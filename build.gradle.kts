@@ -11,6 +11,8 @@ repositories {
 }
 
 dependencies {
+    implementation("com.formdev:flatlaf:3.6.1")
+
     // Kotlinx
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 

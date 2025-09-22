@@ -23,7 +23,7 @@ class OauthService(
         return runBlocking {
             val resultDeferred = server.awaitReponse()
 
-           val requestState = client.triggerOauthFlow()
+            val requestState = client.triggerOauthFlow()
 
             val result = resultDeferred.await()
             if (result.error != null) {

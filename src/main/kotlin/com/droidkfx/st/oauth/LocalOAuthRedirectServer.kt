@@ -7,13 +7,9 @@ import io.ktor.server.netty.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.CompletableDeferred
-import java.awt.Desktop
 import java.io.File
 import java.io.FileInputStream
-import java.net.URI
 import java.net.URLDecoder
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import java.security.KeyStore
 
 
@@ -43,14 +39,16 @@ class LocalOAuthRedirectServer(
                           <body>
                             <h3>${if (error == null) "Authorization complete" else "Authorization failed"}</h3>
                             <p>This page will close automatically or you can close it at any time!.</p>
-                            ${if (error != null) "<p>Error: $error</p>" else """
+                            ${
+                            if (error != null) "<p>Error: $error</p>" else """
                                   <script type="text/javascript">
                                 // This script will attempt to close the current window after 5 seconds (5000 milliseconds).
                                 setTimeout(function() {
                                     window.close();
                                 }, 5000); 
                             </script>
-                            """.trimIndent()}
+                            """.trimIndent()
+                        }
                           </body>
                         </html>
                         """.trimIndent(),

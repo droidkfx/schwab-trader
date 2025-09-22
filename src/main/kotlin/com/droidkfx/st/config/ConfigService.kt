@@ -1,7 +1,6 @@
 package com.droidkfx.st.config
 
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 

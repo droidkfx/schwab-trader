@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNames
 
 @Serializable
-data class OauthTokenResponse (
+data class OauthTokenResponse(
     @JsonNames("expires_in")
     val expiresIn: Long,
     @JsonNames("token_type")

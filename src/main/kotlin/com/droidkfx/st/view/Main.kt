@@ -5,8 +5,9 @@ import javax.swing.ImageIcon
 import javax.swing.JFrame
 import javax.swing.JPanel
 
-open class Main(): JFrame("Schwab Trader") {
+open class Main() : JFrame("Schwab Trader") {
     val rootNode = JPanel()
+
     init {
         // Setup Panel
         rootNode.setLayout(BorderLayout(0, 0))

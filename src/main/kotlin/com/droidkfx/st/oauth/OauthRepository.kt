@@ -1,5 +1,6 @@
 package com.droidkfx.st.oauth
 
+import com.droidkfx.st.schwab.client.OauthTokenResponse
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream

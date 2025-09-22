@@ -1,21 +1,23 @@
-package com.droidkfx.st.oauth
+package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
+import com.droidkfx.st.oauth.LocalOAuthRedirectServer
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.java.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNames
 import java.awt.Desktop
 import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.io.encoding.Base64
-
-private const val BASE_URL = "https://api.schwabapi.com/v1/oauth/authorize"
 
 class OauthClient(
     val config: SchwabClientConfig
@@ -26,11 +28,11 @@ class OauthClient(
         return runBlocking {
             val resp = client.post {
                 url.apply {
-                    host = "api.schwabapi.com"
+                    host = config.baseApiUrl
                     protocol = URLProtocol.HTTPS
                     encodedPath = "/v1/oauth/token"
                 }
-                setBody("grant_type=authorization_code&code=${result.code}&redirect_uri=https://127.0.0.1:41241")
+                setBody("grant_type=authorization_code&code=${result.code}&redirect_uri=${config.callbackServerConfig.url()}")
                 val authorization = Base64.encode("${config.key}:${config.secret}".toByteArray())
                 headers.append("Authorization", "Basic $authorization")
                 headers.append("Content-Type", "application/x-www-form-urlencoded")
@@ -45,7 +47,6 @@ class OauthClient(
         val state = UUID.randomUUID().toString()
         openBrowser(
             buildAuthorizeUrl(
-                BASE_URL,
                 config.key,
                 config.callbackServerConfig.url(),
                 state
@@ -55,19 +56,17 @@ class OauthClient(
     }
 
     private fun buildAuthorizeUrl(
-        baseAuthorizeUrl: String,
         clientId: String,
         redirectUri: String,
-        state: String? = null,
+        state: String,
     ): String {
-        fun enc(s: String) = URLEncoder.encode(s, StandardCharsets.UTF_8)
         val params = mutableListOf(
-            "client_id=${enc(clientId)}",
-            "redirect_uri=${enc(redirectUri)}",
+            "client_id=${clientId.urlEncode()}",
+            "redirect_uri=${redirectUri.urlEncode()}",
             "response_type=code",
-            "state=${enc(state ?: "")}"
+            "state=${state.urlEncode()}"
         )
-        return "$baseAuthorizeUrl?${params.joinToString("&")}"
+        return "${config.baseApiUrl}/v1/oauth/authorize?${params.joinToString("&")}"
     }
 
     private fun openBrowser(url: String) {
@@ -78,4 +77,26 @@ class OauthClient(
         }
     }
 
+    private fun String.urlEncode(): String {
+        return URLEncoder.encode(this, StandardCharsets.UTF_8)
+    }
 }
+
+
+
+@Serializable
+@OptIn(ExperimentalSerializationApi::class)
+data class OauthTokenResponse(
+    @JsonNames("expires_in")
+    val expiresIn: Long,
+    @JsonNames("token_type")
+    val tokenType: String,
+    @JsonNames("scope")
+    val scope: String,
+    @JsonNames("refresh_token")
+    val refreshToken: String,
+    @JsonNames("access_token")
+    val accessToken: String,
+    @JsonNames("id_token")
+    val idToken: String
+)

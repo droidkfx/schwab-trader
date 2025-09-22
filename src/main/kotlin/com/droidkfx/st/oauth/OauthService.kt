@@ -1,5 +1,7 @@
 package com.droidkfx.st.oauth
 
+import com.droidkfx.st.schwab.client.OauthClient
+import com.droidkfx.st.schwab.client.OauthTokenResponse
 import kotlinx.coroutines.runBlocking
 
 class OauthService(

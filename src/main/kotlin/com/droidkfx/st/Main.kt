@@ -3,9 +3,9 @@ package com.droidkfx.st
 import com.droidkfx.st.config.ConfigService
 import com.droidkfx.st.controller.Main
 import com.droidkfx.st.oauth.LocalOAuthRedirectServer
-import com.droidkfx.st.oauth.OauthClient
 import com.droidkfx.st.oauth.OauthRepository
 import com.droidkfx.st.oauth.OauthService
+import com.droidkfx.st.schwab.client.OauthClient
 
 fun main() {
     val configService = ConfigService("application.no-commit.config.json")

@@ -19,6 +19,7 @@ data class CallbackServerConfig(
 data class SchwabClientConfig(
     val key: String,
     val secret: String,
+    val baseApiUrl: String,
     val callbackServerConfig: CallbackServerConfig,
 )
 

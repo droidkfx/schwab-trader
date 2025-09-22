@@ -4,7 +4,6 @@ import com.droidkfx.st.config.SchwabClientConfig
 import com.droidkfx.st.oauth.LocalOAuthRedirectServer
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.engine.java.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
@@ -20,10 +19,9 @@ import java.util.*
 import kotlin.io.encoding.Base64
 
 class OauthClient(
-    val config: SchwabClientConfig
+    val config: SchwabClientConfig,
+    val client: HttpClient
 ) {
-    val client = HttpClient(Java)
-
     fun exchangeToken(result: LocalOAuthRedirectServer.Result): OauthTokenResponse {
         return runBlocking {
             val resp = client.post {
@@ -81,7 +79,6 @@ class OauthClient(
         return URLEncoder.encode(this, StandardCharsets.UTF_8)
     }
 }
-
 
 
 @Serializable

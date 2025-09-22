@@ -5,8 +5,7 @@ import javax.swing.ImageIcon
 import javax.swing.JFrame
 import javax.swing.JPanel
 
-class Main(): JFrame() {
-    private val frame = JFrame("Schwab Trader")
+open class Main(): JFrame("Schwab Trader") {
     val rootNode = JPanel()
     init {
         // Setup Panel
@@ -21,8 +20,7 @@ class Main(): JFrame() {
             defaultCloseOperation = EXIT_ON_CLOSE
             setLocationRelativeTo(null)
             contentPane.add(rootNode, BorderLayout.CENTER)
+            isVisible = true
         }
-
-
     }
 }

@@ -2,10 +2,12 @@ package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
 import com.droidkfx.st.oauth.LocalOAuthRedirectServer
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.URLProtocol
+import io.ktor.http.encodedPath
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -15,7 +17,7 @@ import java.awt.Desktop
 import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import java.util.*
+import java.util.UUID
 import kotlin.io.encoding.Base64
 
 class OauthClient(

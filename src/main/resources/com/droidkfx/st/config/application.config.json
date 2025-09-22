@@ -1,6 +1,14 @@
 {
   "schwabClientConfig": {
     "key": "",
-    "secret": ""
+    "secret": "",
+    "callbackServerConfig": {
+      "host": "127.0.0.1",
+      "port": 41241,
+      "sslCertLocation": "",
+      "sslCertPassword": "",
+      "sslCertAlias": "",
+      "sslCertType": ""
+    }
   }
 }

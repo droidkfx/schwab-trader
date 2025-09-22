@@ -16,6 +16,12 @@ dependencies {
     // Kotlinx
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
+    // Ktor
+    implementation("io.ktor:ktor-client-core:${properties["ktor_version"]}")
+    implementation("io.ktor:ktor-client-java:${properties["ktor_version"]}")
+    implementation("io.ktor:ktor-server-core:${properties["ktor_version"]}")
+    implementation("io.ktor:ktor-server-netty:${properties["ktor_version"]}")
+
     testImplementation(kotlin("test"))
 }
 

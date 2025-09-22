@@ -21,6 +21,7 @@ dependencies {
     implementation("io.ktor:ktor-client-java:${properties["ktor_version"]}")
     implementation("io.ktor:ktor-server-core:${properties["ktor_version"]}")
     implementation("io.ktor:ktor-server-netty:${properties["ktor_version"]}")
+    implementation("io.ktor:ktor-server-html-builder:${properties["ktor_version"]}")
 
     testImplementation(kotlin("test"))
 }

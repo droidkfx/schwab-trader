@@ -1,12 +1,14 @@
 package com.droidkfx.st.oauth
 
 import com.droidkfx.st.config.CallbackServerConfig
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
+import io.ktor.server.html.*
 import io.ktor.server.netty.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.html.*
 import java.io.File
 import java.io.FileInputStream
 import java.net.URLDecoder
@@ -27,33 +29,34 @@ class LocalOAuthRedirectServer(
         server = embeddedServer(Netty, configure = { envConfig() }) {
             routing {
                 get(callbackServerConfig.callbackPath) {
-                    val code = URLDecoder.decode(call.request.queryParameters["code"])
+                    val code = URLDecoder.decode(call.request.queryParameters["code"], "UTF-8")
                     val session = call.request.queryParameters["session"]
                     val error = call.request.queryParameters["error"]
                     val state = call.request.queryParameters["state"]
 
                     // Show a simple page to user
-                    call.respondText(
-                        """
-                        <html>
-                          <body>
-                            <h3>${if (error == null) "Authorization complete" else "Authorization failed"}</h3>
-                            <p>This page will close automatically or you can close it at any time!.</p>
-                            ${
-                            if (error != null) "<p>Error: $error</p>" else """
-                                  <script type="text/javascript">
-                                // This script will attempt to close the current window after 5 seconds (5000 milliseconds).
-                                setTimeout(function() {
-                                    window.close();
-                                }, 5000); 
-                            </script>
-                            """.trimIndent()
+                    call.respondHtml(HttpStatusCode.OK) {
+                        head {
+                            title {
+                                +"DroidTrader - Oauth Page"
+                            }
                         }
-                          </body>
-                        </html>
-                        """.trimIndent(),
-                        io.ktor.http.ContentType.Text.Html
-                    )
+                        body {
+                            h3 {
+                                if (error == null) {
+                                    +"Authorization complete"
+                                } else {
+                                    +"Authorization failed"
+                                    span {
+                                        +"Error: $error"
+                                    }
+                                }
+                            }
+                            p {
+                                +"You can close this page at any time."
+                            }
+                        }
+                    }
 
                     // Complete the result and stop the server shortly after
                     if (!result.isCompleted) {
@@ -61,7 +64,7 @@ class LocalOAuthRedirectServer(
                     }
                     // stop asynchronously to let response flush
                     // small delay avoids abrupt connection close
-                    call.application.environment.monitor.subscribe(ApplicationStopped) {
+                    call.application.monitor.subscribe(ApplicationStopped) {
                         // no-op
                     }
                     // Stop the server on a separate thread

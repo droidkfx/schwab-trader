@@ -24,7 +24,7 @@ import java.net.URLDecoder
 import java.security.KeyStore
 
 
-class LocalOAuthRedirectServer(
+class LocalServer(
     val callbackServerConfig: CallbackServerConfig
 ) {
     data class Result(val code: String?, val session: String?, val state: String?, val error: String?)

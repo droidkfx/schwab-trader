@@ -2,32 +2,43 @@ package com.droidkfx.st.oauth
 
 import com.droidkfx.st.schwab.client.OauthClient
 import com.droidkfx.st.schwab.client.OauthTokenResponse
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 
 class OauthService(
     val repo: OauthRepository,
     val client: OauthClient,
-    val server: LocalOAuthRedirectServer
+    val server: LocalServer
 ) {
 
-    fun obtainAuth(): OauthTokenResponse {
+    fun obtainAuth(): OauthTokenResponse? {
         val existingToken = repo.loadExistingToken()
         if (existingToken != null) {
             return existingToken
         } else {
-            val newToken = initialAuthorization()
-            repo.saveToken(newToken)
+            val newToken = runInitialAuthorization()?.apply {
+                repo.saveToken(this)
+            }
             return newToken
         }
     }
 
-    fun initialAuthorization(): OauthTokenResponse {
+    fun runInitialAuthorization(): OauthTokenResponse? {
         return runBlocking {
             val resultDeferred = server.awaitReponse()
 
             val requestState = client.triggerOauthFlow()
 
-            val result = resultDeferred.await()
+            val result: LocalServer.Result = try {
+                withTimeout(120_000) {
+                    resultDeferred.await()
+                }
+            } catch (_: TimeoutCancellationException) {
+                server.stop()
+                return@runBlocking null
+            }
+
             if (result.error != null) {
                 throw RuntimeException("Error: ${result.error}")
             } else if (result.code != null) {

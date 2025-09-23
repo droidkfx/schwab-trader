@@ -1,23 +1,13 @@
 package com.droidkfx.st
 
-import com.droidkfx.st.config.ConfigService
-import com.droidkfx.st.controller.Main
-import com.droidkfx.st.oauth.LocalOAuthRedirectServer
-import com.droidkfx.st.oauth.OauthRepository
-import com.droidkfx.st.oauth.OauthService
-import com.droidkfx.st.schwab.client.SchwabClient
+import com.droidkfx.st.config.ConfigModule
+import com.droidkfx.st.controller.ControllerModule
+import com.droidkfx.st.oauth.OauthModule
+import com.droidkfx.st.schwab.SchwabModule
 
 fun main() {
-    val configService = ConfigService("application.no-commit.config.json")
-    val config = configService.getConfig()
-
-    val server = LocalOAuthRedirectServer(config.schwabClientConfig.callbackServerConfig)
-
-    val schwabClient = SchwabClient(config.schwabClientConfig)
-
-    val oauthRepository = OauthRepository()
-
-    OauthService(repo = oauthRepository, client = schwabClient.oathClient, server = server)
-
-    Main()
+    val configModule = ConfigModule("application.no-commit.config.json")
+    val schwabModule = SchwabModule(configModule)
+    val oauthModule = OauthModule(configModule, schwabModule)
+    val controllerModule = ControllerModule()
 }

@@ -1,7 +1,7 @@
 package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
-import com.droidkfx.st.oauth.LocalOAuthRedirectServer
+import com.droidkfx.st.oauth.LocalServer
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -24,7 +24,7 @@ class OauthClient(
     val config: SchwabClientConfig,
     val client: HttpClient
 ) {
-    fun exchangeToken(result: LocalOAuthRedirectServer.Result): OauthTokenResponse {
+    fun exchangeToken(result: LocalServer.Result): OauthTokenResponse {
         return runBlocking {
             val resp = client.post {
                 url.apply {

@@ -25,5 +25,5 @@ data class SchwabClientConfig(
 
 @Serializable
 data class ConfigEntity(
-    val schwabClientConfig: SchwabClientConfig,
+    val schwabConfig: SchwabClientConfig,
 )

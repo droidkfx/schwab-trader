@@ -5,7 +5,7 @@ import javax.swing.ImageIcon
 import javax.swing.JFrame
 import javax.swing.JPanel
 
-open class Main() : JFrame("Schwab Trader") {
+abstract class Main() : JFrame("Schwab Trader") {
     val rootNode = JPanel()
 
     init {

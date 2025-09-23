@@ -11,12 +11,17 @@ import io.ktor.http.encodedPath
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNames
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 import java.awt.Desktop
 import java.net.URI
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import java.time.Instant
 import java.util.UUID
 import kotlin.io.encoding.Base64
 
@@ -24,7 +29,20 @@ class OauthClient(
     val config: SchwabClientConfig,
     val client: HttpClient
 ) {
-    fun exchangeToken(result: LocalServer.Result): OauthTokenResponse {
+
+    fun refreshOauth(refreshToken: String): OauthTokenResponse = exchangeOauthToken(refreshToken, "refresh_token")
+
+    fun exchangeOauthToken(result: LocalServer.Result): OauthTokenResponse {
+        if (result.code == null) {
+            throw IllegalStateException("No code returned from server")
+        }
+        return exchangeOauthToken(result.code, "authorization_code")
+    }
+
+    fun exchangeOauthToken(
+        token: String,
+        grantType: String,
+    ): OauthTokenResponse {
         return runBlocking {
             val resp = client.post {
                 url.apply {
@@ -32,7 +50,17 @@ class OauthClient(
                     protocol = URLProtocol.HTTPS
                     encodedPath = "/v1/oauth/token"
                 }
-                setBody("grant_type=authorization_code&code=${result.code}&redirect_uri=${config.callbackServerConfig.url()}")
+                val body = StringBuilder()
+                body.append("grant_type=${grantType}")
+                if (grantType == "authorization_code") {
+                    body.append("&code=${token}&redirect_uri=${config.callbackServerConfig.url()}")
+                } else if (grantType == "refresh_token") {
+                    body.append("&refresh_token=${token}")
+                } else {
+                    throw IllegalArgumentException("Unsupported grant type: $grantType")
+                }
+
+                setBody(body.toString())
                 val authorization = Base64.encode("${config.key}:${config.secret}".toByteArray())
                 headers.append("Authorization", "Basic $authorization")
                 headers.append("Content-Type", "application/x-www-form-urlencoded")
@@ -98,4 +126,17 @@ data class OauthTokenResponse(
     val accessToken: String,
     @JsonNames("id_token")
     val idToken: String
-)
+) {
+
+    @Transient
+    private val idTokenClaims = idToken
+        .split(".")
+        .getOrElse(1) { null }
+        ?.let { Base64.withPadding(Base64.PaddingOption.ABSENT_OPTIONAL).decode(it).decodeToString() }
+        ?.let { Json.decodeFromString<JsonObject>(it) }
+
+    @Transient
+    val expiresAt = idTokenClaims
+        ?.let { it["exp"]?.jsonPrimitive?.long }
+        ?.let { Instant.ofEpochSecond(it) }
+}

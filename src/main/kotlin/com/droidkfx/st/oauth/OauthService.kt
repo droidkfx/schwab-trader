@@ -7,6 +7,7 @@ import com.droidkfx.st.schwab.client.OauthTokenResponse
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
+import java.time.Instant
 
 class OauthService(
     val repo: OauthRepository,
@@ -19,16 +20,26 @@ class OauthService(
     fun getStatus(): ReadOnlyDataBinding<OauthStatus> = tokenStatus
 
     fun obtainAuth(doInit: Boolean): OauthTokenResponse? {
+        // Load existing token from file
         if (existingToken == null) {
             existingToken = repo.loadExistingToken()
         }
+        // If no existing token, try to obtain one by Oauth
         if (existingToken == null && doInit) {
             existingToken = runInitialAuthorization()?.apply {
                 repo.saveToken(this)
             }
         }
+        // If existing token is expired, try to refresh it
+        if (existingToken?.expiresAt?.isBefore(Instant.now()) == true) {
+            existingToken = existingToken?.refreshToken?.let { client.refreshOauth(it) }
+        }
         return existingToken?.apply {
-            tokenStatus.value = OauthStatus.READY
+            tokenStatus.value = if (expiresAt?.isAfter(Instant.now()) ?: false) {
+                OauthStatus.READY
+            } else {
+                OauthStatus.EXPIRED
+            }
         } ?: run {
             tokenStatus.value = OauthStatus.NOT_INITIALIZED
             null
@@ -42,7 +53,6 @@ class OauthService(
     }
 
     private fun runInitialAuthorization(): OauthTokenResponse? {
-        println("Running initial authorization")
         existingToken = runBlocking {
             tokenStatus.value = OauthStatus.INITIALIZING
             val resultDeferred = server.awaitReponse()
@@ -64,7 +74,7 @@ class OauthService(
                 if (result.state != requestState) {
                     throw IllegalStateException("State mismatch")
                 }
-                val token = client.exchangeToken(result)
+                val token = client.exchangeOauthToken(result)
                 return@runBlocking token
             } else {
                 throw IllegalStateException("Unexpected result")

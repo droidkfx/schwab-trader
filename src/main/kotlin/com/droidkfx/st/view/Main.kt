@@ -12,8 +12,6 @@ abstract class Main(
     val rootNode = JPanel()
 
     init {
-
-
         // Setup Panel
         rootNode.setLayout(BorderLayout(0, 0))
 

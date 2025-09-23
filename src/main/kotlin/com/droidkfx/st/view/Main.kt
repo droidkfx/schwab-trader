@@ -13,7 +13,7 @@ open class Main() : JFrame("Schwab Trader") {
         rootNode.setLayout(BorderLayout(0, 0))
 
         // Setup frame
-        javaClass.getResource("AppIcon.png")?.let {
+        Main::class.java.getResource("AppIcon.png")?.let {
             iconImage = ImageIcon(it).image
         }
         this.apply {

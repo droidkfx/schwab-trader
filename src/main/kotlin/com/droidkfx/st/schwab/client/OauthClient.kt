@@ -66,7 +66,7 @@ class OauthClient(
             "response_type=code",
             "state=${state.urlEncode()}"
         )
-        return "${config.baseApiUrl}/v1/oauth/authorize?${params.joinToString("&")}"
+        return "https://${config.baseApiUrl}/v1/oauth/authorize?${params.joinToString("&")}"
     }
 
     private fun openBrowser(url: String) {

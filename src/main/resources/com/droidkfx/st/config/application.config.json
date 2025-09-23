@@ -2,7 +2,7 @@
   "schwabClientConfig": {
     "key": "",
     "secret": "",
-    "baseApiUrl": "https://api.schwabapi.com",
+    "baseApiUrl": "api.schwabapi.com",
     "callbackServerConfig": {
       "host": "127.0.0.1",
       "port": 41241,

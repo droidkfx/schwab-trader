@@ -1,5 +1,7 @@
 package com.droidkfx.st.oauth
 
+import com.droidkfx.st.databind.DataBinding
+import com.droidkfx.st.databind.ReadOnlyDataBinding
 import com.droidkfx.st.schwab.client.OauthClient
 import com.droidkfx.st.schwab.client.OauthTokenResponse
 import kotlinx.coroutines.TimeoutCancellationException
@@ -11,21 +13,38 @@ class OauthService(
     val client: OauthClient,
     val server: LocalServer
 ) {
+    val tokenStatus = DataBinding(OauthStatus.NOT_INITIALIZED)
+    private var existingToken: OauthTokenResponse? = obtainAuth(doInit = false)
 
-    fun obtainAuth(): OauthTokenResponse? {
-        val existingToken = repo.loadExistingToken()
-        if (existingToken != null) {
-            return existingToken
-        } else {
-            val newToken = runInitialAuthorization()?.apply {
+    fun getStatus(): ReadOnlyDataBinding<OauthStatus> = tokenStatus
+
+    fun obtainAuth(doInit: Boolean): OauthTokenResponse? {
+        if (existingToken == null) {
+            existingToken = repo.loadExistingToken()
+        }
+        if (existingToken == null && doInit) {
+            existingToken = runInitialAuthorization()?.apply {
                 repo.saveToken(this)
             }
-            return newToken
+        }
+        return existingToken?.apply {
+            tokenStatus.value = OauthStatus.READY
+        } ?: run {
+            tokenStatus.value = OauthStatus.NOT_INITIALIZED
+            null
         }
     }
 
-    fun runInitialAuthorization(): OauthTokenResponse? {
-        return runBlocking {
+    fun invalidateOauth() {
+        repo.deleteToken()
+        existingToken = null
+        tokenStatus.value = OauthStatus.NOT_INITIALIZED
+    }
+
+    private fun runInitialAuthorization(): OauthTokenResponse? {
+        println("Running initial authorization")
+        existingToken = runBlocking {
+            tokenStatus.value = OauthStatus.INITIALIZING
             val resultDeferred = server.awaitReponse()
 
             val requestState = client.triggerOauthFlow()
@@ -51,5 +70,6 @@ class OauthService(
                 throw IllegalStateException("Unexpected result")
             }
         }
+        return existingToken
     }
 }

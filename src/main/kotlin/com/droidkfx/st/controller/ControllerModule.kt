@@ -10,8 +10,10 @@ class ControllerModule(oathModule: OauthModule) {
 
     val menuBarController = MenuBar(oathModule.oauthService)
     val statusBarController = StatusBar(oathModule.oauthService)
+    val accountTabs = AccountTabs()
     val mainController = Main(
         statusBarController = statusBarController,
-        menuBarController = menuBarController
+        menuBarController = menuBarController,
+        accountTabs = accountTabs,
     )
 }

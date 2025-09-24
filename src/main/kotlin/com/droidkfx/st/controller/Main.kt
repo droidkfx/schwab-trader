@@ -4,8 +4,10 @@ import com.droidkfx.st.view.Main
 
 class Main(
     statusBarController: StatusBar,
-    menuBarController: MenuBar
+    menuBarController: MenuBar,
+    accountTabs: AccountTabs,
 ) : Main(
     statusBarController,
-    menuBarController
+    menuBarController,
+    accountTabs
 )

@@ -61,12 +61,14 @@ abstract class BaseClient(
         }
 
     protected inline fun <reified T> getAt(
-        vararg segments: String = emptyArray()
+        vararg segments: String = emptyArray(),
+        crossinline block: HttpRequestBuilder.() -> Unit = {}
     ): ApiResponse<T> =
         get {
             url {
                 path(*defaultPathSegments.toTypedArray(), *segments)
             }
+            block()
         }
 }
 

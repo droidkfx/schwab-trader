@@ -27,7 +27,7 @@ import kotlin.io.encoding.Base64
 
 class OauthClient(
     val config: SchwabClientConfig,
-    val client: HttpClient
+    val client: HttpClient,
 ) {
 
     fun refreshOauth(refreshToken: String): OauthTokenResponse = exchangeOauthToken(refreshToken, "refresh_token")
@@ -42,32 +42,30 @@ class OauthClient(
     fun exchangeOauthToken(
         token: String,
         grantType: String,
-    ): OauthTokenResponse {
-        return runBlocking {
-            val resp = client.post {
-                url.apply {
-                    host = config.baseApiUrl
-                    protocol = URLProtocol.HTTPS
-                    encodedPath = "/v1/oauth/token"
-                }
-                val body = StringBuilder()
-                body.append("grant_type=${grantType}")
-                if (grantType == "authorization_code") {
-                    body.append("&code=${token}&redirect_uri=${config.callbackServerConfig.url()}")
-                } else if (grantType == "refresh_token") {
-                    body.append("&refresh_token=${token}")
-                } else {
-                    throw IllegalArgumentException("Unsupported grant type: $grantType")
-                }
-
-                setBody(body.toString())
-                val authorization = Base64.encode("${config.key}:${config.secret}".toByteArray())
-                headers.append("Authorization", "Basic $authorization")
-                headers.append("Content-Type", "application/x-www-form-urlencoded")
-                headers.append("Accept", "application/json")
+    ): OauthTokenResponse = runBlocking {
+        client.post {
+            url.apply {
+                host = config.baseApiUrl
+                protocol = URLProtocol.HTTPS
+                encodedPath = "/v1/oauth/token"
+            }
+            val body = StringBuilder()
+            body.append("grant_type=${grantType}")
+            if (grantType == "authorization_code") {
+                body.append("&code=${token}&redirect_uri=${config.callbackServerConfig.url()}")
+            } else if (grantType == "refresh_token") {
+                body.append("&refresh_token=${token}")
+            } else {
+                throw IllegalArgumentException("Unsupported grant type: $grantType")
             }
 
-            return@runBlocking Json.decodeFromString(resp.body())
+            setBody(body.toString())
+            val authorization = Base64.encode("${config.key}:${config.secret}".toByteArray())
+            headers.append("Authorization", "Basic $authorization")
+            headers.append("Content-Type", "application/x-www-form-urlencoded")
+            headers.append("Accept", "application/json")
+        }.let {
+            Json.decodeFromString<OauthTokenResponse>(it.body())
         }
     }
 

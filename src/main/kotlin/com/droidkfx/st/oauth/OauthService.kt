@@ -24,15 +24,15 @@ class OauthService(
         if (existingToken == null) {
             existingToken = repo.loadExistingToken()
         }
+        // If existing token is expired, try to refresh it
+        if (existingToken?.expiresAt?.isBefore(Instant.now()) == true) {
+            existingToken = existingToken?.refreshToken?.let { client.refreshOauth(it) }
+        }
         // If no existing token, try to obtain one by Oauth
         if (existingToken == null && doInit) {
             existingToken = runInitialAuthorization()?.apply {
                 repo.saveToken(this)
             }
-        }
-        // If existing token is expired, try to refresh it
-        if (existingToken?.expiresAt?.isBefore(Instant.now()) == true) {
-            existingToken = existingToken?.refreshToken?.let { client.refreshOauth(it) }
         }
         return existingToken?.apply {
             tokenStatus.value = if (expiresAt?.isAfter(Instant.now()) ?: false) {

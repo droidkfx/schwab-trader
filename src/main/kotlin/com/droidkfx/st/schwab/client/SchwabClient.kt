@@ -20,7 +20,11 @@ class SchwabClient(
         config = config,
         client = client
     )
-    val ordersClient = OrdersClient()
+    val ordersClient = OrdersClient(
+        config = config,
+        client = client,
+        oathToken = oathAccessToken
+    )
     val transactionsClient = TransactionsClient()
     val userPreferenceClient = UserPreferenceClient()
 }

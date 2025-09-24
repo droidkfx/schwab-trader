@@ -10,7 +10,7 @@ class MenuBar(private val oauthService: OauthService) : MenuBar(
     oauthService.tokenStatus.mapped(::invalidateEnabled)
 ) {
     override suspend fun onOauthUpdate() {
-        oauthService.obtainAuth(doInit = true)
+        oauthService.obtainAuth()
     }
 
     override suspend fun onOauthInvalidate() {

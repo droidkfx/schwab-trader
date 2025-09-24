@@ -9,6 +9,7 @@ class DataBinding<T>(initialValue: T) : ReadOnlyDataBinding<T>, ReadWriteDataBin
 
     override var value: T = initialValue
         set(value) {
+            if (field == value) return
             field = value
             listeners.forEach { it(value) }
         }

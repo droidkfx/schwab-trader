@@ -12,27 +12,33 @@ import java.time.Instant
 class OauthService(
     val repo: OauthRepository,
     val client: OauthClient,
-    val server: LocalServer
+    val server: LocalServer,
+    val authToken: DataBinding<String?> = DataBinding(null)
 ) {
     val tokenStatus = DataBinding(OauthStatus.NOT_INITIALIZED)
-    private var existingToken: OauthTokenResponse? = obtainAuth(doInit = false)
+    private var existingToken: OauthTokenResponse? = obtainAuth(doInit = false, allowRefresh = false)
+        set(value) {
+            field = value
+            authToken.value = value?.accessToken
+        }
 
     fun getStatus(): ReadOnlyDataBinding<OauthStatus> = tokenStatus
 
-    fun obtainAuth(doInit: Boolean): OauthTokenResponse? {
+    fun obtainAuth(doInit: Boolean = true, allowRefresh: Boolean = true): OauthTokenResponse? {
         // Load existing token from file
         if (existingToken == null) {
             existingToken = repo.loadExistingToken()
         }
         // If existing token is expired, try to refresh it
-        if (existingToken?.expiresAt?.isBefore(Instant.now()) == true) {
-            existingToken = existingToken?.refreshToken?.let { client.refreshOauth(it) }
+        if (allowRefresh && existingToken?.expiresAt?.isBefore(Instant.now()) == true) {
+            existingToken = existingToken?.refreshToken
+                ?.let { client.refreshOauth(it) }
+                ?.apply { repo.saveToken(this) }
         }
         // If no existing token, try to obtain one by Oauth
         if (existingToken == null && doInit) {
-            existingToken = runInitialAuthorization()?.apply {
-                repo.saveToken(this)
-            }
+            existingToken = runInitialAuthorization()
+                ?.apply { repo.saveToken(this) }
         }
         return existingToken?.apply {
             tokenStatus.value = if (expiresAt?.isAfter(Instant.now()) ?: false) {

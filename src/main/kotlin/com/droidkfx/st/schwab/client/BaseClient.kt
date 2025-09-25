@@ -2,10 +2,11 @@ package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
 import com.droidkfx.st.databind.DataBinding
+import io.github.oshai.kotlinlogging.KLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.get
+import io.ktor.client.request.request
 import io.ktor.http.HttpMethod
 import io.ktor.http.path
 import kotlinx.coroutines.runBlocking
@@ -19,6 +20,7 @@ abstract class BaseClient(
     protected val oathToken: DataBinding<String?> = DataBinding(null),
     protected val defaultPathSegments: List<String> = emptyList()
 ) {
+    protected abstract val logger: KLogger
     protected val authorization: String
         get() = "Bearer ${oathToken.value}"
 
@@ -33,7 +35,7 @@ abstract class BaseClient(
     ): ApiResponse<T> =
         runBlocking {
             try {
-                val resp = client.get {
+                val resp = client.request {
                     method = HttpMethod.Get
                     url {
                         protocol = io.ktor.http.URLProtocol.HTTPS
@@ -45,11 +47,12 @@ abstract class BaseClient(
                     headers.append("Accept", "application/json")
 
                     block()
+                    logger.trace { "Request: \n${this.method} ${url.buildString()}\n ${this.headers.entries()}\n ${this.body}" }
                 }
 
                 val respBody = resp.body<String>()
                 if (resp.status.value in 200..299) {
-                    ApiResponse(json.decodeFromString<T>(respBody))
+                    ApiResponse(json.decodeFromString<T>(respBody)).also { }
                 } else if (respBody == "") {
                     ApiResponse(error = ErrorResponse(emptyList(), "${resp.status.value} ${resp.status.description}"))
                 } else {
@@ -57,6 +60,8 @@ abstract class BaseClient(
                 }
             } catch (e: Exception) {
                 ApiResponse(error = ErrorResponse(emptyList(), e.message ?: "Unknown error"))
+            }.also {
+                logger.trace { "Response: $it" }
             }
         }
 

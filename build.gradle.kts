@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "2.2.0"
     kotlin("plugin.serialization") version "2.2.20"
+//    id("dev.msfjarvis.tracelog") version "0.1.3"
 }
 
 group = "com.droidkfx.games.snake"
@@ -11,6 +12,10 @@ repositories {
 }
 
 dependencies {
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
+    implementation("ch.qos.logback:logback-classic:1.5.18")
+
+    // Swing Libraries
     implementation("com.formdev:flatlaf:3.6.1")
 
     // Kotlinx
@@ -29,6 +34,7 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(21)
 }

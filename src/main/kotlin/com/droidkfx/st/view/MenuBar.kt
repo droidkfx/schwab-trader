@@ -1,6 +1,7 @@
 package com.droidkfx.st.view
 
 import com.droidkfx.st.databind.ReadOnlyDataBinding
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -12,7 +13,10 @@ abstract class MenuBar(
     updateOauthEnabled: ReadOnlyDataBinding<Boolean>,
     invalidateOauthEnabled: ReadOnlyDataBinding<Boolean>
 ) : JMenuBar() {
+    private val logger = logger {}
+
     init {
+        logger.trace { "Initializing" }
         add(JMenu("Auth").apply {
             this.add(JMenuItem("Update Oath").apply {
                 addActionListener {

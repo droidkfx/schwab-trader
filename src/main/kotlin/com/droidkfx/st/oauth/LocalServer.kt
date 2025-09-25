@@ -1,6 +1,7 @@
 package com.droidkfx.st.oauth
 
 import com.droidkfx.st.config.CallbackServerConfig
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationStopped
 import io.ktor.server.engine.ApplicationEngine
@@ -29,15 +30,23 @@ class LocalServer(
 ) {
     data class Result(val code: String?, val session: String?, val state: String?, val error: String?)
 
+    private val logger = logger {}
+
     private val result = CompletableDeferred<Result>()
     private var server: EmbeddedServer<*, *>? = null
 
     fun awaitReponse(): CompletableDeferred<Result> {
-        if (server != null) return result
+        logger.trace { "awaitReponse" }
+        if (server != null) {
+            logger.debug { "Server already running" }
+            return result
+        }
 
+        logger.debug { "Starting local server on port ${callbackServerConfig.port}" }
         server = embeddedServer(Netty, configure = { envConfig() }) {
             routing {
                 get(callbackServerConfig.callbackPath) {
+                    logger.debug { "Received callback" }
                     val code = URLDecoder.decode(call.request.queryParameters["code"], "UTF-8")
                     val session = call.request.queryParameters["session"]
                     val error = call.request.queryParameters["error"]
@@ -69,6 +78,7 @@ class LocalServer(
 
                     // Complete the result and stop the server shortly after
                     if (!result.isCompleted) {
+                        logger.debug { "oauth callback result: $result" }
                         result.complete(Result(code, session, state, error))
                     }
                     // stop asynchronously to let response flush
@@ -84,11 +94,13 @@ class LocalServer(
                 }
             }
         }.start(false)
+        logger.debug { "Local server started" }
 
         return result
     }
 
     fun stop() {
+        logger.debug { "Stopping local server" }
         server?.stop(gracePeriodMillis = 200, timeoutMillis = 1000)
         server = null
     }

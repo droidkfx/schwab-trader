@@ -2,6 +2,8 @@ package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
 import com.droidkfx.st.databind.DataBinding
+import io.github.oshai.kotlinlogging.KLogger
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
 import kotlinx.serialization.Serializable
 import java.time.OffsetDateTime
@@ -11,6 +13,8 @@ class OrdersClient(
     client: HttpClient,
     oathToken: DataBinding<String?> = DataBinding(null)
 ) : BaseClient(config, client, oathToken, listOf("trader", "v1")) {
+    override val logger: KLogger = logger {}
+
     fun getAccountOrders(
         accountNumber: String,
         fromEnteredTime: OffsetDateTime,

@@ -2,6 +2,8 @@ package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
 import com.droidkfx.st.databind.DataBinding
+import io.github.oshai.kotlinlogging.KLogger
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
 import kotlinx.serialization.Serializable
 
@@ -10,26 +12,34 @@ class AccountsClient(
     client: HttpClient,
     oathToken: DataBinding<String?> = DataBinding(null)
 ) : BaseClient(config, client, oathToken, listOf("trader", "v1")) {
-    fun listAccountNumbers(): ApiResponse<List<AccountNumberResponse>> =
-        getAt("accounts", "accountNumbers")
+    override val logger: KLogger = logger {}
 
-    fun getLinkedAccounts(includePositions: Boolean = false): ApiResponse<List<LinkedAccountsResponse>> =
-        getAt("accounts") {
+    fun listAccountNumbers(): ApiResponse<List<AccountNumberResponse>> {
+        logger.trace { "listAccountNumbers" }
+        return getAt("accounts", "accountNumbers")
+    }
+
+    fun getLinkedAccounts(includePositions: Boolean = false): ApiResponse<List<LinkedAccountsResponse>> {
+        logger.trace { "getLinkedAccounts" }
+        return getAt("accounts") {
             url {
                 if (includePositions) {
                     parameters["fields"] = "positions"
                 }
             }
         }
+    }
 
-    fun getLinkedAccount(accountId: String, includePositions: Boolean = false): ApiResponse<LinkedAccountsResponse> =
-        getAt("accounts", accountId) {
+    fun getLinkedAccount(accountId: String, includePositions: Boolean = false): ApiResponse<LinkedAccountsResponse> {
+        logger.trace { "getLinkedAccount $accountId" }
+        return getAt("accounts", accountId) {
             url {
                 if (includePositions) {
                     parameters["fields"] = "positions"
                 }
             }
         }
+    }
 }
 
 @Serializable

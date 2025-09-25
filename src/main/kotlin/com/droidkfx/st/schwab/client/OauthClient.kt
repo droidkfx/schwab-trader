@@ -2,6 +2,7 @@ package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
 import com.droidkfx.st.oauth.LocalServer
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -29,6 +30,7 @@ class OauthClient(
     val config: SchwabClientConfig,
     val client: HttpClient,
 ) {
+    private val logger = logger {}
 
     fun refreshOauth(refreshToken: String): OauthTokenResponse = exchangeOauthToken(refreshToken, "refresh_token")
 
@@ -99,7 +101,7 @@ class OauthClient(
         if (Desktop.isDesktopSupported()) {
             Desktop.getDesktop().browse(URI(url))
         } else {
-            println("Open this URL in your browser: $url")
+            logger.info { "Open this URL in your browser: $url" }
         }
     }
 

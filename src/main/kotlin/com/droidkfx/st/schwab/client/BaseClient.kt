@@ -30,40 +30,43 @@ abstract class BaseClient(
         coerceInputValues = true
     }
 
-    protected inline fun <reified T> get(
-        crossinline block: HttpRequestBuilder.() -> Unit = {}
-    ): ApiResponse<T> =
-        runBlocking {
-            try {
-                val resp = client.request {
-                    method = HttpMethod.Get
-                    url {
-                        protocol = io.ktor.http.URLProtocol.HTTPS
-                        host = config.baseApiUrl
-                        path(*defaultPathSegments.toTypedArray())
-                    }
-
-                    headers.append("Authorization", authorization)
-                    headers.append("Accept", "application/json")
-
-                    block()
-                    logger.trace { "Request: \n${this.method} ${url.buildString()}\n ${this.headers.entries()}\n ${this.body}" }
+    protected inline fun <reified T> request(
+        method: HttpMethod,
+        crossinline block: HttpRequestBuilder.() -> Unit = {},
+    ) = runBlocking {
+        try {
+            val resp = client.request {
+                this.method = method
+                url {
+                    protocol = io.ktor.http.URLProtocol.HTTPS
+                    host = config.baseApiUrl
+                    path(*defaultPathSegments.toTypedArray())
                 }
 
-                val respBody = resp.body<String>()
-                if (resp.status.value in 200..299) {
-                    ApiResponse(json.decodeFromString<T>(respBody)).also { }
-                } else if (respBody == "") {
-                    ApiResponse(error = ErrorResponse(emptyList(), "${resp.status.value} ${resp.status.description}"))
-                } else {
-                    ApiResponse(error = json.decodeFromString(respBody))
-                }
-            } catch (e: Exception) {
-                ApiResponse(error = ErrorResponse(emptyList(), e.message ?: "Unknown error"))
-            }.also {
-                logger.trace { "Response: $it" }
+                headers.append("Authorization", authorization)
+                headers.append("Accept", "application/json")
+
+                block()
+                logger.trace { "Request: \n${this.method} ${url.buildString()}\n ${this.headers.entries()}\n ${this.body}" }
             }
+
+            val respBody = resp.body<String>()
+            if (resp.status.value in 200..299) {
+                ApiResponse(json.decodeFromString<T>(respBody))
+            } else if (respBody == "") {
+                ApiResponse(error = ErrorResponse(emptyList(), "${resp.status.value} ${resp.status.description}"))
+            } else {
+                ApiResponse(error = json.decodeFromString(respBody))
+            }
+        } catch (e: Exception) {
+            ApiResponse(error = ErrorResponse(emptyList(), e.message ?: "Unknown error"))
+        }.also {
+            logger.trace { "Response: $it" }
         }
+    }
+
+    protected inline fun <reified T> get(crossinline block: HttpRequestBuilder.() -> Unit = {}): ApiResponse<T> =
+        request(HttpMethod.Get, block)
 
     protected inline fun <reified T> getAt(
         vararg segments: String = emptyArray(),

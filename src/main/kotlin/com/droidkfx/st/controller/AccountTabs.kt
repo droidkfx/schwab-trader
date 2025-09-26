@@ -1,9 +1,12 @@
 package com.droidkfx.st.controller
 
-import com.droidkfx.st.databind.DataBinding
+import com.droidkfx.st.databind.ReadOnlyDataBinding
 import com.droidkfx.st.view.AccountTabPanel
+import com.droidkfx.st.view.model.AccountTabViewModel
 
-class AccountTabs : AccountTabPanel(
-    DataBinding(null)
+class AccountTabs(
+    accounts: ReadOnlyDataBinding<List<AccountTabViewModel>?>
+) : AccountTabPanel(
+    accounts
 ) {
 }

@@ -1,24 +1,27 @@
 package com.droidkfx.st.view.model
 
 data class AllocationRowViewModel(
-    @field:Column(name = "Symbol", position = 0)
+    @field:Column(name = "Symbol")
     val symbol: String,
 
-    @field:Column(name = "Target Allocation", position = 1)
+    @field:Column(name = "Target Allocation")
     val allocationTarget: Double,
-    @field:Column(name = "Owned", position = 2)
+    @field:Column(name = "Owned")
     val currentShares: Double,
-    @field:Column(name = "Price", position = 3)
+    @field:Column(name = "Price")
     val currentPrice: Double,
-    @field:Column(name = "Value", position = 4)
+    @field:Column(name = "Value")
     val currentValue: Double,
-    @field:Column(name = "Allocation", position = 5)
+    @field:Column(name = "Allocation")
     val currentAllocation: Double,
 
-    @field:Column(name = "Rec Action", position = 6)
+    @field:Column(name = "Delta")
+    val allocationDelta: Double = currentAllocation - allocationTarget,
+
+    @field:Column(name = "Rec Action")
     val tradeAction: String,
-    @field:Column(name = "Rec Shares", position = 7)
+    @field:Column(name = "Rec Shares")
     val tradeShares: Double,
-    @field:Column(name = "Expected Cost", position = 8)
+    @field:Column(name = "Expected Cost")
     val expectedCost: Double
 )

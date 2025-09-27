@@ -5,6 +5,8 @@ import com.droidkfx.st.view.model.AccountTabViewModel
 import com.droidkfx.st.view.model.AllocationRowViewModel
 import com.droidkfx.st.view.model.ObjectTableModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import java.awt.BorderLayout
+import java.awt.FlowLayout
 import java.awt.GridBagLayout
 import javax.swing.JButton
 import javax.swing.JPanel
@@ -19,10 +21,19 @@ abstract class AccountTabPanel(accountTabs: ReadOnlyDataBinding<List<AccountTabV
         logger.trace { "Initializing" }
         accountTabs.value
             ?.forEach {
-                addTab(it.title, JTabbedPane().apply {
-                    addTab("Allocation", AllocationTab(it.data))
-                    addTab("Positions", PositionsTab())
-                })
+                addTab(
+                    it.title, JPanel(BorderLayout())
+                        .apply {
+                            add(
+                                JPanel(
+                                    FlowLayout()
+                                        .apply { alignment = FlowLayout.LEFT })
+                                    .apply {
+                                        add(JButton("Adjust allocation"))
+                                    }, BorderLayout.NORTH
+                            )
+                            add(AllocationTab(it.data), BorderLayout.CENTER)
+                        })
             }
             ?: run {
                 addTab("Getting Started", JPanel().apply {
@@ -30,15 +41,6 @@ abstract class AccountTabPanel(accountTabs: ReadOnlyDataBinding<List<AccountTabV
                     add(JButton("Click here to start balancing an account"))
                 })
             }
-    }
-
-
-    private class PositionsTab : JPanel(GridBagLayout()) {
-        private val logger = logger {}
-
-        init {
-            logger.trace { "Initializing" }
-        }
     }
 
     private class AllocationTab(data: List<AllocationRowViewModel>) : JScrollPane() {
@@ -52,7 +54,9 @@ abstract class AccountTabPanel(accountTabs: ReadOnlyDataBinding<List<AccountTabV
                         data = data,
                         AllocationRowViewModel::class.java
                     )
-                )
+                ).apply {
+                    autoCreateRowSorter = true
+                }
             )
         }
     }

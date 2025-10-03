@@ -1,7 +1,7 @@
 package com.droidkfx.st.controller
 
 import com.droidkfx.st.databind.DataBinding
-import com.droidkfx.st.oauth.OauthModule
+import com.droidkfx.st.schwab.oauth.OauthModule
 import com.droidkfx.st.view.model.AccountTabViewModel
 import com.droidkfx.st.view.model.AllocationRowViewModel
 import com.formdev.flatlaf.FlatDarkLaf

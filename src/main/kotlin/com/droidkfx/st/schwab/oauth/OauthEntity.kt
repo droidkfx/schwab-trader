@@ -1,4 +1,4 @@
-package com.droidkfx.st.oauth
+package com.droidkfx.st.schwab.oauth
 
 enum class OauthStatus {
     READY,

@@ -1,4 +1,4 @@
-package com.droidkfx.st.oauth
+package com.droidkfx.st.schwab.oauth
 
 import com.droidkfx.st.schwab.client.OauthTokenResponse
 import io.github.oshai.kotlinlogging.KotlinLogging.logger

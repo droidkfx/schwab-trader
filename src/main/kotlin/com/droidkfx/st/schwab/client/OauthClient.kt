@@ -1,7 +1,7 @@
 package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
-import com.droidkfx.st.oauth.LocalServer
+import com.droidkfx.st.schwab.oauth.LocalServer
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

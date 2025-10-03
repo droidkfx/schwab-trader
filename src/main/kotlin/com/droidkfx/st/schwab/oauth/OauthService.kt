@@ -1,4 +1,4 @@
-package com.droidkfx.st.oauth
+package com.droidkfx.st.schwab.oauth
 
 import com.droidkfx.st.databind.DataBinding
 import com.droidkfx.st.databind.ReadOnlyDataBinding

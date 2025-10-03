@@ -1,5 +1,6 @@
 package com.droidkfx.st
 
+import com.droidkfx.st.account.AccountModule
 import com.droidkfx.st.config.ConfigModule
 import com.droidkfx.st.controller.ControllerModule
 import com.droidkfx.st.databind.DataBinding
@@ -15,6 +16,7 @@ fun main() {
     val oauthTokenBinding = DataBinding<String?>(null)
     val schwabModule = SchwabModule(configModule, oauthTokenBinding)
     val oauthModule = OauthModule(configModule, schwabModule, oauthTokenBinding)
+    val accountModule = AccountModule(schwabModule)
 
     schwabModule.client.accountsClient.listAccountNumbers()
 

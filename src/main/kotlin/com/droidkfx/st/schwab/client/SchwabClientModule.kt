@@ -6,9 +6,9 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.java.Java
 
-class SchwabClient(
-    val config: SchwabClientConfig,
-    val oathAccessToken: DataBinding<String?> = DataBinding(null),
+class SchwabClientModule(
+    config: SchwabClientConfig,
+    oathAccessToken: DataBinding<String?> = DataBinding(null),
 ) {
     private val logger = logger {}
 

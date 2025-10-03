@@ -83,7 +83,7 @@ class OauthService(
             val requestState = client.triggerOauthFlow()
 
             val result: LocalServer.Result = try {
-                withTimeout(120_000) {
+                withTimeout(30_000) {
                     resultDeferred.await()
                 }
             } catch (_: TimeoutCancellationException) {

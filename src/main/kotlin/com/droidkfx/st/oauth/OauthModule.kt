@@ -15,7 +15,8 @@ class OauthModule(
     init {
         logger.trace { "Initializing" }
     }
-    val oauthLocalServer = LocalServer(configModule.configService.getConfig().schwabConfig.callbackServerConfig)
-    val oauthRepository = OauthRepository()
+
+    private val oauthLocalServer = LocalServer(configModule.configService.getConfig().schwabConfig.callbackServerConfig)
+    private val oauthRepository = OauthRepository()
     val oauthService = OauthService(oauthRepository, schwabModule.client.oathClient, oauthLocalServer, oauthToken)
 }

@@ -1,4 +1,4 @@
-package com.droidkfx.st.account;
+package com.droidkfx.st.account
 
-public class AccountModule {
+class AccountModule {
 }

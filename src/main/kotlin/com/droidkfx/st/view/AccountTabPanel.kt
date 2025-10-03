@@ -35,7 +35,7 @@ abstract class AccountTabPanel(accountTabs: ReadOnlyDataBinding<List<AccountTabV
                             add(AllocationTab(it.data), BorderLayout.CENTER)
                         })
             }
-            ?: run {
+        run {
                 addTab("Getting Started", JPanel().apply {
                     layout = GridBagLayout()
                     add(JButton("Click here to start balancing an account"))

@@ -44,4 +44,4 @@ bin/
 ### Mac OS ###
 .DS_Store
 /src/main/resources/com/droidkfx/st/config/application.no-commit.config.json
-/creds/
+/data/

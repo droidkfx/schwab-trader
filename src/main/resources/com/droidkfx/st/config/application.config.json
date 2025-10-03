@@ -1,11 +1,13 @@
 {
-  "schwabClientConfig": {
+  "repositoryRoot": "./data",
+  "schwabConfig": {
     "key": "",
     "secret": "",
     "baseApiUrl": "api.schwabapi.com",
     "callbackServerConfig": {
       "host": "127.0.0.1",
       "port": 41241,
+      "callbackPath": "",
       "sslCertLocation": "",
       "sslCertPassword": "",
       "sslCertAlias": "",

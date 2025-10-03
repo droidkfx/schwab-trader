@@ -19,7 +19,7 @@ class SchwabModule(configModule: ConfigModule) {
         oauthTokenBinding
     )
     val oauthModule = OauthModule(
-        configModule.configService.getConfig().schwabConfig.callbackServerConfig,
+        configModule.configService.getConfig(),
         clientModule.oathClient,
         oauthTokenBinding
     )

@@ -1,5 +1,6 @@
 package com.droidkfx.st.schwab.oauth
 
+import com.droidkfx.st.config.ConfigEntity
 import com.droidkfx.st.schwab.client.OauthTokenResponse
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -7,17 +8,23 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 
-class OauthRepository {
+class OauthRepository(private val configEntity: ConfigEntity) {
     private val logger = logger {}
+    private val json = Json {
+        ignoreUnknownKeys = true
+        prettyPrint = true
+    }
+
+    private val tokenFile: File
+        get() = File("${configEntity.repositoryRoot}/oauth/token.json")
 
     @OptIn(ExperimentalSerializationApi::class)
     fun loadExistingToken(): OauthTokenResponse? {
         logger.trace { "loadExistingToken" }
         return try {
-            val tokenFile = File("./creds/oauth-token.json")
             if (tokenFile.exists()) {
                 tokenFile.inputStream().use {
-                    Json.decodeFromStream<OauthTokenResponse>(it)
+                    json.decodeFromStream<OauthTokenResponse>(it)
                 }.also {
                     logger.debug { "Existing token loaded: $it" }
                 }
@@ -33,14 +40,12 @@ class OauthRepository {
 
     fun saveToken(token: OauthTokenResponse) {
         logger.trace { "saveToken $token" }
-        val tokenFile = File("./creds/oauth-token.json")
         tokenFile.parentFile.mkdirs()
-        tokenFile.writeText(Json.encodeToString(token))
+        tokenFile.writeText(json.encodeToString(token))
     }
 
     fun deleteToken() {
         logger.trace { "deleteToken" }
-        val tokenFile = File("./creds/oauth-token.json")
         tokenFile.delete()
     }
 }

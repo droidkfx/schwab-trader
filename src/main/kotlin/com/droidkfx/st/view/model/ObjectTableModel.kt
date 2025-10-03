@@ -84,6 +84,9 @@ class ObjectTableModel<T>(
             return it.name
         } ?: "Unknown Column"
 
+
+//    override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = true
+
     override fun getRowCount(): Int = data.size
     override fun getColumnCount(): Int = typeInfo.declaredFields.size
     override fun getValueAt(rowIndex: Int, columnIndex: Int): String {

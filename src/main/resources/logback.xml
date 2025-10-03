@@ -8,4 +8,8 @@
     <root level="debug">
         <appender-ref ref="STDOUT"/>
     </root>
+
+    <logger name="io.netty" level="ERROR"/>
+    <logger name="io.ktor" level="ERROR"/>
+    <logger name="javax.net.ssl" level="ERROR"/>
 </configuration>

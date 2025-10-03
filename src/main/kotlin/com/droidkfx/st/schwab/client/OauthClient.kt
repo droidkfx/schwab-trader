@@ -9,6 +9,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.URLProtocol
 import io.ktor.http.encodedPath
+import io.ktor.http.isSuccess
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -67,6 +68,9 @@ class OauthClient(
             headers.append("Content-Type", "application/x-www-form-urlencoded")
             headers.append("Accept", "application/json")
         }.let {
+            if (!it.status.isSuccess()) {
+                throw IllegalStateException("Error while exchanging token: ${it.status}")
+            }
             Json.decodeFromString<OauthTokenResponse>(it.body())
         }
     }

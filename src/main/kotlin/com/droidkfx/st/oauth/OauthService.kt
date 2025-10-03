@@ -35,9 +35,15 @@ class OauthService(
         // If existing token is expired, try to refresh it
         if (allowRefresh && existingToken?.expiresAt?.isBefore(Instant.now()) == true) {
             logger.debug { "token expired, refreshing" }
-            existingToken = existingToken?.refreshToken
-                ?.let { client.refreshOauth(it) }
-                ?.apply { repo.saveToken(this) }
+            try {
+                existingToken = existingToken?.refreshToken
+                    ?.let { client.refreshOauth(it) }
+                    ?.apply { repo.saveToken(this) }
+            } catch (e: Exception) {
+                logger.error { "Error refreshing token ${e.message}" }
+                repo.deleteToken()
+                existingToken = null
+            }
         }
         // If no existing token, try to obtain one by Oauth
         if (existingToken == null && doInit) {

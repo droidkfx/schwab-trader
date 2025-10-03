@@ -78,8 +78,9 @@ class LocalServer(
 
                     // Complete the result and stop the server shortly after
                     if (!result.isCompleted) {
-                        logger.debug { "oauth callback result: $result" }
-                        result.complete(Result(code, session, state, error))
+                        val value = Result(code, session, state, error)
+                        logger.debug { "oauth callback result: $value" }
+                        result.complete(value)
                     }
                     // stop asynchronously to let response flush
                     // small delay avoids abrupt connection close

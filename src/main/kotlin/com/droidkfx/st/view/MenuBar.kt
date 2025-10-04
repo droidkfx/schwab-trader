@@ -35,4 +35,7 @@ abstract class MenuBar(
 
     abstract suspend fun onOauthUpdate()
     abstract suspend fun onOauthInvalidate()
+    abstract suspend fun onManageAccounts()
 }
+
+

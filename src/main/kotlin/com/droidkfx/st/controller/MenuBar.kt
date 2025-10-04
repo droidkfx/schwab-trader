@@ -6,7 +6,10 @@ import com.droidkfx.st.schwab.oauth.OauthStatus
 import com.droidkfx.st.view.MenuBar
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class MenuBar(private val oauthService: OauthService) : MenuBar(
+class MenuBar(
+    private val oauthService: OauthService,
+    private val manageAccounts: ManageAccounts
+) : MenuBar(
     oauthService.tokenStatus.mapped(::oauthEnabled),
     oauthService.tokenStatus.mapped(::invalidateEnabled)
 ) {
@@ -20,6 +23,11 @@ class MenuBar(private val oauthService: OauthService) : MenuBar(
     override suspend fun onOauthInvalidate() {
         logger.trace { "onOauthInvalidate" }
         oauthService.invalidateOauth()
+    }
+
+    override suspend fun onManageAccounts() {
+        logger.trace { "onManageAccounts" }
+        manageAccounts.showDialog()
     }
 
     companion object {

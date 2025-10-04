@@ -28,7 +28,8 @@ abstract class Main(
             logger.warn { "No icon found @ 'AppIcon.png'" }
         }
         this.apply {
-            setSize(1000, 600)
+            size = PerfectSize(500)
+            minimumSize = size
             defaultCloseOperation = EXIT_ON_CLOSE
 
             jMenuBar = menuBar

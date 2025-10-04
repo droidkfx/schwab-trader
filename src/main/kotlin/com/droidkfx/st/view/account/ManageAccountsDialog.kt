@@ -2,8 +2,8 @@ package com.droidkfx.st.view.account
 
 import com.droidkfx.st.controller.account.AccountPositionDetail
 import com.droidkfx.st.controller.account.ManageAccountList
+import com.droidkfx.st.view.PerfectSize
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.awt.Dimension
 import java.awt.Frame
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -18,7 +18,9 @@ abstract class ManageAccountsDialog : JDialog(null as? Frame, "Manage Accounts",
 
     init {
         logger.trace { "Initializing" }
-        minimumSize = Dimension(700, 500)
+        minimumSize = PerfectSize(300)
+//        size = minimumSize
+//        preferredSize = minimumSize
         add(JPanel(GridBagLayout()).apply {
             add(ManageAccountList(), GridBagConstraints().apply {
                 gridx = 0

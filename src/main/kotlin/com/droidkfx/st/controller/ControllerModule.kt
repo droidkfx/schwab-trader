@@ -17,11 +17,17 @@ class ControllerModule(oathModule: OauthModule) {
 
     private val accountControllerModule = AccountControllerModule()
 
+    // TODO remove this
+    init {
+        accountControllerModule.manageAccountDialog.showDialog()
+    }
+
     private val menuBarController = MenuBar(
         oathModule.oauthService,
         accountControllerModule.manageAccountDialog
     )
     private val statusBarController = StatusBar(oathModule.oauthService)
+
 
     private val accounts: DataBinding<List<AccountTabViewModel>?> = DataBinding(listOf())
 

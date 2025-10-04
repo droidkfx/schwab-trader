@@ -8,15 +8,16 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 
-class OauthRepository(private val configEntity: ConfigEntity) {
+class OauthRepository(configEntity: ConfigEntity) {
     private val logger = logger {}
     private val json = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
     }
+    private val repositoryRoot = configEntity.repositoryRoot
 
     private val tokenFile: File
-        get() = File("${configEntity.repositoryRoot}/oauth/token.json")
+        get() = File("${repositoryRoot}/oauth/token.json")
 
     @OptIn(ExperimentalSerializationApi::class)
     fun loadExistingToken(): OauthTokenResponse? {

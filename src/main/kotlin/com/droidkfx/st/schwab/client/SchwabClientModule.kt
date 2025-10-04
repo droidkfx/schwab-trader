@@ -15,6 +15,7 @@ class SchwabClientModule(
     init {
         logger.trace { "Initializing" }
     }
+
     private val client = HttpClient(Java)
 
     val accountsClient = AccountsClient(

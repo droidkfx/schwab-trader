@@ -1,6 +1,6 @@
-package com.droidkfx.st.view
+package com.droidkfx.st.view.account
 
-import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import javax.swing.JLabel
@@ -12,7 +12,7 @@ import javax.swing.border.CompoundBorder
 import javax.swing.border.EmptyBorder
 
 abstract class AccountPositionDetail : JPanel(GridBagLayout()) {
-    private val logger = logger {}
+    private val logger = KotlinLogging.logger {}
 
     init {
         logger.trace { "Initializing" }

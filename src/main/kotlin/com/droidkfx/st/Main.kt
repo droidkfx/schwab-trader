@@ -17,5 +17,7 @@ fun main() {
 
     schwabModule.clientModule.accountsClient.listAccountNumbers()
 
-    ControllerModule(schwabModule.oauthModule)
+    val controllerModule = ControllerModule(schwabModule.oauthModule)
+
+    controllerModule.mainController.showAndRun()
 }

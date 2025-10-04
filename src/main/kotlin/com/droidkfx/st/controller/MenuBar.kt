@@ -1,5 +1,6 @@
 package com.droidkfx.st.controller
 
+import com.droidkfx.st.controller.account.ManageAccountsDialog
 import com.droidkfx.st.databind.mapped
 import com.droidkfx.st.schwab.oauth.OauthService
 import com.droidkfx.st.schwab.oauth.OauthStatus

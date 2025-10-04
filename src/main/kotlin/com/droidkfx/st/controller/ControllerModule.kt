@@ -1,5 +1,6 @@
 package com.droidkfx.st.controller
 
+import com.droidkfx.st.controller.account.AccountControllerModule
 import com.droidkfx.st.databind.DataBinding
 import com.droidkfx.st.schwab.oauth.OauthModule
 import com.droidkfx.st.view.model.AccountTabViewModel
@@ -14,20 +15,20 @@ class ControllerModule(oathModule: OauthModule) {
         FlatDarkLaf.setup().also { logger.info { "Dark LaF setup complete" } }
     }
 
-    private val manageAccountsDialogController = ManageAccountsDialog()
-    private val menuBarController = MenuBar(oathModule.oauthService, manageAccountsDialogController)
+    private val accountControllerModule = AccountControllerModule()
+
+    private val menuBarController = MenuBar(
+        oathModule.oauthService,
+        accountControllerModule.manageAccountDialog
+    )
     private val statusBarController = StatusBar(oathModule.oauthService)
 
-    val accounts: DataBinding<List<AccountTabViewModel>?> = DataBinding(listOf())
+    private val accounts: DataBinding<List<AccountTabViewModel>?> = DataBinding(listOf())
 
     private val accountTabs = AccountTabs(accounts)
-    private val mainController = Main(
+    val mainController = Main(
         statusBarController = statusBarController,
         menuBarController = menuBarController,
         accountTabs = accountTabs,
     )
-
-    init {
-        manageAccountsDialogController.showDialog()
-    }
 }

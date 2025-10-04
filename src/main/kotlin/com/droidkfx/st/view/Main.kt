@@ -30,13 +30,17 @@ abstract class Main(
         this.apply {
             setSize(1000, 600)
             defaultCloseOperation = EXIT_ON_CLOSE
-            setLocationRelativeTo(null)
 
             jMenuBar = menuBar
 
             contentPane.add(accountTabs, BorderLayout.CENTER)
             contentPane.add(statusBar, BorderLayout.SOUTH)
-            isVisible = true
         }
+    }
+
+    fun showAndRun() {
+        setLocationRelativeTo(null)
+        pack()
+        isVisible = true
     }
 }

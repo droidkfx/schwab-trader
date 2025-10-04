@@ -1,8 +1,8 @@
-package com.droidkfx.st.view
+package com.droidkfx.st.view.account
 
-import com.droidkfx.st.controller.AccountPositionDetail
-import com.droidkfx.st.controller.ManageAccountList
-import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import com.droidkfx.st.controller.account.AccountPositionDetail
+import com.droidkfx.st.controller.account.ManageAccountList
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.Dimension
 import java.awt.Frame
 import java.awt.GridBagConstraints
@@ -14,7 +14,7 @@ import javax.swing.JPanel
 
 @Suppress("USELESS_CAST") // Cast is required for overload ambiguity
 abstract class ManageAccountsDialog : JDialog(null as? Frame, "Manage Accounts", true) {
-    private val logger = logger {}
+    private val logger = KotlinLogging.logger {}
 
     init {
         logger.trace { "Initializing" }

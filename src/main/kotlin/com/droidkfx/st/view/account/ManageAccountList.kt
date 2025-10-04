@@ -1,6 +1,6 @@
-package com.droidkfx.st.view
+package com.droidkfx.st.view.account
 
-import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.BorderLayout
 import java.util.Vector
 import javax.swing.JButton
@@ -9,7 +9,7 @@ import javax.swing.JPanel
 import javax.swing.border.EmptyBorder
 
 abstract class ManageAccountList : JPanel(BorderLayout()) {
-    private val logger = logger {}
+    private val logger = KotlinLogging.logger {}
 
     init {
         logger.trace { "Initializing" }

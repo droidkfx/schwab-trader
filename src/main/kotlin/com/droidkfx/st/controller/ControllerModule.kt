@@ -14,8 +14,8 @@ class ControllerModule(oathModule: OauthModule) {
         FlatDarkLaf.setup().also { logger.info { "Dark LaF setup complete" } }
     }
 
-    private val manageAccountsController = ManageAccounts()
-    private val menuBarController = MenuBar(oathModule.oauthService, manageAccountsController)
+    private val manageAccountsDialogController = ManageAccountsDialog()
+    private val menuBarController = MenuBar(oathModule.oauthService, manageAccountsDialogController)
     private val statusBarController = StatusBar(oathModule.oauthService)
 
     val accounts: DataBinding<List<AccountTabViewModel>?> = DataBinding(listOf())
@@ -26,4 +26,8 @@ class ControllerModule(oathModule: OauthModule) {
         menuBarController = menuBarController,
         accountTabs = accountTabs,
     )
+
+    init {
+        manageAccountsDialogController.showDialog()
+    }
 }

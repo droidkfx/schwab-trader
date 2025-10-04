@@ -8,7 +8,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class MenuBar(
     private val oauthService: OauthService,
-    private val manageAccounts: ManageAccounts
+    private val manageAccountsDialog: ManageAccountsDialog
 ) : MenuBar(
     oauthService.tokenStatus.mapped(::oauthEnabled),
     oauthService.tokenStatus.mapped(::invalidateEnabled)
@@ -27,7 +27,7 @@ class MenuBar(
 
     override suspend fun onManageAccounts() {
         logger.trace { "onManageAccounts" }
-        manageAccounts.showDialog()
+        manageAccountsDialog.showDialog()
     }
 
     companion object {

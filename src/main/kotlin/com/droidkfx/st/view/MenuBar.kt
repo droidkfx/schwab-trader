@@ -2,9 +2,6 @@ package com.droidkfx.st.view
 
 import com.droidkfx.st.databind.ReadOnlyDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.swing.JMenu
 import javax.swing.JMenuBar
 import javax.swing.JMenuItem
@@ -17,22 +14,19 @@ abstract class MenuBar(
 
     init {
         logger.trace { "Initializing" }
+        add(JMenu("File").apply {
+            this.add(JMenuItem("Manage Accounts").apply {
+                addCoActionListener { onManageAccounts() }
+            })
+        })
         add(JMenu("Auth").apply {
             this.add(JMenuItem("Update Oath").apply {
-                addActionListener {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        onOauthUpdate()
-                    }
-                }
+                addCoActionListener { onOauthUpdate() }
                 this.isEnabled = updateOauthEnabled.value
                 updateOauthEnabled.addSwingListener { this.isEnabled = it }
             })
             this.add(JMenuItem("Oauth Invalidate").apply {
-                addActionListener {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        onOauthInvalidate()
-                    }
-                }
+                addCoActionListener { onOauthInvalidate() }
                 this.isEnabled = invalidateOauthEnabled.value
                 invalidateOauthEnabled.addSwingListener { this.isEnabled = it }
             })

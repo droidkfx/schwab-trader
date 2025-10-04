@@ -1,8 +1,8 @@
 package com.droidkfx.st
 
-import com.droidkfx.st.account.AccountModule
 import com.droidkfx.st.config.ConfigModule
 import com.droidkfx.st.controller.ControllerModule
+import com.droidkfx.st.position.PositionModule
 import com.droidkfx.st.schwab.SchwabModule
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -13,11 +13,11 @@ fun main() {
     val configModule = ConfigModule("application.no-commit.config.json")
 
     val schwabModule = SchwabModule(configModule)
-    val accountModule = AccountModule()
+    val positionModule = PositionModule()
 
     schwabModule.clientModule.accountsClient.listAccountNumbers()
 
-    val controllerModule = ControllerModule(schwabModule.oauthModule)
+    val controllerModule = ControllerModule(schwabModule.oauthModule, positionModule)
 
     controllerModule.mainController.showAndRun()
 }

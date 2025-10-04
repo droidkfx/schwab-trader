@@ -2,12 +2,13 @@ package com.droidkfx.st.controller
 
 import com.droidkfx.st.controller.account.AccountControllerModule
 import com.droidkfx.st.databind.DataBinding
+import com.droidkfx.st.position.PositionModule
 import com.droidkfx.st.schwab.oauth.OauthModule
 import com.droidkfx.st.view.model.AccountTabViewModel
 import com.formdev.flatlaf.FlatDarkLaf
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class ControllerModule(oathModule: OauthModule) {
+class ControllerModule(oathModule: OauthModule, positionModule: PositionModule) {
     private val logger = logger {}
 
     init {
@@ -15,7 +16,7 @@ class ControllerModule(oathModule: OauthModule) {
         FlatDarkLaf.setup().also { logger.info { "Dark LaF setup complete" } }
     }
 
-    private val accountControllerModule = AccountControllerModule()
+    private val accountControllerModule = AccountControllerModule(positionModule.accountPositionService)
 
     // TODO remove this
     init {

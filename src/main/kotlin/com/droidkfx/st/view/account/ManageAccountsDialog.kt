@@ -2,6 +2,7 @@ package com.droidkfx.st.view.account
 
 import com.droidkfx.st.controller.account.AccountPositionDetail
 import com.droidkfx.st.controller.account.ManageAccountList
+import com.droidkfx.st.databind.DataBinding
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.view.PerfectSize
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -24,12 +25,15 @@ abstract class ManageAccountsDialog(data: List<AccountPosition>) : JDialog(null 
 
     private val detailPane = JPanel(BorderLayout())
     private val detailPanelsByAccountName = mutableMapOf<String, AccountPositionDetail>()
+    private val selectedAccountName = DataBinding<String?>(null)
 
     init {
         logger.trace { "Initializing" }
         minimumSize = PerfectSize(300)
 
         val accountNames = data.map { it.Account.name }
+        selectedAccountName.value = accountNames.firstOrNull()
+        selectedAccountName.addListener { setAccountByName(it) }
         data.forEach {
             detailPanelsByAccountName.getOrPut(it.Account.name) {
                 AccountPositionDetail(it)
@@ -37,7 +41,7 @@ abstract class ManageAccountsDialog(data: List<AccountPosition>) : JDialog(null 
         }
 
         add(JPanel(GridBagLayout()).apply {
-            add(ManageAccountList(accountNames) { setAccountByName(it) }, GridBagConstraints().apply {
+            add(ManageAccountList(selectedAccountName, accountNames), GridBagConstraints().apply {
                 gridx = 0
                 gridy = 0
                 weightx = 1.0

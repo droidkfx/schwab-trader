@@ -24,6 +24,11 @@ class DataBinding<T>(initialValue: T) : ReadOnlyDataBinding<T>, ReadWriteDataBin
                 it(value)
             }
         }
+
+    override fun update(block: (T) -> Boolean) {
+        if (!block(value)) return
+        listeners.forEach { it(value) }
+    }
 }
 
 interface ReadOnlyDataBinding<T> {
@@ -34,6 +39,8 @@ interface ReadOnlyDataBinding<T> {
 interface ReadWriteDataBinding<T> {
     fun addListener(listener: (T) -> Unit)
     var value: T
+
+    fun update(block: (T) -> Boolean)
 }
 
 fun <T, U> ReadOnlyDataBinding<T>.mapped(mapper: (T) -> U): ReadOnlyDataBinding<U> {

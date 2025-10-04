@@ -20,7 +20,7 @@ class ControllerModule(oathModule: OauthModule, positionModule: PositionModule) 
 
     // TODO remove this
     init {
-        accountControllerModule.manageAccountDialog.showDialog()
+//        accountControllerModule.manageAccountDialog.showDialog()
     }
 
     private val menuBarController = MenuBar(

@@ -8,5 +8,6 @@ class ConfigModule(location: String = "application.config.json") {
     init {
         logger.trace { "Initializing from: $location" }
     }
+
     val configService = ConfigService(location)
 }

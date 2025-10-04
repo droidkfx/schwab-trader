@@ -1,20 +1,16 @@
 package com.droidkfx.st.view
 
 import com.droidkfx.st.controller.AccountPositionDetail
+import com.droidkfx.st.controller.ManageAccountList
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
-import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.Frame
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
-import java.util.Vector
-import javax.swing.JButton
 import javax.swing.JDialog
-import javax.swing.JList
 import javax.swing.JPanel
-import javax.swing.border.EmptyBorder
 
 @Suppress("USELESS_CAST") // Cast is required for overload ambiguity
 abstract class ManageAccountsDialog : JDialog(null as? Frame, "Manage Accounts", true) {
@@ -24,13 +20,7 @@ abstract class ManageAccountsDialog : JDialog(null as? Frame, "Manage Accounts",
         logger.trace { "Initializing" }
         minimumSize = Dimension(700, 500)
         add(JPanel(GridBagLayout()).apply {
-            add(JPanel(BorderLayout()).apply {
-                add(JList(Vector(listOf("Account 1", "Account 2"))), BorderLayout.CENTER)
-                add(JPanel().apply {
-                    add(JButton("Refresh"))
-                    border = EmptyBorder(5, 5, 5, 5)
-                }, BorderLayout.SOUTH)
-            }, GridBagConstraints().apply {
+            add(ManageAccountList(), GridBagConstraints().apply {
                 gridx = 0
                 gridy = 0
                 weightx = 1.0

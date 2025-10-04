@@ -8,16 +8,23 @@ import javax.swing.JList
 import javax.swing.JPanel
 import javax.swing.border.EmptyBorder
 
-abstract class ManageAccountList : JPanel(BorderLayout()) {
+abstract class ManageAccountList(val accountNames: List<String>) : JPanel(BorderLayout()) {
     private val logger = KotlinLogging.logger {}
 
     init {
         logger.trace { "Initializing" }
 
-        add(JList(Vector(listOf("Account 1", "Account 2"))), BorderLayout.CENTER)
+        add(JList(Vector(accountNames)).apply {
+            selectedIndex = 0
+            addListSelectionListener {
+                listSelectionChanged(accountNames[selectedIndex])
+            }
+        }, BorderLayout.CENTER)
         add(JPanel().apply {
             add(JButton("Refresh"))
             border = EmptyBorder(5, 5, 5, 5)
         }, BorderLayout.SOUTH)
     }
+
+    abstract fun listSelectionChanged(name: String)
 }

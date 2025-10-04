@@ -1,67 +1,58 @@
 package com.droidkfx.st.view.account
 
+import com.droidkfx.st.position.AccountPosition
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
+import java.awt.Insets
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTable
-import javax.swing.border.BevelBorder
-import javax.swing.border.CompoundBorder
-import javax.swing.border.EmptyBorder
 
-abstract class AccountPositionDetail : JPanel(GridBagLayout()) {
+abstract class AccountPositionDetail(acctData: AccountPosition) : JPanel(GridBagLayout()) {
     private val logger = KotlinLogging.logger {}
 
     init {
         logger.trace { "Initializing" }
-        border = CompoundBorder(
-            EmptyBorder(0, 5, 5, 5),
-            BevelBorder(BevelBorder.LOWERED)
-        )
 
-        add(JLabel("Account ID:"), GridBagConstraints().apply {
-            gridx = 0
-            gridy = 0
-        })
-        add(JLabel("123456789"), GridBagConstraints().apply {
-            gridx = 1
-            gridy = 0
-        })
-
-        add(JLabel("Account Hash:"), GridBagConstraints().apply {
-            gridx = 0
-            gridy = 1
-        })
-        add(JLabel("123456789"), GridBagConstraints().apply {
-            gridx = 1
-            gridy = 1
-        })
-
-        add(JLabel("Position Configuration:"), GridBagConstraints().apply {
-            gridx = 0
-            gridy = 2
-        })
+        addRow("Account Name:", acctData.Account.name, 0)
+        addRow("Account ID:", acctData.Account.id, 1)
+        addRow("Account Number:", acctData.Account.accountNumber, 2)
+        addRow("Account Hash:", acctData.Account.accountNumberHash, 3)
 
         add(
             JScrollPane(
                 JTable(
-                    arrayOf(
-                        arrayOf("SPY", "35 %"),
-                        arrayOf("VTA", "35 %"),
-                        arrayOf("VNI", "15 %"),
-                        arrayOf("SFY", "15 %")
-                    ),
+                    acctData.positionTargets.map {
+                        arrayOf(it.symbol, "%.2f %%".format(it.allocationTarget * 100))
+                    }.toTypedArray(),
                     arrayOf("Position", "Allocation")
                 ).apply {
 
                 }), GridBagConstraints().apply {
-                gridy = 3
+                gridy = 5
                 gridwidth = 2
                 weighty = 1.0
                 weightx = 1.0
                 fill = GridBagConstraints.BOTH
             })
+    }
+
+    private fun addRow(title: String, value: String, row: Int) {
+        add(JLabel(title), GridBagConstraints().apply {
+            gridx = 0
+            gridy = row
+            anchor = GridBagConstraints.EAST
+            insets = Insets(1, 5, 1, 10)
+        })
+        add(JLabel(value), GridBagConstraints().apply {
+            gridx = 1
+            gridy = row
+            anchor = GridBagConstraints.WEST
+            fill = GridBagConstraints.HORIZONTAL
+            weightx = 1.0
+            insets = Insets(1, 0, 1, 5)
+        })
     }
 }

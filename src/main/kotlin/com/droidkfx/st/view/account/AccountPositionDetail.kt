@@ -17,9 +17,9 @@ abstract class AccountPositionDetail(acctData: AccountPosition) : JPanel(GridBag
         logger.trace { "Initializing" }
 
         addRow("Account Name:", acctData.Account.name, 0)
-        addRow("Account ID:", acctData.Account.id, 1)
+        addRow("Account ID:", acctData.Account.id.truncateMiddle(), 1)
         addRow("Account Number:", acctData.Account.accountNumber, 2)
-        addRow("Account Hash:", acctData.Account.accountNumberHash, 3)
+        addRow("Account Hash:", acctData.Account.accountNumberHash.truncateMiddle(), 3)
 
         add(
             JScrollPane(
@@ -54,5 +54,16 @@ abstract class AccountPositionDetail(acctData: AccountPosition) : JPanel(GridBag
             weightx = 1.0
             insets = Insets(1, 0, 1, 5)
         })
+    }
+
+    private fun String.truncateMiddle(maxLength: Int = 20): String {
+        return when {
+            length <= maxLength -> this
+            maxLength <= 3 -> "..."
+            else -> {
+                val sideLength = (maxLength - 3) / 2
+                take(sideLength) + "..." + takeLast(sideLength)
+            }
+        }
     }
 }

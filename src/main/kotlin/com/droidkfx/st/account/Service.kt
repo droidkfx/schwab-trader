@@ -1,24 +1,33 @@
 package com.droidkfx.st.account
 
+import com.droidkfx.st.schwab.client.AccountsClient
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import java.util.UUID
 
-class Service {
+class Service(private val accountRepository: Repository, private val accountsClient: AccountsClient) {
     private val logger = logger {}
     fun listAccounts(): List<Account> {
         logger.trace { "listAccounts" }
-        return listOf(
-            Account(
-                id = "3757b694-74f4-4fd0-8836-7c388a32c95d",
-                name = "Account 1",
-                accountNumber = "123456789",
-                accountNumberHash = "D4541250B586296FCCE5DEA4463AE17F",
-            ),
-            Account(
-                id = "b4a84475-78db-4bca-a863-d8d4055b3f70",
-                name = "Account 2",
-                accountNumber = "987654321",
-                accountNumberHash = "AE4F46B5D6406A0A9DDDE0547FAD9FE6",
-            )
-        )
+        return accountRepository.loadAccounts().sortedBy { it.name }
+    }
+
+    fun refreshAccounts(): List<Account> {
+        logger.trace { "refreshAccounts" }
+
+        val knownAccounts = listAccounts()
+        val newAccounts = accountsClient.listAccountNumbers()
+            .data
+            ?.filter { knownAccounts.none { account -> account.accountNumber == it.accountNumber } }
+            ?.map {
+                return@map Account(
+                    id = UUID.randomUUID().toString(),
+                    name = it.accountNumber,
+                    accountNumber = it.accountNumber,
+                    accountNumberHash = it.hashValue
+                )
+            }
+        val totalAccounts = knownAccounts + (newAccounts ?: emptyList())
+        totalAccounts.forEach(accountRepository::saveAccount)
+        return totalAccounts.sortedBy { it.name }
     }
 }

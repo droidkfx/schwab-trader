@@ -14,7 +14,7 @@ fun main() {
     val configModule = ConfigModule("application.no-commit.config.json")
 
     val schwabModule = SchwabModule(configModule)
-    val accountModule = AccountModule()
+    val accountModule = AccountModule(configModule, schwabModule)
     val positionModule = PositionModule(accountModule)
     val controllerModule = ControllerModule(schwabModule.oauthModule, positionModule)
 

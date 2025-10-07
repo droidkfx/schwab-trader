@@ -1,5 +1,6 @@
 package com.droidkfx.st
 
+import com.droidkfx.st.account.AccountModule
 import com.droidkfx.st.config.ConfigModule
 import com.droidkfx.st.controller.ControllerModule
 import com.droidkfx.st.position.PositionModule
@@ -13,10 +14,8 @@ fun main() {
     val configModule = ConfigModule("application.no-commit.config.json")
 
     val schwabModule = SchwabModule(configModule)
-    val positionModule = PositionModule()
-
-    schwabModule.clientModule.accountsClient.listAccountNumbers()
-
+    val accountModule = AccountModule()
+    val positionModule = PositionModule(accountModule)
     val controllerModule = ControllerModule(schwabModule.oauthModule, positionModule)
 
     controllerModule.mainController.showAndRun()

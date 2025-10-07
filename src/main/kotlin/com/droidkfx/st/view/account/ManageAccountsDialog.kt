@@ -2,8 +2,8 @@ package com.droidkfx.st.view.account
 
 import com.droidkfx.st.controller.account.AccountPositionDetail
 import com.droidkfx.st.controller.account.ManageAccountList
-import com.droidkfx.st.databind.DataBinding
 import com.droidkfx.st.position.AccountPosition
+import com.droidkfx.st.util.databind.DataBinding
 import com.droidkfx.st.view.PerfectSize
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.BorderLayout

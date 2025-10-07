@@ -1,9 +1,9 @@
 package com.droidkfx.st.schwab
 
 import com.droidkfx.st.config.ConfigModule
-import com.droidkfx.st.databind.DataBinding
 import com.droidkfx.st.schwab.client.SchwabClientModule
 import com.droidkfx.st.schwab.oauth.OauthModule
+import com.droidkfx.st.util.databind.DataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class SchwabModule(configModule: ConfigModule) {

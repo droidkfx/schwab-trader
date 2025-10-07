@@ -1,9 +1,9 @@
 package com.droidkfx.st.schwab.oauth
 
-import com.droidkfx.st.databind.DataBinding
-import com.droidkfx.st.databind.ReadOnlyDataBinding
 import com.droidkfx.st.schwab.client.OauthClient
 import com.droidkfx.st.schwab.client.OauthTokenResponse
+import com.droidkfx.st.util.databind.DataBinding
+import com.droidkfx.st.util.databind.ReadOnlyDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking

@@ -1,6 +1,6 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.databind.ReadOnlyDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import javax.swing.JMenu
 import javax.swing.JMenuBar

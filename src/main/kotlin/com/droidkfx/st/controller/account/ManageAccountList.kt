@@ -1,6 +1,6 @@
 package com.droidkfx.st.controller.account
 
-import com.droidkfx.st.databind.DataBinding
+import com.droidkfx.st.util.databind.DataBinding
 import com.droidkfx.st.view.account.ManageAccountList
 
 internal class ManageAccountList(

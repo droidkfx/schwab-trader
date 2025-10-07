@@ -1,7 +1,7 @@
 package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
-import com.droidkfx.st.databind.DataBinding
+import com.droidkfx.st.util.databind.DataBinding
 import io.github.oshai.kotlinlogging.KLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

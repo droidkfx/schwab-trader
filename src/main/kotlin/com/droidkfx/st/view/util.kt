@@ -1,6 +1,6 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.databind.ReadOnlyDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyDataBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

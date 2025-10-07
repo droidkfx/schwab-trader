@@ -1,6 +1,6 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.databind.ReadOnlyDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyDataBinding
 import com.droidkfx.st.view.model.AccountTabViewModel
 import com.droidkfx.st.view.model.AllocationRowViewModel
 import com.droidkfx.st.view.model.ObjectTableModel

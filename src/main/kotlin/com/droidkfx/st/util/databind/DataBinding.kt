@@ -1,4 +1,4 @@
-package com.droidkfx.st.databind
+package com.droidkfx.st.util.databind
 
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 

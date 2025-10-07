@@ -8,5 +8,4 @@ class AccountTabs(
     accounts: ReadOnlyDataBinding<List<AccountTabViewModel>?>
 ) : AccountTabPanel(
     accounts
-) {
-}
+)

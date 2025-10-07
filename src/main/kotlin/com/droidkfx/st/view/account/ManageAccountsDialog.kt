@@ -4,7 +4,7 @@ import com.droidkfx.st.controller.account.AccountPositionDetail
 import com.droidkfx.st.controller.account.ManageAccountList
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.util.databind.DataBinding
-import com.droidkfx.st.view.PerfectSize
+import com.droidkfx.st.view.GoldenRatioSize
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.BorderLayout
 import java.awt.Frame
@@ -29,7 +29,7 @@ abstract class ManageAccountsDialog(data: List<AccountPosition>) : JDialog(null 
 
     init {
         logger.trace { "Initializing" }
-        minimumSize = PerfectSize(300)
+        minimumSize = GoldenRatioSize(300)
 
         val accountNames = data.map { it.Account.name }
         selectedAccountName.value = accountNames.firstOrNull()

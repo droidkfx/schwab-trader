@@ -21,4 +21,4 @@ internal fun JMenuItem.addCoActionListener(function: suspend () -> Unit) {
 
 private const val goldenRatio = 1.618
 
-fun PerfectSize(size: Int) = java.awt.Dimension((size * goldenRatio).toInt(), size)
+fun GoldenRatioSize(size: Int) = java.awt.Dimension((size * goldenRatio).toInt(), size)

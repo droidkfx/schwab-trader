@@ -4,7 +4,10 @@ import com.droidkfx.st.account.Account
 import com.droidkfx.st.account.AccountService
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class AccountPositionService(private val accountService: AccountService, private val positionService: PositionService) {
+class AccountPositionService internal constructor(
+    private val accountService: AccountService,
+    private val positionService: PositionService
+) {
     private val logger = logger {}
 
     fun getAccountPositions(): List<AccountPosition> {

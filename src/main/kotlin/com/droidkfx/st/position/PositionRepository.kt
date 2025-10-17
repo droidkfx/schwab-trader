@@ -8,7 +8,7 @@ internal class PositionRepository(configEntity: ConfigEntity) :
     FileRepository("${configEntity.repositoryRoot}/positions") {
     private val logger = logger {}
 
-    fun loadPositions(accountId: String): List<AccountPosition> {
+    fun loadPositions(accountId: String): List<PositionTarget> {
         logger.trace { "loadPositions" }
         return load(accountId) ?: emptyList()
     }

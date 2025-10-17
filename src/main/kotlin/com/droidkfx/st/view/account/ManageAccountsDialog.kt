@@ -3,6 +3,7 @@ package com.droidkfx.st.view.account
 import com.droidkfx.st.controller.account.AccountPositionDetail
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.util.databind.DataBinding
+import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.view.GoldenRatioSize
 import com.droidkfx.st.view.addSwingListener
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -29,25 +30,15 @@ abstract class ManageAccountsDialog(
     private val logger = KotlinLogging.logger {}
 
     private val detailPane = JPanel(BorderLayout())
-    private val detailPanelsByAccountName = mutableMapOf<String, AccountPositionDetail>()
+    private val detailPanelsByAccountName =
+        data.mapped { list -> list.associate { it.Account.name to AccountPositionDetail(it) } }
 
     init {
         logger.trace { "Initializing" }
         minimumSize = GoldenRatioSize(300)
 
         selectedAccountName.addSwingListener { setAccountByName(it) }
-        data.value.forEach {
-            detailPanelsByAccountName.getOrPut(it.Account.name) {
-                AccountPositionDetail(it)
-            }
-        }
         data.addSwingListener { list ->
-            detailPanelsByAccountName.clear()
-            list.forEach {
-                detailPanelsByAccountName.getOrPut(it.Account.name) {
-                    AccountPositionDetail(it)
-                }
-            }
             selectedAccountName.value = list.firstOrNull()?.Account?.name
         }
 
@@ -88,8 +79,8 @@ abstract class ManageAccountsDialog(
         if (name == null) return
         logger.debug { "Setting account to: $name" }
         detailPane.removeAll()
-        if (detailPanelsByAccountName[name] != null) {
-            detailPane.add(detailPanelsByAccountName[name]!!, BorderLayout.CENTER)
+        if (detailPanelsByAccountName.value[name] != null) {
+            detailPane.add(detailPanelsByAccountName.value[name]!!, BorderLayout.CENTER)
         } else {
             detailPane.add(JPanel(), BorderLayout.CENTER)
         }

@@ -23,6 +23,7 @@ class ControllerModule(oathModule: OauthModule, accountModule: AccountModule, po
     )
 
     private val menuBarController = MenuBar(
+        accountModule.accountService,
         oathModule.oauthService,
         accountControllerModule.manageAccountDialog
     )

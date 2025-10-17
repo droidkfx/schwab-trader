@@ -13,4 +13,9 @@ class Repository(configEntity: ConfigEntity) : FileRepository("${configEntity.re
         logger.trace { "saveAccount $account" }
         save(account.id, account)
     }
+
+    fun clear() {
+        logger.trace { "clear" }
+        deleteAll()
+    }
 }

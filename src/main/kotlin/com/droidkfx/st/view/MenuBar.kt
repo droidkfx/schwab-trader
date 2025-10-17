@@ -18,9 +18,8 @@ abstract class MenuBar(
             this.add(JMenuItem("Manage Accounts").apply {
                 addCoActionListener { onManageAccounts() }
             })
-            this.add(JMenuItem("Clear all data (WIP)").apply {
+            this.add(JMenuItem("Reset Data").apply {
                 addCoActionListener { onClearAllData() }
-                isEnabled = false
             })
         })
         add(JMenu("Auth").apply {

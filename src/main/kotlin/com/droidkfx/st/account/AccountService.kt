@@ -31,4 +31,9 @@ class AccountService(private val accountRepository: Repository, private val acco
         totalAccounts.forEach(accountRepository::saveAccount)
         return totalAccounts.sortedBy { it.name }
     }
+
+    fun clear() {
+        logger.trace { "clear" }
+        accountRepository.clear()
+    }
 }

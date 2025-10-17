@@ -58,5 +58,10 @@ abstract class FileRepository(protected val rootPath: String) {
         }
     }
 
+    protected fun deleteAll() {
+        val files = File(rootPath).listFiles { _, name -> name.endsWith(".json") }
+        files?.forEach { it.delete() }
+    }
+
     protected fun getFile(path: String) = File("$rootPath/$path.json")
 }

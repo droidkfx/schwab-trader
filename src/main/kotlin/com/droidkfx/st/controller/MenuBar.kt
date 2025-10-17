@@ -1,5 +1,6 @@
 package com.droidkfx.st.controller
 
+import com.droidkfx.st.account.AccountService
 import com.droidkfx.st.controller.account.ManageAccountsDialog
 import com.droidkfx.st.schwab.oauth.OauthService
 import com.droidkfx.st.schwab.oauth.OauthStatus
@@ -8,6 +9,7 @@ import com.droidkfx.st.view.MenuBar
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class MenuBar(
+    private val accountService: AccountService,
     private val oauthService: OauthService,
     private val manageAccountsDialog: ManageAccountsDialog
 ) : MenuBar(
@@ -32,7 +34,9 @@ class MenuBar(
     }
 
     override suspend fun onClearAllData() {
-        TODO("Not yet implemented")
+        accountService.clear()
+        oauthService.invalidateOauth()
+        // TODO reset internal data bindings after clear
     }
 
     companion object {

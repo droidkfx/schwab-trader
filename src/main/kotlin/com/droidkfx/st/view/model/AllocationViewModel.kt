@@ -17,8 +17,8 @@ data class AllocationRowViewModel(
     val tradeAction: String,
     @field:Column(name = "Rec Shares", mapper = DoubleTableValueMapper::class, position = 8)
     val tradeShares: Double,
-
     ) {
+
     @field:Column(name = "Delta", mapper = PercentTableValueMapper::class, position = 6)
     val allocationDelta: Double = currentAllocation - allocationTarget
 

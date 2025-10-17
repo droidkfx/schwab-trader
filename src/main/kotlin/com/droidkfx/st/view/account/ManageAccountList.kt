@@ -2,6 +2,7 @@ package com.droidkfx.st.view.account
 
 import com.droidkfx.st.util.databind.ReadOnlyDataBinding
 import com.droidkfx.st.view.addCoActionListener
+import com.droidkfx.st.view.addCoListChangeListener
 import com.droidkfx.st.view.addSwingListener
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.BorderLayout
@@ -19,7 +20,7 @@ abstract class ManageAccountList(val accountNames: ReadOnlyDataBinding<List<Stri
 
         val jList = JList(Vector(accountNames.value)).apply {
             selectedIndex = 0
-            addListSelectionListener {
+            addCoListChangeListener {
                 listSelectionChanged(accountNames.value[selectedIndex])
             }
             accountNames.addSwingListener {
@@ -35,6 +36,6 @@ abstract class ManageAccountList(val accountNames: ReadOnlyDataBinding<List<Stri
         }, BorderLayout.SOUTH)
     }
 
-    abstract fun listSelectionChanged(name: String)
-    abstract fun refresh()
+    abstract suspend fun listSelectionChanged(name: String)
+    abstract suspend fun refresh()
 }

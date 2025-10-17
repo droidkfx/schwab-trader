@@ -15,12 +15,12 @@ internal class ManageAccountList(
 ) :
     ManageAccountList(accountData.mapped { list -> list.map { it.Account.name } }) {
 
-    override fun listSelectionChanged(name: String) {
+    override suspend fun listSelectionChanged(name: String) {
         logger.debug { "listSelectionChanged: $name" }
         selectedAccountName.value = name
     }
 
-    override fun refresh() {
+    override suspend fun refresh() {
         logger.debug { "refresh" }
         accountData.value = accountPositionService.getAccountPositions(accountService.refreshAccounts())
     }

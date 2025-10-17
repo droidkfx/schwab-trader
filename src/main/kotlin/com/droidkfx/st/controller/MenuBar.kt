@@ -31,6 +31,10 @@ class MenuBar(
         manageAccountsDialog.showDialog()
     }
 
+    override suspend fun onClearAllData() {
+        TODO("Not yet implemented")
+    }
+
     companion object {
         fun oauthEnabled(status: OauthStatus): Boolean = when (status) {
             OauthStatus.READY, OauthStatus.INITIALIZING -> false

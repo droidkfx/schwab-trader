@@ -4,7 +4,7 @@ import com.droidkfx.st.schwab.client.AccountsClient
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import java.util.UUID
 
-class Service(private val accountRepository: Repository, private val accountsClient: AccountsClient) {
+class AccountService(private val accountRepository: Repository, private val accountsClient: AccountsClient) {
     private val logger = logger {}
     fun listAccounts(): List<Account> {
         logger.trace { "listAccounts" }
@@ -15,6 +15,7 @@ class Service(private val accountRepository: Repository, private val accountsCli
         logger.trace { "refreshAccounts" }
 
         val knownAccounts = listAccounts()
+        // TODO handle client errors
         val newAccounts = accountsClient.listAccountNumbers()
             .data
             ?.filter { knownAccounts.none { account -> account.accountNumber == it.accountNumber } }

@@ -13,5 +13,5 @@ class AccountModule(configModule: ConfigModule, schwabModule: SchwabModule) {
 
     private val accountRepository = Repository(configModule.configService.getConfig())
 
-    val accountService = Service(accountRepository, schwabModule.clientModule.accountsClient)
+    val accountService = AccountService(accountRepository, schwabModule.clientModule.accountsClient)
 }

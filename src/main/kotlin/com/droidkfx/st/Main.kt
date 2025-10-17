@@ -16,7 +16,7 @@ fun main() {
     val schwabModule = SchwabModule(configModule)
     val accountModule = AccountModule(configModule, schwabModule)
     val positionModule = PositionModule(accountModule)
-    val controllerModule = ControllerModule(schwabModule.oauthModule, positionModule)
+    val controllerModule = ControllerModule(schwabModule.oauthModule, accountModule, positionModule)
 
     controllerModule.mainController.showAndRun()
 }

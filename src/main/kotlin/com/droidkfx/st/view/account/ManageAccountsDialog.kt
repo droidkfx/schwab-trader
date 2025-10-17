@@ -1,10 +1,10 @@
 package com.droidkfx.st.view.account
 
 import com.droidkfx.st.controller.account.AccountPositionDetail
-import com.droidkfx.st.controller.account.ManageAccountList
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.util.databind.DataBinding
 import com.droidkfx.st.view.GoldenRatioSize
+import com.droidkfx.st.view.addSwingListener
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.BorderLayout
 import java.awt.Frame
@@ -12,6 +12,7 @@ import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
+import javax.swing.JComponent
 import javax.swing.JDialog
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -20,28 +21,38 @@ import javax.swing.border.CompoundBorder
 import javax.swing.border.EmptyBorder
 
 @Suppress("USELESS_CAST") // Cast is required for overload ambiguity
-abstract class ManageAccountsDialog(data: List<AccountPosition>) : JDialog(null as? Frame, "Manage Accounts", true) {
+abstract class ManageAccountsDialog(
+    data: DataBinding<List<AccountPosition>>,
+    selectedAccountName: DataBinding<String?>,
+    private val manageAccountList: JComponent
+) : JDialog(null as? Frame, "Manage Accounts", true) {
     private val logger = KotlinLogging.logger {}
 
     private val detailPane = JPanel(BorderLayout())
     private val detailPanelsByAccountName = mutableMapOf<String, AccountPositionDetail>()
-    private val selectedAccountName = DataBinding<String?>(null)
 
     init {
         logger.trace { "Initializing" }
         minimumSize = GoldenRatioSize(300)
 
-        val accountNames = data.map { it.Account.name }
-        selectedAccountName.value = accountNames.firstOrNull()
-        selectedAccountName.addListener { setAccountByName(it) }
-        data.forEach {
+        selectedAccountName.addSwingListener { setAccountByName(it) }
+        data.value.forEach {
             detailPanelsByAccountName.getOrPut(it.Account.name) {
                 AccountPositionDetail(it)
             }
         }
+        data.addSwingListener { list ->
+            detailPanelsByAccountName.clear()
+            list.forEach {
+                detailPanelsByAccountName.getOrPut(it.Account.name) {
+                    AccountPositionDetail(it)
+                }
+            }
+            selectedAccountName.value = list.firstOrNull()?.Account?.name
+        }
 
         add(JPanel(GridBagLayout()).apply {
-            add(ManageAccountList(selectedAccountName, accountNames), GridBagConstraints().apply {
+            add(manageAccountList, GridBagConstraints().apply {
                 gridx = 0
                 gridy = 0
                 weightx = 1.0
@@ -62,7 +73,7 @@ abstract class ManageAccountsDialog(data: List<AccountPosition>) : JDialog(null 
                 weighty = 1.0
                 fill = GridBagConstraints.BOTH
             })
-            setAccountByName(accountNames.firstOrNull())
+            setAccountByName(selectedAccountName.value)
 
             addWindowListener(object : WindowAdapter() {
                 override fun windowClosing(e: WindowEvent?) {

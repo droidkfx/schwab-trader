@@ -5,10 +5,12 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
+import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JScrollPane
 import javax.swing.JTable
+import javax.swing.border.EmptyBorder
 
 abstract class AccountPositionDetail(acctData: AccountPosition) : JPanel(GridBagLayout()) {
     private val logger = KotlinLogging.logger {}
@@ -37,6 +39,18 @@ abstract class AccountPositionDetail(acctData: AccountPosition) : JPanel(GridBag
                 weightx = 1.0
                 fill = GridBagConstraints.BOTH
             })
+
+        add(JPanel().apply {
+            border = EmptyBorder(5, 0, 5, 0)
+            add(JButton("Save").apply {
+                isEnabled = false
+            })
+        }, GridBagConstraints().apply {
+            gridx = 0
+            gridy = 6
+            gridwidth = 2
+            anchor = GridBagConstraints.CENTER
+        })
     }
 
     private fun addRow(title: String, value: String, row: Int) {

@@ -35,7 +35,7 @@ abstract class ManageAccountsDialog(
 
     init {
         logger.trace { "Initializing" }
-        minimumSize = GoldenRatioSize(300)
+        minimumSize = GoldenRatioSize(500)
 
         selectedAccountName.addSwingListener { setAccountByName(it) }
         data.addSwingListener { list ->

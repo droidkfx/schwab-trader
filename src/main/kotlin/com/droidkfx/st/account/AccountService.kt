@@ -4,7 +4,7 @@ import com.droidkfx.st.schwab.client.AccountsClient
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import java.util.UUID
 
-class AccountService(private val accountRepository: Repository, private val accountsClient: AccountsClient) {
+class AccountService(private val accountRepository: AccountRepository, private val accountsClient: AccountsClient) {
     private val logger = logger {}
     fun listAccounts(): List<Account> {
         logger.trace { "listAccounts" }

@@ -11,7 +11,7 @@ class AccountModule(configModule: ConfigModule, schwabModule: SchwabModule) {
         logger.trace { "Initializing" }
     }
 
-    private val accountRepository = Repository(configModule.configService.getConfig())
+    private val accountRepository = AccountRepository(configModule.configService.getConfig())
 
     val accountService = AccountService(accountRepository, schwabModule.clientModule.accountsClient)
 }

@@ -4,9 +4,10 @@ import com.droidkfx.st.config.ConfigEntity
 import com.droidkfx.st.util.repository.FileRepository
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class AccountRepository(configEntity: ConfigEntity) : FileRepository("${configEntity.repositoryRoot}/account") {
-    private val logger = logger {}
-
+class AccountRepository(configEntity: ConfigEntity) : FileRepository(
+    logger {},
+    "${configEntity.repositoryRoot}/account"
+) {
     fun loadAccounts(): List<Account> {
         logger.trace { "loadAccounts" }
         return loadAll()

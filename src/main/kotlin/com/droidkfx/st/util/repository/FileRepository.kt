@@ -1,13 +1,12 @@
 package com.droidkfx.st.util.repository
 
-import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import io.github.oshai.kotlinlogging.KLogger
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 
-abstract class FileRepository(protected val rootPath: String) {
-    private val logger = logger {}
+abstract class FileRepository(protected val logger: KLogger, protected val rootPath: String) {
     protected val json = Json {
         ignoreUnknownKeys = true
         prettyPrint = true

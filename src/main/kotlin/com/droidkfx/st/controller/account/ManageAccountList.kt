@@ -10,10 +10,10 @@ import com.droidkfx.st.view.account.ManageAccountList
 internal class ManageAccountList(
     val accountService: AccountService,
     val accountPositionService: AccountPositionService,
-    val selectedAccountName: DataBinding<String?>,
+    selectedAccountName: DataBinding<String?>,
     val accountData: DataBinding<List<AccountPosition>>,
 ) :
-    ManageAccountList(accountData.mapped { list -> list.map { it.Account.name } }) {
+    ManageAccountList(selectedAccountName, accountData.mapped { list -> list.map { it.Account.name } }) {
 
     override suspend fun listSelectionChanged(name: String) {
         logger.debug { "listSelectionChanged: $name" }

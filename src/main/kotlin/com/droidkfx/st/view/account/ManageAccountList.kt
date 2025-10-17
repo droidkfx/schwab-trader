@@ -1,5 +1,6 @@
 package com.droidkfx.st.view.account
 
+import com.droidkfx.st.util.databind.DataBinding
 import com.droidkfx.st.util.databind.ReadOnlyDataBinding
 import com.droidkfx.st.view.addCoActionListener
 import com.droidkfx.st.view.addCoListChangeListener
@@ -12,7 +13,10 @@ import javax.swing.JList
 import javax.swing.JPanel
 import javax.swing.border.EmptyBorder
 
-abstract class ManageAccountList(val accountNames: ReadOnlyDataBinding<List<String>>) : JPanel(BorderLayout()) {
+abstract class ManageAccountList(
+    val selectedAccountName: DataBinding<String?>,
+    val accountNames: ReadOnlyDataBinding<List<String>>
+) : JPanel(BorderLayout()) {
     protected val logger = KotlinLogging.logger {}
 
     init {
@@ -25,6 +29,9 @@ abstract class ManageAccountList(val accountNames: ReadOnlyDataBinding<List<Stri
             }
             accountNames.addSwingListener {
                 setListData(Vector(it))
+            }
+            selectedAccountName.addSwingListener {
+                selectedIndex = it?.let { it1 -> accountNames.value.indexOf(it1) } ?: 0
             }
         }
         add(jList, BorderLayout.CENTER)

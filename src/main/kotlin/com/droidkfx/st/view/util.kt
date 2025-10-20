@@ -8,6 +8,7 @@ import javax.swing.JButton
 import javax.swing.JList
 import javax.swing.JMenuItem
 import javax.swing.SwingUtilities
+import javax.swing.event.ListSelectionEvent
 
 internal fun <T> ReadOnlyDataBinding<T>.addSwingListener(listener: (T) -> Unit) {
     addListener { SwingUtilities.invokeLater { listener(it) } }
@@ -21,10 +22,10 @@ internal fun JMenuItem.addCoActionListener(function: suspend () -> Unit) {
     }
 }
 
-internal fun JList<*>.addCoListChangeListener(function: suspend () -> Unit) {
+internal fun JList<*>.addCoListChangeListener(function: suspend (ListSelectionEvent) -> Unit) {
     addListSelectionListener {
         CoroutineScope(Dispatchers.Default).launch {
-            function()
+            function(it)
         }
     }
 }

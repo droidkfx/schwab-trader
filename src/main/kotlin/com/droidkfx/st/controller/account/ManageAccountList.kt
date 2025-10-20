@@ -11,7 +11,7 @@ internal class ManageAccountList(
     val accountService: AccountService,
     val accountPositionService: AccountPositionService,
     selectedAccountName: DataBinding<String?>,
-    val accountData: DataBinding<List<AccountPosition>>,
+    val accountData: DataBinding<MutableList<AccountPosition>>,
 ) :
     ManageAccountList(selectedAccountName, accountData.mapped { list -> list.map { it.Account.name } }) {
 
@@ -22,6 +22,6 @@ internal class ManageAccountList(
 
     override suspend fun refresh() {
         logger.debug { "refresh" }
-        accountData.value = accountPositionService.getAccountPositions(accountService.refreshAccounts())
+        accountData.value = accountPositionService.getAccountPositions(accountService.refreshAccounts()).toMutableList()
     }
 }

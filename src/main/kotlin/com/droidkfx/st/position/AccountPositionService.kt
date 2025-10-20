@@ -21,4 +21,9 @@ class AccountPositionService internal constructor(
             AccountPosition(it, positionService.getAccountPosition(it.id))
         }
     }
+
+    fun updateAccountPositions(accountId: String, newPositions: List<PositionTarget>) {
+        logger.trace { "updateAccountPositions $accountId" }
+        positionService.updateAccountPositions(accountId, newPositions)
+    }
 }

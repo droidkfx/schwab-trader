@@ -2,7 +2,9 @@ package com.droidkfx.st.view.account
 
 import com.droidkfx.st.controller.account.AccountPositionDetail
 import com.droidkfx.st.position.AccountPosition
+import com.droidkfx.st.position.PositionTarget
 import com.droidkfx.st.util.databind.DataBinding
+import com.droidkfx.st.util.databind.ReadOnlyDataBinding
 import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.view.GoldenRatioSize
 import com.droidkfx.st.view.addSwingListener
@@ -23,15 +25,16 @@ import javax.swing.border.EmptyBorder
 
 @Suppress("USELESS_CAST") // Cast is required for overload ambiguity
 abstract class ManageAccountsDialog(
-    data: DataBinding<List<AccountPosition>>,
+    data: ReadOnlyDataBinding<List<AccountPosition>>,
     selectedAccountName: DataBinding<String?>,
-    private val manageAccountList: JComponent
+    private val manageAccountList: JComponent,
 ) : JDialog(null as? Frame, "Manage Accounts", true) {
     private val logger = KotlinLogging.logger {}
 
     private val detailPane = JPanel(BorderLayout())
-    private val detailPanelsByAccountName =
-        data.mapped { list -> list.associate { it.Account.name to AccountPositionDetail(it) } }
+    private val detailPanelsByAccountName = data.mapped { list ->
+        list.associate { it.Account.name to AccountPositionDetail(it, ::onPositionSave) }
+    }
 
     init {
         logger.trace { "Initializing" }
@@ -39,7 +42,9 @@ abstract class ManageAccountsDialog(
 
         selectedAccountName.addSwingListener { setAccountByName(it) }
         data.addSwingListener { list ->
-            selectedAccountName.value = list.firstOrNull()?.Account?.name
+            // TODO there is a bug where if we do this we end up in a refresh loop when we update positions
+            // However we want to do this in the case of going from no accounts to many in a refresh.
+//            selectedAccountName.value = list.firstOrNull()?.Account?.name
         }
 
         add(JPanel(GridBagLayout()).apply {
@@ -93,4 +98,6 @@ abstract class ManageAccountsDialog(
         setLocationRelativeTo(null)
         isVisible = true
     }
+
+    abstract fun onPositionSave(accountId: String, newPositions: List<PositionTarget>)
 }

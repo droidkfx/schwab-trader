@@ -14,4 +14,9 @@ internal class PositionRepository(configEntity: ConfigEntity) :
         logger.trace { "loadPositions" }
         return load(accountId) ?: emptyList()
     }
+
+    fun savePositions(accountId: String, newPositions: List<PositionTarget>) {
+        logger.trace { "savePositions" }
+        save(accountId, newPositions)
+    }
 }

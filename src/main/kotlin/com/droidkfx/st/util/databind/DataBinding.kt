@@ -19,15 +19,19 @@ class DataBinding<T>(initialValue: T) : ReadOnlyDataBinding<T>, ReadWriteDataBin
                 return
             }
             field = value
-            listeners.forEach {
-                logger.trace { "Invoking listener $it" }
-                it(value)
-            }
+            notifyChanged()
         }
 
     override fun update(block: (T) -> Boolean) {
         if (!block(value)) return
         listeners.forEach { it(value) }
+    }
+
+    override fun notifyChanged() {
+        listeners.forEach {
+            logger.trace { "Invoking listener $it" }
+            it(value)
+        }
     }
 }
 
@@ -41,6 +45,11 @@ interface ReadWriteDataBinding<T> {
     var value: T
 
     fun update(block: (T) -> Boolean)
+    fun notifyChanged()
+}
+
+fun <T> DataBinding<T>.readOnly(): ReadOnlyDataBinding<T> {
+    return this
 }
 
 fun <T, U> ReadOnlyDataBinding<T>.mapped(mapper: (T) -> U): ReadOnlyDataBinding<U> {

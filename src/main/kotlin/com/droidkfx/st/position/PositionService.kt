@@ -8,4 +8,9 @@ internal class PositionService(private val positionRepository: PositionRepositor
         logger.trace { "getAccountPosition for account: $accountId" }
         return positionRepository.loadPositions(accountId)
     }
+
+    fun updateAccountPositions(accountId: String, newPositions: List<PositionTarget>) {
+        logger.trace { "updateAccountPositions for account: $accountId" }
+        positionRepository.savePositions(accountId, newPositions)
+    }
 }

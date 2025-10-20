@@ -25,10 +25,14 @@ abstract class ManageAccountList(
         val jList = JList(Vector(accountNames.value)).apply {
             selectedIndex = 0
             addCoListChangeListener {
+                if (it.valueIsAdjusting) return@addCoListChangeListener
+                if (selectedIndex < 0 || selectedIndex >= accountNames.value.size) return@addCoListChangeListener
                 listSelectionChanged(accountNames.value[selectedIndex])
             }
             accountNames.addSwingListener {
+                val indexOfPreviouslySelectedValue = it.indexOf(selectedAccountName.value)
                 setListData(Vector(it))
+                selectedIndex = if (indexOfPreviouslySelectedValue < 0) 0 else indexOfPreviouslySelectedValue
             }
             selectedAccountName.addSwingListener {
                 selectedIndex = it?.let { it1 -> accountNames.value.indexOf(it1) } ?: 0

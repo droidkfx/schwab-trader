@@ -15,7 +15,7 @@ class AccountControllerModule(
         logger.trace { "Initializing" }
     }
 
-    private val accountData = DataBinding(accountPositionService.getAccountPositions())
+    private val accountData = DataBinding(accountPositionService.getAccountPositions().toMutableList())
     private val selectedAccountName = DataBinding(accountData.value.firstOrNull()?.Account?.name)
 
     private val manageAccountList = ManageAccountList(
@@ -24,5 +24,6 @@ class AccountControllerModule(
         selectedAccountName,
         accountData,
     )
-    val manageAccountDialog = ManageAccountsDialog(accountData, selectedAccountName, manageAccountList)
+    val manageAccountDialog =
+        ManageAccountsDialog(accountData, selectedAccountName, manageAccountList, accountPositionService)
 }

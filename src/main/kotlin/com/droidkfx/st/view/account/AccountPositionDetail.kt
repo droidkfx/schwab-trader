@@ -2,6 +2,7 @@ package com.droidkfx.st.view.account
 
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.position.PositionTarget
+import com.droidkfx.st.view.addCoActionListener
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
@@ -99,6 +100,9 @@ abstract class AccountPositionDetail(acctData: AccountPosition) : JPanel(GridBag
                 logger.trace { "Save button clicked" }
                 isEnabled = false
             }
+            addCoActionListener {
+                save(acctData.Account.id, tableModel.data.mapNotNull { it.toPositionTarget() })
+            }
         }
         tableModel.apply {
             addTableModelListener {
@@ -126,6 +130,8 @@ abstract class AccountPositionDetail(acctData: AccountPosition) : JPanel(GridBag
             anchor = GridBagConstraints.CENTER
         })
     }
+
+    abstract suspend fun save(accountId: String, newPositionTargets: List<PositionTarget>)
 
     private fun addRow(title: String, value: String, row: Int) {
         add(JLabel(title), GridBagConstraints().apply {

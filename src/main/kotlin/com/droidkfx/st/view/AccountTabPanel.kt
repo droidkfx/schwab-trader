@@ -15,11 +15,20 @@ import javax.swing.JScrollPane
 import javax.swing.JTabbedPane
 import javax.swing.JTable
 
-abstract class AccountTabPanel(accountTabs: ReadOnlyDataBinding<List<AccountTabViewModel>?>) : JTabbedPane() {
+abstract class AccountTabPanel(private val accountTabs: ReadOnlyDataBinding<List<AccountTabViewModel>?>) :
+    JTabbedPane() {
     private val logger = logger {}
 
     init {
         logger.trace { "Initializing" }
+        buildTabs()
+        accountTabs.addSwingListener {
+            this.removeAll()
+            buildTabs()
+        }
+    }
+
+    private fun buildTabs() {
         accountTabs.value?.forEach {
             addTab(
                 it.title, JPanel(BorderLayout()).apply {

@@ -2,7 +2,7 @@ package com.droidkfx.st.schwab.oauth
 
 import com.droidkfx.st.schwab.client.OauthClient
 import com.droidkfx.st.schwab.client.OauthTokenResponse
-import com.droidkfx.st.util.databind.ReadOnlyDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.readOnly
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
@@ -25,7 +25,7 @@ class OauthService(
             authToken.value = value?.accessToken
         }
 
-    fun getStatus(): ReadOnlyDataBinding<OauthStatus> = tokenStatus
+    fun getStatus(): ReadOnlyValueDataBinding<OauthStatus> = tokenStatus
 
     fun obtainAuth(doInit: Boolean = true, allowRefresh: Boolean = true): OauthTokenResponse? {
         logger.trace { "obtainAuth" }

@@ -1,12 +1,12 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.util.databind.ReadOnlyDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import java.awt.FlowLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-abstract class StatusBar(oauthStatus: ReadOnlyDataBinding<String>) : JPanel() {
+abstract class StatusBar(oauthStatus: ReadOnlyValueDataBinding<String>) : JPanel() {
     private val logger = logger {}
 
     init {

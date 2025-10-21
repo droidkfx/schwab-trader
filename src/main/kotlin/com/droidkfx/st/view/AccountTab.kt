@@ -1,7 +1,7 @@
 package com.droidkfx.st.view
 
 import com.droidkfx.st.controller.AllocationTable
-import com.droidkfx.st.util.databind.ReadOnlyDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import java.awt.BorderLayout
@@ -14,8 +14,8 @@ import javax.swing.JPanel
 import javax.swing.JTabbedPane
 
 abstract class AccountTab(
-    private val accountTabs: ReadOnlyDataBinding<List<AccountTabViewModel>?>,
-    private val canRefresh: ReadOnlyDataBinding<Boolean>
+    private val accountTabs: ReadOnlyValueDataBinding<List<AccountTabViewModel>?>,
+    private val canRefresh: ReadOnlyValueDataBinding<Boolean>
 ) :
     JTabbedPane() {
     private val logger = logger {}

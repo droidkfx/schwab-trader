@@ -1,14 +1,14 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.util.databind.ReadOnlyDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import javax.swing.JMenu
 import javax.swing.JMenuBar
 import javax.swing.JMenuItem
 
 abstract class MenuBar(
-    updateOauthEnabled: ReadOnlyDataBinding<Boolean>,
-    invalidateOauthEnabled: ReadOnlyDataBinding<Boolean>
+    updateOauthEnabled: ReadOnlyValueDataBinding<Boolean>,
+    invalidateOauthEnabled: ReadOnlyValueDataBinding<Boolean>
 ) : JMenuBar() {
     private val logger = logger {}
 

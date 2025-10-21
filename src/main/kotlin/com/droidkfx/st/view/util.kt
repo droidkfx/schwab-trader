@@ -1,6 +1,6 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.util.databind.ReadOnlyDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -10,7 +10,7 @@ import javax.swing.JMenuItem
 import javax.swing.SwingUtilities
 import javax.swing.event.ListSelectionEvent
 
-internal fun <T> ReadOnlyDataBinding<T>.addSwingListener(listener: (T) -> Unit) {
+internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(listener: (T) -> Unit) {
     addListener { SwingUtilities.invokeLater { listener(it) } }
 }
 

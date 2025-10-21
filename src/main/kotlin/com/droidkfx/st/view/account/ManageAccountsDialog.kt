@@ -3,7 +3,7 @@ package com.droidkfx.st.view.account
 import com.droidkfx.st.controller.account.AccountPositionDetail
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.position.PositionTarget
-import com.droidkfx.st.util.databind.ReadOnlyDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.view.GoldenRatioSize
@@ -25,7 +25,7 @@ import javax.swing.border.EmptyBorder
 
 @Suppress("USELESS_CAST") // Cast is required for overload ambiguity
 abstract class ManageAccountsDialog(
-    data: ReadOnlyDataBinding<List<AccountPosition>>,
+    data: ReadOnlyValueDataBinding<List<AccountPosition>>,
     selectedAccountName: ValueDataBinding<String?>,
     private val manageAccountList: JComponent,
 ) : JDialog(null as? Frame, "Manage Accounts", true) {

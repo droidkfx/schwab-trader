@@ -2,7 +2,7 @@ package com.droidkfx.st.util.databind
 
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class ValueDataBinding<T>(initialValue: T) : ReadOnlyDataBinding<T>, ReadWriteDataBinding<T> {
+class ValueDataBinding<T>(initialValue: T) : ReadOnlyValueDataBinding<T>, ReadWriteValueDataBinding<T> {
     private val logger = logger {}
     private val listeners = mutableListOf<(T) -> Unit>()
 
@@ -35,12 +35,12 @@ class ValueDataBinding<T>(initialValue: T) : ReadOnlyDataBinding<T>, ReadWriteDa
     }
 }
 
-interface ReadOnlyDataBinding<T> {
+interface ReadOnlyValueDataBinding<T> {
     fun addListener(listener: (T) -> Unit)
     val value: T
 }
 
-interface ReadWriteDataBinding<T> {
+interface ReadWriteValueDataBinding<T> {
     fun addListener(listener: (T) -> Unit)
     var value: T
 
@@ -48,12 +48,12 @@ interface ReadWriteDataBinding<T> {
     fun notifyChanged()
 }
 
-fun <T> ValueDataBinding<T>.readOnly(): ReadOnlyDataBinding<T> {
+fun <T> ValueDataBinding<T>.readOnly(): ReadOnlyValueDataBinding<T> {
     return this.mapped { it }
 }
 
-fun <T, U> ReadOnlyDataBinding<T>.mapped(mapper: (T) -> U): ReadOnlyDataBinding<U> {
-    return object : ReadOnlyDataBinding<U> {
+fun <T, U> ReadOnlyValueDataBinding<T>.mapped(mapper: (T) -> U): ReadOnlyValueDataBinding<U> {
+    return object : ReadOnlyValueDataBinding<U> {
         private val delegate = mapper
         override fun addListener(listener: (U) -> Unit) {
             this@mapped.addListener { listener(delegate(it)) }

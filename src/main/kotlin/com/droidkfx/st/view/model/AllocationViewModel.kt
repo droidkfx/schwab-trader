@@ -1,10 +1,10 @@
 package com.droidkfx.st.view.model
 
 data class AllocationRowViewModel(
-    @field:Column(name = "Symbol", position = 0)
+    @field:Column(name = "Symbol", position = 0, editable = true)
     val symbol: String,
 
-    @field:Column(name = "Target Allocation", mapper = PercentTableValueMapper::class, position = 1)
+    @field:Column(name = "Target Allocation", mapper = PercentTableValueMapper::class, position = 1, editable = true)
     val allocationTarget: Double,
     @field:Column(name = "Owned", mapper = DoubleTableValueMapper::class, position = 2)
     val currentShares: Double,
@@ -17,7 +17,7 @@ data class AllocationRowViewModel(
     val tradeAction: String,
     @field:Column(name = "Rec Shares", mapper = DoubleTableValueMapper::class, position = 8)
     val tradeShares: Double,
-    ) {
+) {
 
     @field:Column(name = "Delta", mapper = PercentTableValueMapper::class, position = 6)
     val allocationDelta: Double = currentAllocation - allocationTarget

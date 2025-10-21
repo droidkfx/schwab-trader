@@ -12,12 +12,37 @@ abstract class AllocationTable(data: List<AllocationRowViewModel>) : JScrollPane
     init {
         logger.trace { "Initializing" }
         setViewportView(
-            JTable(
-                ObjectTableModel<AllocationRowViewModel>(
-                    data = data, AllocationRowViewModel::class.java
-                )
-            ).apply {
+            JTable(AllocationTableModel(data)).apply {
                 autoCreateRowSorter = true
             })
+    }
+}
+
+private class AllocationTableModel(data: List<AllocationRowViewModel>) :
+    ObjectTableModel<AllocationRowViewModel>(data, AllocationRowViewModel::class.java) {
+    private val newRow = MutableList(columnCount) { "" }
+
+    override fun getRowCount(): Int {
+        return super.rowCount + 1
+    }
+
+    override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
+        return (rowIndex >= super.rowCount) && super.isColumnEditable(columnIndex)
+    }
+
+    override fun setValueAt(value: Any?, rowIndex: Int, columnIndex: Int) {
+        if (rowIndex >= super.rowCount) {
+            newRow[columnIndex] = value?.toString() ?: ""
+        } else {
+            super.setValueAt(value, rowIndex, columnIndex)
+        }
+    }
+
+    override fun getValueAt(rowIndex: Int, columnIndex: Int): String {
+        return if (rowIndex >= super.rowCount) {
+            columns[columnIndex].mapper.map(newRow[columnIndex])
+        } else {
+            super.getValueAt(rowIndex, columnIndex)
+        }
     }
 }

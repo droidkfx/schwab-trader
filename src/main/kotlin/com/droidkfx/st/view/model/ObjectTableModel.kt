@@ -45,15 +45,16 @@ class PercentTableValueMapper : DoubleTableValueMapper("%05.2f") {
 annotation class Column(
     val name: String = "",
     val position: Int = -1,
-    val mapper: KClass<out TableValueMapper> = DefaultTableValueMapper::class
+    val mapper: KClass<out TableValueMapper> = DefaultTableValueMapper::class,
+    val editable: Boolean = false
 )
 
-class ObjectTableModel<T>(
+open class ObjectTableModel<T>(
     private val data: List<T>,
     private val typeInfo: Class<T>
 ) : AbstractTableModel() {
 
-    private val columns = typeInfo.declaredFields
+    protected val columns = typeInfo.declaredFields
         .mapIndexed { index, field ->
             field.annotations
                 .firstOrNull { it is Column }
@@ -61,31 +62,33 @@ class ObjectTableModel<T>(
                     val col = (it as Column)
                     val index = if (col.position != -1) col.position else index
                     val name = if (col.name != "") col.name else field.name
-                    return@mapIndexed ((index to field.name) to (name to createMapper(col.mapper)))
-                } ?: ((index to field.name) to (field.name to createMapper(DefaultTableValueMapper::class)))
-        }.sortedBy { it.first.first }
-        .map { it ->
-            ColumnInfo(
-                it.second.first,
-                it.second.second,
-                typeInfo.getMethod("get" + it.first.second.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        getDefault()
-                    ) else it.toString()
-                })
-            )
-        }
+                    return@mapIndexed index to ColumnInfo(
+                        name,
+                        fetchGetter(field.name),
+                        createMapper(col.mapper),
+                        col.editable
+                    )
+                } ?: (index to ColumnInfo(field.name, fetchGetter(field.name)))
+        }.sortedBy { it.first }
+        .map { it.second }
 
-    private fun createMapper(mapperClass: KClass<out TableValueMapper>): TableValueMapper =
-        mapperClass.java.getConstructor().newInstance() as TableValueMapper
+    private fun fetchGetter(name: String): Method {
+        return typeInfo.getMethod("get" + name.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(
+                getDefault()
+            ) else it.toString()
+        })
+    }
 
     override fun getColumnName(column: Int): String =
         columns.getOrNull(column)?.let {
             return it.name
         } ?: "Unknown Column"
 
+    internal fun isColumnEditable(column: Int): Boolean =
+        columns.getOrNull(column)?.editable ?: false
 
-//    override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = true
+    override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = false
 
     override fun getRowCount(): Int = data.size
     override fun getColumnCount(): Int = typeInfo.declaredFields.size
@@ -96,5 +99,15 @@ class ObjectTableModel<T>(
         } ?: ""
     }
 
-    data class ColumnInfo(val name: String, val mapper: TableValueMapper, val getter: Method)
+    data class ColumnInfo(
+        val name: String,
+        val getter: Method,
+        val mapper: TableValueMapper = createMapper(DefaultTableValueMapper::class),
+        val editable: Boolean = false
+    )
+
+    companion object {
+        private fun createMapper(mapperClass: KClass<out TableValueMapper>): TableValueMapper =
+            mapperClass.java.getConstructor().newInstance() as TableValueMapper
+    }
 }

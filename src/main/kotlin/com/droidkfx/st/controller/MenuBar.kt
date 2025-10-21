@@ -2,8 +2,10 @@ package com.droidkfx.st.controller
 
 import com.droidkfx.st.account.AccountService
 import com.droidkfx.st.controller.account.ManageAccountsDialog
+import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.schwab.oauth.OauthService
 import com.droidkfx.st.schwab.oauth.OauthStatus
+import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.view.MenuBar
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
@@ -11,7 +13,8 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 class MenuBar(
     private val accountService: AccountService,
     private val oauthService: OauthService,
-    private val manageAccountsDialog: ManageAccountsDialog
+    private val manageAccountsDialog: ManageAccountsDialog,
+    private val accountData: ReadWriteListDataBinding<AccountPosition>
 ) : MenuBar(
     oauthService.getTokenStatusBinding().mapped(::oauthEnabled),
     oauthService.getTokenStatusBinding().mapped(::invalidateEnabled)
@@ -36,6 +39,7 @@ class MenuBar(
     override suspend fun onClearAllData() {
         accountService.clear()
         oauthService.invalidateOauth()
+        accountData.clear()
         // TODO reset internal data bindings after clear
     }
 

@@ -1,6 +1,6 @@
 package com.droidkfx.st.view.account
 
-import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyListDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.view.addCoActionListener
 import com.droidkfx.st.view.addCoListChangeListener
@@ -15,27 +15,27 @@ import javax.swing.border.EmptyBorder
 
 abstract class ManageAccountList(
     val selectedAccountName: ValueDataBinding<String?>,
-    val accountNames: ReadOnlyValueDataBinding<List<String>>
+    val accountNames: ReadOnlyListDataBinding<String>
 ) : JPanel(BorderLayout()) {
     protected val logger = KotlinLogging.logger {}
 
     init {
         logger.trace { "Initializing" }
 
-        val jList = JList(Vector(accountNames.value)).apply {
+        val jList = JList(Vector(accountNames)).apply {
             selectedIndex = 0
             addCoListChangeListener {
                 if (it.valueIsAdjusting) return@addCoListChangeListener
-                if (selectedIndex < 0 || selectedIndex >= accountNames.value.size) return@addCoListChangeListener
-                listSelectionChanged(accountNames.value[selectedIndex])
+                if (selectedIndex < 0 || selectedIndex >= accountNames.size) return@addCoListChangeListener
+                listSelectionChanged(accountNames[selectedIndex])
             }
             accountNames.addSwingListener {
-                val indexOfPreviouslySelectedValue = it.indexOf(selectedAccountName.value)
-                setListData(Vector(it))
+                val indexOfPreviouslySelectedValue = accountNames.indexOf(selectedAccountName.value)
+                setListData(Vector(accountNames))
                 selectedIndex = if (indexOfPreviouslySelectedValue < 0) 0 else indexOfPreviouslySelectedValue
             }
             selectedAccountName.addSwingListener {
-                selectedIndex = it?.let { it1 -> accountNames.value.indexOf(it1) } ?: 0
+                selectedIndex = it?.let { it1 -> accountNames.indexOf(it1) } ?: 0
             }
         }
         add(jList, BorderLayout.CENTER)

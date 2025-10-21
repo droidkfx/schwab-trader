@@ -5,7 +5,7 @@ import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.schwab.oauth.OauthStatus
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
-import com.droidkfx.st.util.databind.ValueDataBinding
+import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.view.AccountTab
 import com.droidkfx.st.view.model.AccountTabViewModel
@@ -15,15 +15,13 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 class AccountTabs(
     private val accountPositionService: AccountPositionService,
     private val accountService: AccountService,
-    private val accountData: ValueDataBinding<MutableList<AccountPosition>>,
+    private val accountData: ReadWriteListDataBinding<AccountPosition>,
     oauthData: ReadOnlyValueDataBinding<OauthStatus>,
 ) : AccountTab(
-    accountData.mapped { data ->
-        data.map { it ->
-            AccountTabViewModel(it.Account.name, it.positionTargets.map {
-                AllocationRowViewModel(it.symbol, it.allocationTarget, 0.0, 0.0, 0.0, "TBD", 0.0)
-            })
-        }
+    accountData.mapped {
+        AccountTabViewModel(it.Account.name, it.positionTargets.map { pTarget ->
+            AllocationRowViewModel(pTarget.symbol, pTarget.allocationTarget, 0.0, 0.0, 0.0, "TBD", 0.0)
+        })
     },
     oauthData.mapped { it == OauthStatus.READY }
 ) {
@@ -31,6 +29,12 @@ class AccountTabs(
 
     override suspend fun refresh() {
         logger.debug { "refresh" }
-        accountData.value = accountPositionService.getAccountPositions(accountService.refreshAccounts()).toMutableList()
+        val accountPositions = accountPositionService.getAccountPositions(accountService.refreshAccounts())
+        accountPositions.forEach {
+            if (!accountData.contains(it)) {
+                accountData.add(it)
+            }
+        }
+        accountData.retainAll(accountPositions)
     }
 }

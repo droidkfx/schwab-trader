@@ -3,7 +3,7 @@ package com.droidkfx.st.view.account
 import com.droidkfx.st.controller.account.AccountPositionDetail
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.position.PositionTarget
-import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyListDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.view.GoldenRatioSize
@@ -25,16 +25,15 @@ import javax.swing.border.EmptyBorder
 
 @Suppress("USELESS_CAST") // Cast is required for overload ambiguity
 abstract class ManageAccountsDialog(
-    data: ReadOnlyValueDataBinding<List<AccountPosition>>,
+    data: ReadOnlyListDataBinding<AccountPosition>,
     selectedAccountName: ValueDataBinding<String?>,
     private val manageAccountList: JComponent,
 ) : JDialog(null as? Frame, "Manage Accounts", true) {
     private val logger = KotlinLogging.logger {}
 
     private val detailPane = JPanel(BorderLayout())
-    private val detailPanelsByAccountName = data.mapped { list ->
-        list.associate { it.Account.name to AccountPositionDetail(it, ::onPositionSave) }
-    }
+    private val detailPanelsByAccountName =
+        data.mapped { it.Account.name to AccountPositionDetail(it, ::onPositionSave) }
 
     init {
         logger.trace { "Initializing" }
@@ -84,8 +83,9 @@ abstract class ManageAccountsDialog(
         if (name == null) return
         logger.debug { "Setting account to: $name" }
         detailPane.removeAll()
-        if (detailPanelsByAccountName.value[name] != null) {
-            detailPane.add(detailPanelsByAccountName.value[name]!!, BorderLayout.CENTER)
+        val pane = detailPanelsByAccountName.firstOrNull { it.first == name }
+        if (pane != null) {
+            detailPane.add(pane.second, BorderLayout.CENTER)
         } else {
             detailPane.add(JPanel(), BorderLayout.CENTER)
         }
@@ -94,7 +94,6 @@ abstract class ManageAccountsDialog(
     }
 
     fun showDialog() {
-//        pack()
         setLocationRelativeTo(null)
         isVisible = true
     }

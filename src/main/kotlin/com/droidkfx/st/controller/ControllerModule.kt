@@ -4,7 +4,7 @@ import com.droidkfx.st.account.AccountModule
 import com.droidkfx.st.controller.account.AccountControllerModule
 import com.droidkfx.st.position.PositionModule
 import com.droidkfx.st.schwab.oauth.OauthModule
-import com.droidkfx.st.util.databind.ValueDataBinding
+import com.droidkfx.st.util.databind.toDataBinding
 import com.formdev.flatlaf.FlatDarkLaf
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
@@ -16,8 +16,9 @@ class ControllerModule(oathModule: OauthModule, accountModule: AccountModule, po
         FlatDarkLaf.setup().also { logger.info { "Dark LaF setup complete" } }
     }
 
-    private val accountData =
-        ValueDataBinding(positionModule.accountPositionService.getAccountPositions().toMutableList())
+    private val accountData = positionModule.accountPositionService.getAccountPositions()
+        .toMutableList()
+        .toDataBinding()
 
     private val accountControllerModule = AccountControllerModule(
         positionModule.accountPositionService,
@@ -28,7 +29,8 @@ class ControllerModule(oathModule: OauthModule, accountModule: AccountModule, po
     private val menuBarController = MenuBar(
         accountModule.accountService,
         oathModule.oauthService,
-        accountControllerModule.manageAccountDialog
+        accountControllerModule.manageAccountDialog,
+        accountData,
     )
     private val statusBarController = StatusBar(oathModule.oauthService)
 

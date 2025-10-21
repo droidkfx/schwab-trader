@@ -3,17 +3,18 @@ package com.droidkfx.st.controller.account
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.position.PositionTarget
+import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
-import com.droidkfx.st.util.databind.mapped
+import com.droidkfx.st.util.databind.readOnly
 import com.droidkfx.st.view.account.ManageAccountsDialog
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class ManageAccountsDialog internal constructor(
-    val data: ValueDataBinding<MutableList<AccountPosition>>,
+    val data: ReadWriteListDataBinding<AccountPosition>,
     selectedAccountName: ValueDataBinding<String?>,
     manageAccountList: ManageAccountList,
     private val accountPositionService: AccountPositionService,
-) : ManageAccountsDialog(data.mapped { it as List<AccountPosition> }, selectedAccountName, manageAccountList) {
+) : ManageAccountsDialog(data.readOnly(), selectedAccountName, manageAccountList) {
     private val logger = logger {}
 
     override fun onPositionSave(
@@ -22,13 +23,12 @@ class ManageAccountsDialog internal constructor(
     ) {
         accountPositionService.updateAccountPositions(accountId, newPositions)
 
-        val accountIndex = data.value.indexOfFirst { it.Account.id == accountId }
+        val accountIndex = data.indexOfFirst { it.Account.id == accountId }
         if (accountIndex == -1) {
             logger.error { "Account index not found: $accountIndex" }
         }
-        val originalElement = data.value[accountIndex]
+        val originalElement = data[accountIndex]
         val newElement = AccountPosition(originalElement.Account, newPositions)
-        data.value[accountIndex] = newElement
-        data.notifyChanged()
+        data[accountIndex] = newElement
     }
 }

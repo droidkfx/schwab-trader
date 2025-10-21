@@ -1,6 +1,7 @@
 package com.droidkfx.st.view
 
 import com.droidkfx.st.controller.AllocationTable
+import com.droidkfx.st.util.databind.ReadOnlyListDataBinding
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
@@ -14,7 +15,7 @@ import javax.swing.JPanel
 import javax.swing.JTabbedPane
 
 abstract class AccountTab(
-    private val accountTabs: ReadOnlyValueDataBinding<List<AccountTabViewModel>?>,
+    private val accountTabs: ReadOnlyListDataBinding<AccountTabViewModel>,
     private val canRefresh: ReadOnlyValueDataBinding<Boolean>
 ) :
     JTabbedPane() {
@@ -30,7 +31,7 @@ abstract class AccountTab(
     }
 
     private fun buildTabs() {
-        accountTabs.value?.forEach {
+        accountTabs.forEach {
             addTab(
                 it.title, JPanel(BorderLayout()).apply {
                     add(
@@ -42,7 +43,7 @@ abstract class AccountTab(
                     add(AllocationTable(it.data), BorderLayout.CENTER)
                 })
         }
-        if (accountTabs.value?.isEmpty() == true) {
+        if (accountTabs.isEmpty()) {
             addTab("Getting Started", JPanel().apply {
                 layout = BoxLayout(this, BoxLayout.Y_AXIS)
                 add(Box.createVerticalGlue())

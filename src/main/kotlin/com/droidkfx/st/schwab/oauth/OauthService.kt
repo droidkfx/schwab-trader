@@ -4,6 +4,7 @@ import com.droidkfx.st.schwab.client.OauthClient
 import com.droidkfx.st.schwab.client.OauthTokenResponse
 import com.droidkfx.st.util.databind.DataBinding
 import com.droidkfx.st.util.databind.ReadOnlyDataBinding
+import com.droidkfx.st.util.databind.readOnly
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
@@ -17,7 +18,7 @@ class OauthService(
     val authToken: DataBinding<String?> = DataBinding(null)
 ) {
     private val logger = logger {}
-    val tokenStatus = DataBinding(OauthStatus.NOT_INITIALIZED)
+    private val tokenStatus = DataBinding(OauthStatus.NOT_INITIALIZED)
     private var existingToken: OauthTokenResponse? = obtainAuth(doInit = false, allowRefresh = false)
         set(value) {
             field = value
@@ -72,6 +73,8 @@ class OauthService(
         existingToken = null
         tokenStatus.value = OauthStatus.NOT_INITIALIZED
     }
+
+    fun getTokenStatusBinding() = tokenStatus.readOnly()
 
     private fun runInitialAuthorization(): OauthTokenResponse? {
         logger.trace { "runInitialAuthorization" }

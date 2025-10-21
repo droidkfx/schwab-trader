@@ -49,7 +49,7 @@ interface ReadWriteDataBinding<T> {
 }
 
 fun <T> DataBinding<T>.readOnly(): ReadOnlyDataBinding<T> {
-    return this
+    return this.mapped { it }
 }
 
 fun <T, U> ReadOnlyDataBinding<T>.mapped(mapper: (T) -> U): ReadOnlyDataBinding<U> {

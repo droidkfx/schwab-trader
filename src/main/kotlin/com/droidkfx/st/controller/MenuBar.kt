@@ -13,8 +13,8 @@ class MenuBar(
     private val oauthService: OauthService,
     private val manageAccountsDialog: ManageAccountsDialog
 ) : MenuBar(
-    oauthService.tokenStatus.mapped(::oauthEnabled),
-    oauthService.tokenStatus.mapped(::invalidateEnabled)
+    oauthService.getTokenStatusBinding().mapped(::oauthEnabled),
+    oauthService.getTokenStatusBinding().mapped(::invalidateEnabled)
 ) {
     private val logger = logger {}
 

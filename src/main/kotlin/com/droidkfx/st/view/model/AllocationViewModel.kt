@@ -1,30 +1,34 @@
 package com.droidkfx.st.view.model
 
 data class AllocationRowViewModel(
-    @field:Column(name = "Symbol", position = 0, editable = true)
-    val symbol: String,
+    @field:Column(name = "Symbol", position = 0)
+    var symbol: String,
 
-    @field:Column(name = "Target Allocation", mapper = PercentTableValueMapper::class, position = 1, editable = true)
-    val allocationTarget: Double,
-    @field:Column(name = "Owned", mapper = DoubleTableValueMapper::class, position = 2)
-    val currentShares: Double,
-    @field:Column(name = "Price", mapper = DollarTableValueMapper::class, position = 3)
-    val currentPrice: Double,
-    @field:Column(name = "Allocation", mapper = PercentTableValueMapper::class, position = 5)
-    val currentAllocation: Double,
+    @field:Column(name = "Target Allocation", mapper = PercentReadTableValueMapper::class, position = 1)
+    var allocationTarget: Double,
+    @field:Column(name = "Owned", mapper = DoubleReadTableValueMapper::class, position = 2, editable = false)
+    var currentShares: Double,
+    @field:Column(name = "Price", mapper = DollarReadTableValueMapper::class, position = 3, editable = false)
+    var currentPrice: Double,
+    @field:Column(name = "Allocation", mapper = PercentReadTableValueMapper::class, position = 5, editable = false)
+    var currentAllocation: Double,
 
-    @field:Column(name = "Rec Action", position = 7)
-    val tradeAction: String,
-    @field:Column(name = "Rec Shares", mapper = DoubleTableValueMapper::class, position = 8)
-    val tradeShares: Double,
+    @field:Column(name = "Rec Action", position = 7, editable = false)
+    var tradeAction: String,
+    @field:Column(name = "Rec Shares", mapper = DoubleReadTableValueMapper::class, position = 8, editable = false)
+    var tradeShares: Double,
 ) {
 
-    @field:Column(name = "Delta", mapper = PercentTableValueMapper::class, position = 6)
-    val allocationDelta: Double = currentAllocation - allocationTarget
 
-    @field:Column(name = "Expected Cost", mapper = DollarTableValueMapper::class, position = 9)
-    val expectedCost: Double = currentPrice * tradeShares * if (tradeAction == "SELL") -1.0 else 1.0
+    val allocationDelta: Double
+        @Column(name = "Delta", mapper = PercentReadTableValueMapper::class, position = 6)
+        get() = currentAllocation - allocationTarget
 
-    @field:Column(name = "Value", mapper = DollarTableValueMapper::class, position = 4)
-    val currentValue: Double = currentPrice * currentShares
+    val expectedCost: Double
+        @Column(name = "Expected Cost", mapper = DollarReadTableValueMapper::class, position = 9)
+        get() = currentPrice * tradeShares * if (tradeAction == "SELL") -1.0 else 1.0
+
+    val currentValue: Double
+        @Column(name = "Value", mapper = DollarReadTableValueMapper::class, position = 4)
+        get() = currentPrice * currentShares
 }

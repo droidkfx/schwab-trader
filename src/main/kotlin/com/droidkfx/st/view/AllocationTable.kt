@@ -20,7 +20,13 @@ abstract class AllocationTable(data: List<AllocationRowViewModel>) : JScrollPane
 
 private class AllocationTableModel(data: List<AllocationRowViewModel>) :
     ObjectTableModel<AllocationRowViewModel>(data, AllocationRowViewModel::class.java) {
-    private val newRow = MutableList(columnCount) { "" }
+    private var newRow: AllocationRowViewModel = defaultValue()
+
+    fun defaultValue(): AllocationRowViewModel = AllocationRowViewModel("", 0.0, 0.0, 0.0, 0.0, "", 0.0)
+
+    fun valueSetup(allocationRowViewModel: AllocationRowViewModel): Boolean {
+        return allocationRowViewModel.symbol.isNotEmpty() && allocationRowViewModel.allocationTarget > 0.0
+    }
 
     override fun getRowCount(): Int {
         return super.rowCount + 1
@@ -32,7 +38,10 @@ private class AllocationTableModel(data: List<AllocationRowViewModel>) :
 
     override fun setValueAt(value: Any?, rowIndex: Int, columnIndex: Int) {
         if (rowIndex >= super.rowCount) {
-            newRow[columnIndex] = value?.toString() ?: ""
+            setValueOn(newRow, columnIndex, value)
+            if (valueSetup(newRow)) {
+                newRow = defaultValue()
+            }
         } else {
             super.setValueAt(value, rowIndex, columnIndex)
         }
@@ -40,7 +49,9 @@ private class AllocationTableModel(data: List<AllocationRowViewModel>) :
 
     override fun getValueAt(rowIndex: Int, columnIndex: Int): String {
         return if (rowIndex >= super.rowCount) {
-            columns[columnIndex].mapper.map(newRow[columnIndex])
+            val column = columns[columnIndex]
+            val dataValue = column.getter?.invoke(newRow)
+            column.mapper.mapOut(dataValue ?: "")
         } else {
             super.getValueAt(rowIndex, columnIndex)
         }

@@ -1,14 +1,14 @@
 package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
-import com.droidkfx.st.util.databind.DataBinding
+import com.droidkfx.st.util.databind.ValueDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.java.Java
 
 class SchwabClientModule(
     config: SchwabClientConfig,
-    oathAccessToken: DataBinding<String?> = DataBinding(null),
+    oathAccessToken: ValueDataBinding<String?> = ValueDataBinding(null),
 ) {
     private val logger = logger {}
 

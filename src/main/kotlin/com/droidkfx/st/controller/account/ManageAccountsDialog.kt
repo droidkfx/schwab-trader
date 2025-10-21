@@ -3,14 +3,14 @@ package com.droidkfx.st.controller.account
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.position.PositionTarget
-import com.droidkfx.st.util.databind.DataBinding
+import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.view.account.ManageAccountsDialog
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class ManageAccountsDialog internal constructor(
-    val data: DataBinding<MutableList<AccountPosition>>,
-    selectedAccountName: DataBinding<String?>,
+    val data: ValueDataBinding<MutableList<AccountPosition>>,
+    selectedAccountName: ValueDataBinding<String?>,
     manageAccountList: ManageAccountList,
     private val accountPositionService: AccountPositionService,
 ) : ManageAccountsDialog(data.mapped { it as List<AccountPosition> }, selectedAccountName, manageAccountList) {

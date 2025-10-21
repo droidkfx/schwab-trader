@@ -2,13 +2,13 @@ package com.droidkfx.st.schwab.oauth
 
 import com.droidkfx.st.config.ConfigEntity
 import com.droidkfx.st.schwab.client.OauthClient
-import com.droidkfx.st.util.databind.DataBinding
+import com.droidkfx.st.util.databind.ValueDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class OauthModule(
     config: ConfigEntity,
     oauthClient: OauthClient,
-    oauthToken: DataBinding<String?>
+    oauthToken: ValueDataBinding<String?>
 ) {
     private val logger = logger {}
 

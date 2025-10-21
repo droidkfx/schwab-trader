@@ -1,7 +1,7 @@
 package com.droidkfx.st.view.account
 
-import com.droidkfx.st.util.databind.DataBinding
 import com.droidkfx.st.util.databind.ReadOnlyDataBinding
+import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.view.addCoActionListener
 import com.droidkfx.st.view.addCoListChangeListener
 import com.droidkfx.st.view.addSwingListener
@@ -14,7 +14,7 @@ import javax.swing.JPanel
 import javax.swing.border.EmptyBorder
 
 abstract class ManageAccountList(
-    val selectedAccountName: DataBinding<String?>,
+    val selectedAccountName: ValueDataBinding<String?>,
     val accountNames: ReadOnlyDataBinding<List<String>>
 ) : JPanel(BorderLayout()) {
     protected val logger = KotlinLogging.logger {}

@@ -2,8 +2,8 @@ package com.droidkfx.st.schwab.oauth
 
 import com.droidkfx.st.schwab.client.OauthClient
 import com.droidkfx.st.schwab.client.OauthTokenResponse
-import com.droidkfx.st.util.databind.DataBinding
 import com.droidkfx.st.util.databind.ReadOnlyDataBinding
+import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.readOnly
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import kotlinx.coroutines.TimeoutCancellationException
@@ -15,10 +15,10 @@ class OauthService(
     val repo: OauthRepository,
     val client: OauthClient,
     val server: LocalServer,
-    val authToken: DataBinding<String?> = DataBinding(null)
+    val authToken: ValueDataBinding<String?> = ValueDataBinding(null)
 ) {
     private val logger = logger {}
-    private val tokenStatus = DataBinding(OauthStatus.NOT_INITIALIZED)
+    private val tokenStatus = ValueDataBinding(OauthStatus.NOT_INITIALIZED)
     private var existingToken: OauthTokenResponse? = obtainAuth(doInit = false, allowRefresh = false)
         set(value) {
             field = value

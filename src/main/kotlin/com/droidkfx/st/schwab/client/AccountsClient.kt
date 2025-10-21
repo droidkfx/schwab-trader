@@ -1,7 +1,7 @@
 package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
-import com.droidkfx.st.util.databind.DataBinding
+import com.droidkfx.st.util.databind.ValueDataBinding
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 class AccountsClient(
     config: SchwabClientConfig,
     client: HttpClient,
-    oathToken: DataBinding<String?> = DataBinding(null)
+    oathToken: ValueDataBinding<String?> = ValueDataBinding(null)
 ) : BaseClient(config, client, oathToken, listOf("trader", "v1")) {
     override val logger: KLogger = logger {}
 

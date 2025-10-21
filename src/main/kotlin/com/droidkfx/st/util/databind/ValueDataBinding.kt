@@ -2,7 +2,7 @@ package com.droidkfx.st.util.databind
 
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class DataBinding<T>(initialValue: T) : ReadOnlyDataBinding<T>, ReadWriteDataBinding<T> {
+class ValueDataBinding<T>(initialValue: T) : ReadOnlyDataBinding<T>, ReadWriteDataBinding<T> {
     private val logger = logger {}
     private val listeners = mutableListOf<(T) -> Unit>()
 
@@ -48,7 +48,7 @@ interface ReadWriteDataBinding<T> {
     fun notifyChanged()
 }
 
-fun <T> DataBinding<T>.readOnly(): ReadOnlyDataBinding<T> {
+fun <T> ValueDataBinding<T>.readOnly(): ReadOnlyDataBinding<T> {
     return this.mapped { it }
 }
 

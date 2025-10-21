@@ -1,7 +1,7 @@
 package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
-import com.droidkfx.st.util.databind.DataBinding
+import com.droidkfx.st.util.databind.ValueDataBinding
 import io.github.oshai.kotlinlogging.KLogger
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -17,7 +17,7 @@ import kotlinx.serialization.json.JsonObject
 abstract class BaseClient(
     protected val config: SchwabClientConfig,
     protected val client: HttpClient,
-    protected val oathToken: DataBinding<String?> = DataBinding(null),
+    protected val oathToken: ValueDataBinding<String?> = ValueDataBinding(null),
     protected val defaultPathSegments: List<String> = emptyList()
 ) {
     protected abstract val logger: KLogger

@@ -7,6 +7,7 @@ import com.droidkfx.st.schwab.oauth.OauthStatus
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.mapped
+import com.droidkfx.st.util.databind.toDataBinding
 import com.droidkfx.st.view.AccountTab
 import com.droidkfx.st.view.model.AccountTabViewModel
 import com.droidkfx.st.view.model.AllocationRowViewModel
@@ -19,9 +20,15 @@ class AccountTabs(
     oauthData: ReadOnlyValueDataBinding<OauthStatus>,
 ) : AccountTab(
     accountData.mapped {
-        AccountTabViewModel(it.Account.name, it.positionTargets.map { pTarget ->
-            AllocationRowViewModel(pTarget.symbol, pTarget.allocationTarget, 0.0, 0.0, 0.0, "TBD", 0.0)
-        })
+        AccountTabViewModel(
+            it.Account.name,
+            it.positionTargets
+                .map { pTarget ->
+                    AllocationRowViewModel(pTarget.symbol, pTarget.allocationTarget, 0.0, 0.0, 0.0, "TBD", 0.0)
+                }
+                .toMutableList()
+                .toDataBinding()
+        )
     },
     oauthData.mapped { it == OauthStatus.READY }
 ) {

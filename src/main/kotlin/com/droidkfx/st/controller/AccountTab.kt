@@ -29,4 +29,12 @@ class AccountTab(
                 PositionTarget(it.symbol, it.allocationTarget)
             })
     }
+
+    override suspend fun refreshData() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun processOrders() {
+        TODO("Not yet implemented")
+    }
 }

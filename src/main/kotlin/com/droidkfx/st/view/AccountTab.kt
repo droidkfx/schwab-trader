@@ -50,8 +50,12 @@ abstract class AccountTab(
                     )
                 })
                 add(saveAllocationsButton)
-                add(JButton("Refresh Data"))
-                add(JButton("Process Orders"))
+                add(JButton("Refresh Data").apply {
+                    addCoActionListener { refreshData() }
+                })
+                add(JButton("Process Orders").apply {
+                    addCoActionListener { processOrders() }
+                })
             }, BorderLayout.NORTH
         )
         add(AllocationTable(viewModel.data).apply {
@@ -62,4 +66,6 @@ abstract class AccountTab(
     }
 
     abstract suspend fun saveAccountPositions()
+    abstract suspend fun refreshData()
+    abstract suspend fun processOrders()
 }

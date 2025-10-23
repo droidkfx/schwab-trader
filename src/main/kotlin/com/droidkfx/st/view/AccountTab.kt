@@ -17,22 +17,28 @@ abstract class AccountTab(
 
     init {
         logger.trace { "Initializing" }
+        val saveAllocationsButton = JButton("Save Allocations").apply {
+            isEnabled = false
+            addCoActionListener {
+                saveAccountPositions()
+                SwingUtilities.invokeLater { isEnabled = false }
+            }
+            allocations.addSwingListener {
+                isEnabled = true
+            }
+        }
+
         add(
             JPanel(
                 FlowLayout().apply { alignment = FlowLayout.LEFT }).apply {
-                add(JButton("Save Allocations").apply {
-                    isEnabled = false
-                    addCoActionListener {
-                        saveAccountPositions()
-                        SwingUtilities.invokeLater { isEnabled = false }
-                    }
-                    allocations.addSwingListener {
-                        isEnabled = true
-                    }
-                })
+                add(saveAllocationsButton)
             }, BorderLayout.NORTH
         )
-        add(AllocationTable(allocations), BorderLayout.CENTER)
+        add(AllocationTable(allocations).apply {
+            addTableModelListener {
+                saveAllocationsButton.isEnabled = true
+            }
+        }, BorderLayout.CENTER)
     }
 
     abstract suspend fun saveAccountPositions()

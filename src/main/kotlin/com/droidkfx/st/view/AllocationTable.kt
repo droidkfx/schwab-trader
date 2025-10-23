@@ -10,16 +10,23 @@ import kotlinx.coroutines.launch
 import javax.swing.JScrollPane
 import javax.swing.JTable
 import javax.swing.SwingUtilities
+import javax.swing.event.TableModelListener
 
 abstract class AllocationTable(data: ReadOnlyListDataBinding<AllocationRowViewModel>) : JScrollPane() {
     private val logger = KotlinLogging.logger {}
 
+    private val allocationTableModel: AllocationTableModel = AllocationTableModel(data, ::addNewRow)
+
     init {
         logger.trace { "Initializing" }
         setViewportView(
-            JTable(AllocationTableModel(data, ::addNewRow)).apply {
+            JTable(allocationTableModel).apply {
                 autoCreateRowSorter = true
             })
+    }
+
+    fun addTableModelListener(l: TableModelListener) {
+        allocationTableModel.addTableModelListener(l)
     }
 
     abstract suspend fun addNewRow(newRow: AllocationRowViewModel)
@@ -43,7 +50,11 @@ private class AllocationTableModel(
     }
 
     override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
-        return (rowIndex >= super.rowCount) && super.isColumnEditable(columnIndex)
+        return if (rowIndex >= super.rowCount) {
+            super.isColumnEditable(columnIndex)
+        } else {
+            super.isCellEditable(rowIndex, columnIndex)
+        }
     }
 
     override fun setValueAt(value: Any?, rowIndex: Int, columnIndex: Int) {

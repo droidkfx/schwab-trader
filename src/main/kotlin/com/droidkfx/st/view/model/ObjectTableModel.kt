@@ -159,6 +159,7 @@ open class ObjectTableModel<T>(
             return
         }
         setValueOn(data[rowIndex], columnIndex, value)
+        super.fireTableCellUpdated(rowIndex, columnIndex)
     }
 
     override fun getRowCount(): Int = data.size

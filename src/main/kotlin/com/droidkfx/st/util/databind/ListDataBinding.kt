@@ -1,11 +1,12 @@
 package com.droidkfx.st.util.databind
 
-interface ReadOnlyListDataBinding<T> : List<T> {
+interface ListDataBinding<T> {
     fun addListener(listener: (ListDataBindingEvent<T>) -> Unit)
 }
 
-interface ReadWriteListDataBinding<T> : MutableList<T> {
-}
+interface ReadOnlyListDataBinding<T> : List<T>, ListDataBinding<T>
+
+interface ReadWriteListDataBinding<T> : MutableList<T>, ListDataBinding<T>
 
 enum class ListDataBindingEventType {
     ADD, REMOVE, UPDATE

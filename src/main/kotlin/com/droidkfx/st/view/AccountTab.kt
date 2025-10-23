@@ -8,6 +8,7 @@ import java.awt.BorderLayout
 import java.awt.FlowLayout
 import javax.swing.JButton
 import javax.swing.JPanel
+import javax.swing.SwingUtilities
 
 abstract class AccountTab(
     allocations: ReadWriteListDataBinding<AllocationRowViewModel>,
@@ -21,7 +22,13 @@ abstract class AccountTab(
                 FlowLayout().apply { alignment = FlowLayout.LEFT }).apply {
                 add(JButton("Save Allocations").apply {
                     isEnabled = false
-                    addCoActionListener { saveAccountPositions() }
+                    addCoActionListener {
+                        saveAccountPositions()
+                        SwingUtilities.invokeLater { isEnabled = false }
+                    }
+                    allocations.addSwingListener {
+                        isEnabled = true
+                    }
                 })
             }, BorderLayout.NORTH
         )

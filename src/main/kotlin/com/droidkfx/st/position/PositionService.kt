@@ -13,4 +13,9 @@ internal class PositionService(private val positionRepository: PositionRepositor
         logger.trace { "updateAccountPositions for account: $accountId" }
         positionRepository.savePositions(accountId, newPositions)
     }
+
+    fun clear() {
+        logger.trace { "clear" }
+        positionRepository.clear()
+    }
 }

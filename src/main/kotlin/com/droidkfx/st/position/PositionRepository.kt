@@ -19,4 +19,9 @@ internal class PositionRepository(configEntity: ConfigEntity) :
         logger.trace { "savePositions" }
         save(accountId, newPositions)
     }
+
+    fun clear() {
+        logger.trace { "clear" }
+        deleteAll()
+    }
 }

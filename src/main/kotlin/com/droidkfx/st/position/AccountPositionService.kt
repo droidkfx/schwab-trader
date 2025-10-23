@@ -26,4 +26,9 @@ class AccountPositionService internal constructor(
         logger.trace { "updateAccountPositions $accountId" }
         positionService.updateAccountPositions(accountId, newPositions)
     }
+
+    fun clear() {
+        logger.trace { "clear" }
+        positionService.clear()
+    }
 }

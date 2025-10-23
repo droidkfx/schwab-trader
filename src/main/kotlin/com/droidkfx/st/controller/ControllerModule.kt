@@ -39,7 +39,13 @@ class ControllerModule(oathModule: OauthModule, accountModule: AccountModule, po
         accountModule.accountService,
         accountData,
         oathModule.oauthService.getTokenStatusBinding()
-    )
+    ) {
+        AccountTab(
+            positionModule.accountPositionService,
+            it.title,
+            it.data
+        )
+    }
 
     val mainController = Main(
         statusBarController = statusBarController,

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Account(
     val id: String,
-    val name: String,
+    var name: String,
     val accountNumber: String,
     val accountNumberHash: String
 )

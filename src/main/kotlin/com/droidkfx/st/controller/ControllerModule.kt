@@ -43,8 +43,8 @@ class ControllerModule(oathModule: OauthModule, accountModule: AccountModule, po
     ) {
         AccountTab(
             positionModule.accountPositionService,
-            it.accountId,
-            it.data
+            accountModule.accountService,
+            it
         )
     }
 

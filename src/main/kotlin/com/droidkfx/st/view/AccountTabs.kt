@@ -29,8 +29,11 @@ abstract class AccountTabs(
     }
 
     private fun buildTabs() {
-        accountTabs.forEach {
-            addTab(it.title, accountTabProvider(it))
+        accountTabs.forEachIndexed { index, it ->
+            addTab(it.account.name, accountTabProvider(it))
+            it.accountNameDataBinding.addSwingListener {
+                setTitleAt(index, it)
+            }
         }
         if (accountTabs.isEmpty()) {
             addTab("Getting Started", JPanel().apply {

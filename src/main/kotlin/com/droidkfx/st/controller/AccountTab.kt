@@ -1,23 +1,32 @@
 package com.droidkfx.st.controller
 
+import com.droidkfx.st.account.AccountService
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.position.PositionTarget
-import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.view.AccountTab
-import com.droidkfx.st.view.model.AllocationRowViewModel
+import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class AccountTab(
     private val accountPositionService: AccountPositionService,
-    private val accountId: String,
-    private val allocations: ReadWriteListDataBinding<AllocationRowViewModel>,
-) : AccountTab(allocations) {
+    private val accountService: AccountService,
+    private val accountTabViewModel: AccountTabViewModel,
+) : AccountTab(accountTabViewModel) {
     private val logger = logger {}
+
+    init {
+        logger.trace { "Initializing" }
+        accountTabViewModel.accountNameDataBinding.addListener {
+            accountService.saveAccount(accountTabViewModel.account)
+        }
+    }
 
     override suspend fun saveAccountPositions() {
         logger.debug { "saveAccountPositions" }
-        accountPositionService.updateAccountPositions(accountId, allocations.map {
-            PositionTarget(it.symbol, it.allocationTarget)
-        })
+        accountPositionService.updateAccountPositions(
+            accountTabViewModel.account.id,
+            accountTabViewModel.data.map {
+                PositionTarget(it.symbol, it.allocationTarget)
+            })
     }
 }

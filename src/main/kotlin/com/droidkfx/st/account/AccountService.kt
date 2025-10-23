@@ -36,4 +36,9 @@ class AccountService(private val accountRepository: AccountRepository, private v
         logger.trace { "clear" }
         accountRepository.clear()
     }
+
+    fun saveAccount(account: Account) {
+        logger.trace { "saveAccount $account" }
+        accountRepository.saveAccount(account)
+    }
 }

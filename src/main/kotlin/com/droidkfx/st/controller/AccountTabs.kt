@@ -22,8 +22,7 @@ class AccountTabs(
 ) : AccountTabs(
     accountData.mapped {
         AccountTabViewModel(
-            it.Account.name,
-            it.Account.id,
+            it.Account,
             it.positionTargets
                 .map { pTarget ->
                     AllocationRowViewModel(pTarget.symbol, pTarget.allocationTarget, 0.0, 0.0, 0.0, "TBD", 0.0)

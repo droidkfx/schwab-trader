@@ -32,7 +32,7 @@ class AccountTab(
 
     override suspend fun refreshData() {
         logger.debug { "refreshData" }
-        val currentPositions = accountPositionService.refreshCurrentAccountPositions(viewModel.account)
+        val currentPositions = accountPositionService.refreshAccountPositions(viewModel.account)
         viewModel.data.forEach { row ->
             currentPositions.positions.firstOrNull {
                 it.symbol == row.symbol

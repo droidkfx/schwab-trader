@@ -32,7 +32,7 @@ class AccountPositionService internal constructor(
         )
     }
 
-    fun refreshCurrentAccountPositions(account: Account): CurrentPositions {
+    fun refreshAccountPositions(account: Account): CurrentPositions {
         logger.trace { "refreshCurrentAccountPositions" }
         return positionService.refreshAccountPositions(account)
     }

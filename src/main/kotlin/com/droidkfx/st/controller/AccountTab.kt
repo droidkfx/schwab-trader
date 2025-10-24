@@ -3,6 +3,7 @@ package com.droidkfx.st.controller
 import com.droidkfx.st.account.AccountService
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.position.PositionTarget
+import com.droidkfx.st.schwab.client.AccountsClient
 import com.droidkfx.st.view.AccountTab
 import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
@@ -10,28 +11,49 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 class AccountTab(
     private val accountPositionService: AccountPositionService,
     private val accountService: AccountService,
-    private val accountTabViewModel: AccountTabViewModel,
-) : AccountTab(accountTabViewModel) {
+    private val accountsClient: AccountsClient,
+    private val viewModel: AccountTabViewModel,
+) : AccountTab(viewModel) {
     private val logger = logger {}
 
     init {
         logger.trace { "Initializing" }
-        accountTabViewModel.accountNameDataBinding.addListener {
-            accountService.saveAccount(accountTabViewModel.account)
+        viewModel.accountNameDataBinding.addListener {
+            accountService.saveAccount(viewModel.account)
         }
     }
 
     override suspend fun saveAccountPositions() {
         logger.debug { "saveAccountPositions" }
         accountPositionService.updateAccountPositions(
-            accountTabViewModel.account.id,
-            accountTabViewModel.data.map {
+            viewModel.account.id,
+            viewModel.data.map {
                 PositionTarget(it.symbol, it.allocationTarget)
             })
     }
 
     override suspend fun refreshData() {
-        TODO("Not yet implemented")
+        logger.debug { "refreshData" }
+        val response = accountsClient.getLinkedAccount(viewModel.account.accountNumberHash, true)
+        viewModel.accountCash.value = response.data?.securitiesAccount?.currentBalances?.cashBalance ?: 0.0
+        viewModel.data.forEach { row ->
+            val position = response.data?.securitiesAccount?.positions?.first {
+                it.instrument.symbol == row.symbol
+            }
+            row.currentShares = position?.totalQuantity ?: 0.0
+            row.currentPrice = position?.marketValue
+                ?.div(row.currentShares.let { if (it == 0.0) 1.0 else it }) ?: 0.0
+        }
+        val totalAllocation = viewModel.data.sumOf { it.currentValue } + viewModel.accountCash.value
+        viewModel.data.forEach {
+            it.currentAllocation = (it.currentValue / totalAllocation) * 100
+            if (it.allocationDelta < 0) {
+                it.tradeAction = "BUY"
+            } else {
+                it.tradeAction = "HOLD"
+            }
+        }
+        println(response)
     }
 
     override suspend fun processOrders() {

@@ -3,12 +3,12 @@ package com.droidkfx.st.controller
 import com.droidkfx.st.account.AccountModule
 import com.droidkfx.st.controller.account.AccountControllerModule
 import com.droidkfx.st.position.PositionModule
-import com.droidkfx.st.schwab.oauth.OauthModule
+import com.droidkfx.st.schwab.SchwabModule
 import com.droidkfx.st.util.databind.toDataBinding
 import com.formdev.flatlaf.FlatDarkLaf
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class ControllerModule(oathModule: OauthModule, accountModule: AccountModule, positionModule: PositionModule) {
+class ControllerModule(schwabModule: SchwabModule, accountModule: AccountModule, positionModule: PositionModule) {
     private val logger = logger {}
 
     init {
@@ -26,24 +26,26 @@ class ControllerModule(oathModule: OauthModule, accountModule: AccountModule, po
         accountData,
     )
 
+    private val oauthService = schwabModule.oauthModule.oauthService
     private val menuBarController = MenuBar(
         positionModule.accountPositionService,
         accountModule.accountService,
-        oathModule.oauthService,
+        oauthService,
         accountControllerModule.manageAccountDialog,
         accountData,
     )
-    private val statusBarController = StatusBar(oathModule.oauthService)
+    private val statusBarController = StatusBar(oauthService)
 
     private val accountTabs = AccountTabs(
         positionModule.accountPositionService,
         accountModule.accountService,
         accountData,
-        oathModule.oauthService.getTokenStatusBinding()
+        oauthService.getTokenStatusBinding()
     ) {
         AccountTab(
             positionModule.accountPositionService,
             accountModule.accountService,
+            schwabModule.clientModule.accountsClient,
             it
         )
     }

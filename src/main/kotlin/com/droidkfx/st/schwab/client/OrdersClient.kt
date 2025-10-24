@@ -11,8 +11,9 @@ import java.time.OffsetDateTime
 class OrdersClient(
     config: SchwabClientConfig,
     client: HttpClient,
-    oathToken: ValueDataBinding<String?> = ValueDataBinding(null)
-) : BaseClient(config, client, oathToken, listOf("trader", "v1")) {
+    oathToken: ValueDataBinding<String?> = ValueDataBinding(null),
+    requestTokenRefresh: ValueDataBinding<Boolean>,
+) : BaseClient(config, client, requestTokenRefresh, oathToken, listOf("trader", "v1")) {
     override val logger: KLogger = logger {}
 
     fun getAccountOrders(

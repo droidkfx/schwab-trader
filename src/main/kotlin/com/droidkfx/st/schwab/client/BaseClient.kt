@@ -7,7 +7,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
+import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpMethod
+import io.ktor.http.URLProtocol
 import io.ktor.http.path
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
@@ -17,6 +19,7 @@ import kotlinx.serialization.json.JsonObject
 abstract class BaseClient(
     protected val config: SchwabClientConfig,
     protected val client: HttpClient,
+    protected val requestTokenRefresh: ValueDataBinding<Boolean>,
     protected val oathToken: ValueDataBinding<String?> = ValueDataBinding(null),
     protected val defaultPathSegments: List<String> = emptyList()
 ) {
@@ -35,19 +38,12 @@ abstract class BaseClient(
         crossinline block: HttpRequestBuilder.() -> Unit = {},
     ) = runBlocking {
         try {
-            val resp = client.request {
-                this.method = method
-                url {
-                    protocol = io.ktor.http.URLProtocol.HTTPS
-                    host = config.baseApiUrl
-                    path(*defaultPathSegments.toTypedArray())
-                }
+            var resp = doRequestInternal(method, block)
 
-                headers.append("Authorization", authorization)
-                headers.append("Accept", "application/json")
-
-                block()
-                logger.trace { "Request: \n${this.method} ${url.buildString()}\n ${this.headers.entries()}\n ${this.body}" }
+            if (resp.status.value == 401) {
+                logger.info { "Unauthorized, attempting token refresh" }
+                requestTokenRefresh.value = !requestTokenRefresh.value
+                resp = doRequestInternal(method, block)
             }
 
             val respBody = resp.body<String>()
@@ -63,6 +59,24 @@ abstract class BaseClient(
         }.also {
             logger.trace { "Response: $it" }
         }
+    }
+
+    protected suspend inline fun doRequestInternal(
+        method: HttpMethod,
+        block: HttpRequestBuilder.() -> Unit
+    ): HttpResponse = client.request {
+        this.method = method
+        url {
+            protocol = URLProtocol.HTTPS
+            host = config.baseApiUrl
+            path(*defaultPathSegments.toTypedArray())
+        }
+
+        headers.append("Authorization", authorization)
+        headers.append("Accept", "application/json")
+
+        block()
+        logger.trace { "Request: \n${this.method} ${url.buildString()}\n ${this.headers.entries()}\n ${this.body}" }
     }
 
     protected inline fun <reified T> get(crossinline block: HttpRequestBuilder.() -> Unit = {}): ApiResponse<T> =

@@ -30,6 +30,10 @@ abstract class AllocationTable(data: ReadOnlyListDataBinding<AllocationRowViewMo
     }
 
     abstract suspend fun addNewRow(newRow: AllocationRowViewModel)
+
+    fun notifyDataChanged() {
+        allocationTableModel.fireTableDataChanged()
+    }
 }
 
 private class AllocationTableModel(

@@ -15,7 +15,8 @@ class OauthService(
     val repo: OauthRepository,
     val client: OauthClient,
     val server: LocalServer,
-    val authToken: ValueDataBinding<String?> = ValueDataBinding(null)
+    val authToken: ValueDataBinding<String?> = ValueDataBinding(null),
+    tokenRefreshSignal: ValueDataBinding<Boolean>
 ) {
     private val logger = logger {}
     private val tokenStatus = ValueDataBinding(OauthStatus.NOT_INITIALIZED)
@@ -24,6 +25,12 @@ class OauthService(
             field = value
             authToken.value = value?.accessToken
         }
+
+    init {
+        tokenRefreshSignal.addListener {
+            refreshToken()
+        }
+    }
 
     fun getStatus(): ReadOnlyValueDataBinding<OauthStatus> = tokenStatus
 
@@ -35,16 +42,7 @@ class OauthService(
         }
         // If existing token is expired, try to refresh it
         if (allowRefresh && existingToken?.expiresAt?.isBefore(Instant.now()) == true) {
-            logger.debug { "token expired, refreshing" }
-            try {
-                existingToken = existingToken?.refreshToken
-                    ?.let { client.refreshOauth(it) }
-                    ?.apply { repo.saveToken(this) }
-            } catch (e: Exception) {
-                logger.error { "Error refreshing token ${e.message}" }
-                repo.deleteToken()
-                existingToken = null
-            }
+            refreshToken()
         }
         // If no existing token, try to obtain one by Oauth
         if (existingToken == null && doInit) {
@@ -64,6 +62,19 @@ class OauthService(
             logger.info { "token is not initialized" }
             tokenStatus.value = OauthStatus.NOT_INITIALIZED
             null
+        }
+    }
+
+    private fun refreshToken() {
+        logger.debug { "refreshToken" }
+        try {
+            existingToken = existingToken?.refreshToken
+                ?.let { client.refreshOauth(it) }
+                ?.apply { repo.saveToken(this) }
+        } catch (e: Exception) {
+            logger.error { "Error refreshing token ${e.message}" }
+            repo.deleteToken()
+            existingToken = null
         }
     }
 

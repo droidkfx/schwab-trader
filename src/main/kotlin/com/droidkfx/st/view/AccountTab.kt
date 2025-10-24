@@ -7,6 +7,7 @@ import java.awt.BorderLayout
 import java.awt.FlowLayout
 import java.awt.event.FocusListener
 import javax.swing.JButton
+import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
 import javax.swing.SwingUtilities
@@ -26,6 +27,11 @@ abstract class AccountTab(
             }
             viewModel.data.addSwingListener {
                 isEnabled = true
+            }
+        }
+        val allocationTable = AllocationTable(viewModel.data).apply {
+            addTableModelListener {
+                saveAllocationsButton.isEnabled = true
             }
         }
 
@@ -51,18 +57,22 @@ abstract class AccountTab(
                 })
                 add(saveAllocationsButton)
                 add(JButton("Refresh Data").apply {
-                    addCoActionListener { refreshData() }
+                    addCoActionListener {
+                        refreshData()
+                        SwingUtilities.invokeLater {
+                            allocationTable.notifyDataChanged()
+                        }
+                    }
                 })
                 add(JButton("Process Orders").apply {
                     addCoActionListener { processOrders() }
                 })
+                add(JLabel("Account Cash: $ ${"%.2f".format(viewModel.accountCash.value)}").apply {
+                    viewModel.accountCash.addSwingListener { text = "Account Cash: $ ${"%.2f".format(it)}" }
+                })
             }, BorderLayout.NORTH
         )
-        add(AllocationTable(viewModel.data).apply {
-            addTableModelListener {
-                saveAllocationsButton.isEnabled = true
-            }
-        }, BorderLayout.CENTER)
+        add(allocationTable, BorderLayout.CENTER)
     }
 
     abstract suspend fun saveAccountPositions()

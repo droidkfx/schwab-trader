@@ -12,6 +12,6 @@ class PositionModule(configModule: ConfigModule, accountModule: AccountModule) {
     }
 
     private val positionRepository = PositionRepository(configModule.configService.getConfig())
-    private val positionService = PositionService(positionRepository)
+    private val positionService = PositionTargetService(positionRepository)
     val accountPositionService = AccountPositionService(accountModule.accountService, positionService)
 }

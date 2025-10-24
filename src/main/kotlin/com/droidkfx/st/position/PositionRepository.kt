@@ -7,7 +7,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 internal class PositionRepository(configEntity: ConfigEntity) :
     FileRepository(
         logger {},
-        "${configEntity.repositoryRoot}/positions"
+        "${configEntity.repositoryRoot}/position/target"
     ) {
 
     fun loadPositions(accountId: String): List<PositionTarget> {

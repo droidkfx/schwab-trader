@@ -2,12 +2,14 @@ package com.droidkfx.st.position
 
 import com.droidkfx.st.account.Account
 import com.droidkfx.st.account.AccountService
+import com.droidkfx.st.strategy.StrategyEngine
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class AccountPositionService internal constructor(
     private val accountService: AccountService,
     private val positionTargetService: PositionTargetService,
-    private val positionService: PositionService
+    private val positionService: PositionService,
+    private val strategyEngine: StrategyEngine
 ) {
     private val logger = logger {}
 
@@ -24,11 +26,12 @@ class AccountPositionService internal constructor(
     fun getAccountPosition(account: Account): AccountPosition {
         logger.trace { "getAccountPosition for account: $account" }
         val currentPositions = positionService.getCachedPositions(account.id)
+        val positionTargets = positionTargetService.getAccountPositionTargets(account.id)
+        val recommendations = strategyEngine.buildRecommendations(
+            currentPositions.positions, positionTargets, currentPositions.accountCash
+        )
         return AccountPosition(
-            account,
-            positionTargetService.getAccountPositionTargets(account.id),
-            currentPositions.positions,
-            currentPositions.accountCash
+            account, positionTargets, currentPositions.positions, recommendations, currentPositions.accountCash
         )
     }
 

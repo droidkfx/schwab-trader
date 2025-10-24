@@ -37,14 +37,15 @@ fun AccountPosition.toAllocationRows(): MutableList<AllocationRowViewModel> {
     val rows = mutableListOf<AllocationRowViewModel>()
     this.positionTargets.map { target ->
         val currentPosition = this.currentPositions.firstOrNull { it.symbol == target.symbol }
+        val currentRecommendation = this.currentRecommendedChanges.firstOrNull { it.symbol == target.symbol }
         AllocationRowViewModel(
             symbol = target.symbol,
             allocationTarget = target.allocationTarget,
             currentShares = currentPosition?.quantity ?: 0.0,
             currentPrice = currentPosition?.lastKnownPrice ?: 0.0,
             currentAllocation = 0.0,
-            tradeAction = "TBD",
-            tradeShares = 0.0
+            tradeAction = currentRecommendation?.recommendation?.name ?: "TBD",
+            tradeShares = currentRecommendation?.quantity ?: 0.0
         )
     }.toCollection(rows)
     val totalValue = rows.sumOf { it.currentValue }

@@ -7,8 +7,8 @@ import com.droidkfx.st.util.databind.ValueDataBinding
 data class AccountTabViewModel(
     val account: Account,
     val data: ReadWriteListDataBinding<AllocationRowViewModel>,
-    val accountNameDataBinding: ValueDataBinding<String> = ValueDataBinding(account.name),
-    val accountCash: ValueDataBinding<Double> = ValueDataBinding(0.0)
+    val accountCash: ValueDataBinding<Double> = ValueDataBinding(0.0),
+    val accountNameDataBinding: ValueDataBinding<String> = ValueDataBinding(account.name)
 ) {
     fun setAccountName(name: String) {
         account.name = name

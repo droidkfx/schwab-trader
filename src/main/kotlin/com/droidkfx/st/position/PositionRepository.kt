@@ -9,13 +9,18 @@ class PositionRepository(configEntity: ConfigEntity) :
         logger {},
         "${configEntity.repositoryRoot}/position/current"
     ) {
-    fun loadPositions(id: String): List<Position> {
+    fun loadPositions(id: String): CurrentPositions {
         logger.trace { "loadPositions for account: $id" }
-        return load(id) ?: emptyList()
+        return load(id) ?: CurrentPositions(0.0, emptyList())
     }
 
     fun clear() {
         logger.trace { "clear" }
         deleteAll()
+    }
+
+    fun savePositions(accountId: String, positions: CurrentPositions) {
+        logger.trace { "savePositions for account: $accountId" }
+        save(accountId, positions)
     }
 }

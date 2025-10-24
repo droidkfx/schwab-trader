@@ -3,7 +3,6 @@ package com.droidkfx.st.controller
 import com.droidkfx.st.account.AccountService
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.position.PositionTarget
-import com.droidkfx.st.schwab.client.AccountsClient
 import com.droidkfx.st.view.AccountTab
 import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
@@ -11,7 +10,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 class AccountTab(
     private val accountPositionService: AccountPositionService,
     private val accountService: AccountService,
-    private val accountsClient: AccountsClient,
     private val viewModel: AccountTabViewModel,
 ) : AccountTab(viewModel) {
     private val logger = logger {}
@@ -34,16 +32,17 @@ class AccountTab(
 
     override suspend fun refreshData() {
         logger.debug { "refreshData" }
-        val response = accountsClient.getLinkedAccount(viewModel.account.accountNumberHash, true)
-        viewModel.accountCash.value = response.data?.securitiesAccount?.currentBalances?.cashBalance ?: 0.0
+        val currentPositions = accountPositionService.refreshCurrentAccountPositions(viewModel.account)
         viewModel.data.forEach { row ->
-            val position = response.data?.securitiesAccount?.positions?.first {
-                it.instrument.symbol == row.symbol
+            currentPositions.positions.firstOrNull {
+                it.symbol == row.symbol
+            }?.apply {
+                row.currentShares = quantity
+                row.currentPrice = lastKnownPrice
             }
-            row.currentShares = position?.totalQuantity ?: 0.0
-            row.currentPrice = position?.marketValue
-                ?.div(row.currentShares.let { if (it == 0.0) 1.0 else it }) ?: 0.0
         }
+        viewModel.accountCash.value = currentPositions.accountCash
+
         val totalAllocation = viewModel.data.sumOf { it.currentValue } + viewModel.accountCash.value
         viewModel.data.forEach {
             it.currentAllocation = (it.currentValue / totalAllocation) * 100
@@ -53,7 +52,6 @@ class AccountTab(
                 it.tradeAction = "HOLD"
             }
         }
-        println(response)
     }
 
     override suspend fun processOrders() {

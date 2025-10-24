@@ -18,8 +18,6 @@ data class AllocationRowViewModel(
     @field:Column(name = "Rec Shares", mapper = DoubleReadTableValueMapper::class, position = 8, editable = false)
     var tradeShares: Double,
 ) {
-
-
     val allocationDelta: Double
         @Column(name = "Delta", mapper = PercentReadTableValueMapper::class, position = 6)
         get() = currentAllocation - allocationTarget

@@ -33,7 +33,7 @@ abstract class ManageAccountsDialog(
 
     private val detailPane = JPanel(BorderLayout())
     private val detailPanelsByAccountName =
-        data.mapped { it.Account.name to AccountPositionDetail(it, ::onPositionSave) }
+        data.mapped { it.account.name to AccountPositionDetail(it, ::onPositionSave) }
 
     init {
         logger.trace { "Initializing" }

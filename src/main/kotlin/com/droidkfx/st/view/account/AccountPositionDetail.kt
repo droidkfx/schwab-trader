@@ -83,10 +83,10 @@ abstract class AccountPositionDetail(acctData: AccountPosition) : JPanel(GridBag
     init {
         logger.trace { "Initializing" }
 
-        addRow("Account Name:", acctData.Account.name, 0)
-        addRow("Account ID:", acctData.Account.id.truncateMiddle(), 1)
-        addRow("Account Number:", acctData.Account.accountNumber, 2)
-        addRow("Account Hash:", acctData.Account.accountNumberHash.truncateMiddle(), 3)
+        addRow("Account Name:", acctData.account.name, 0)
+        addRow("Account ID:", acctData.account.id.truncateMiddle(), 1)
+        addRow("Account Number:", acctData.account.accountNumber, 2)
+        addRow("Account Hash:", acctData.account.accountNumberHash.truncateMiddle(), 3)
 
         val tableModel = AccountPositionRowModel(acctData.positionTargets.map {
             AccountPositionTableModelRow(
@@ -101,7 +101,7 @@ abstract class AccountPositionDetail(acctData: AccountPosition) : JPanel(GridBag
                 isEnabled = false
             }
             addCoActionListener {
-                save(acctData.Account.id, tableModel.data.mapNotNull { it.toPositionTarget() })
+                save(acctData.account.id, tableModel.data.mapNotNull { it.toPositionTarget() })
             }
         }
         tableModel.apply {

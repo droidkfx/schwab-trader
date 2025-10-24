@@ -2,9 +2,10 @@ package com.droidkfx.st.position
 
 import com.droidkfx.st.account.AccountModule
 import com.droidkfx.st.config.ConfigModule
+import com.droidkfx.st.schwab.client.SchwabClientModule
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class PositionModule(configModule: ConfigModule, accountModule: AccountModule) {
+class PositionModule(configModule: ConfigModule, accountModule: AccountModule, clientModule: SchwabClientModule) {
     private val logger = logger {}
 
     init {
@@ -15,7 +16,7 @@ class PositionModule(configModule: ConfigModule, accountModule: AccountModule) {
     private val targetPositionService = PositionTargetService(targetPositionRepository)
 
     private val positionRepository = PositionRepository(configModule.configService.getConfig())
-    private val positionService: PositionService = PositionService(positionRepository)
+    private val positionService: PositionService = PositionService(positionRepository, clientModule.accountsClient)
 
     val accountPositionService =
         AccountPositionService(accountModule.accountService, targetPositionService, positionService)

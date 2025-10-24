@@ -24,7 +24,7 @@ class ManageAccountsDialog internal constructor(
     ) {
         accountPositionService.updateAccountPositionTargets(accountId, newPositions)
 
-        val accountIndex = data.indexOfFirst { it.Account.id == accountId }
+        val accountIndex = data.indexOfFirst { it.account.id == accountId }
         if (accountIndex == -1) {
             logger.error { "Account index not found: $accountIndex" }
         }

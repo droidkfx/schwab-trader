@@ -45,7 +45,6 @@ class ControllerModule(schwabModule: SchwabModule, accountModule: AccountModule,
         AccountTab(
             positionModule.accountPositionService,
             accountModule.accountService,
-            schwabModule.clientModule.accountsClient,
             it
         )
     }

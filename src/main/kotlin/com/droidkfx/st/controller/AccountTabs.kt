@@ -6,6 +6,7 @@ import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.schwab.oauth.OauthStatus
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
+import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.util.databind.toDataBinding
 import com.droidkfx.st.view.AccountTabs
@@ -20,15 +21,25 @@ class AccountTabs(
     oauthData: ReadOnlyValueDataBinding<OauthStatus>,
     accountTabProvider: (AccountTabViewModel) -> AccountTab,
 ) : AccountTabs(
-    accountData.mapped {
+    accountData.mapped { ap ->
         AccountTabViewModel(
-            it.Account,
-            it.positionTargets
+            ap.account,
+            ap.positionTargets
                 .map { pTarget ->
-                    AllocationRowViewModel(pTarget.symbol, pTarget.allocationTarget, 0.0, 0.0, 0.0, "TBD", 0.0)
+                    val currentPosition = ap.currentPositions.firstOrNull { it.symbol == pTarget.symbol }
+                    AllocationRowViewModel(
+                        pTarget.symbol,
+                        pTarget.allocationTarget,
+                        currentPosition?.quantity ?: 0.0,
+                        currentPosition?.lastKnownPrice ?: 0.0,
+                        0.0,
+                        "TBD",
+                        0.0
+                    )
                 }
                 .toMutableList()
-                .toDataBinding()
+                .toDataBinding(),
+            ValueDataBinding(ap.currentCash)
         )
     },
     oauthData.mapped { it == OauthStatus.READY },
@@ -38,7 +49,7 @@ class AccountTabs(
 
     override suspend fun refreshAllAccounts() {
         logger.debug { "refresh" }
-        val accountPositions = accountPositionService.getAccountPositions(accountService.refreshAccounts())
+        val accountPositions = accountPositionService.mapAccountToAccountPosition(accountService.refreshAccounts())
         accountPositions.forEach {
             if (!accountData.contains(it)) {
                 accountData.add(it)

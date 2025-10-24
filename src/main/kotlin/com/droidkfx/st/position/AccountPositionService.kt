@@ -13,18 +13,28 @@ class AccountPositionService internal constructor(
 
     fun getAccountPositions(): List<AccountPosition> {
         logger.trace { "getAccountPositions" }
-        return getAccountPositions(accountService.listAccounts())
+        return mapAccountToAccountPosition(accountService.listAccounts())
     }
 
-    fun getAccountPositions(accounts: List<Account>): List<AccountPosition> {
-        logger.trace { "getAccountPositions" }
-        return accounts.map {
-            AccountPosition(
-                it,
-                positionTargetService.getAccountPositionTargets(it.id),
-                positionService.getCachedPositions(it.id)
-            )
-        }
+    fun mapAccountToAccountPosition(accounts: List<Account>): List<AccountPosition> {
+        logger.trace { "mapAccountToAccountPosition" }
+        return accounts.map(::getAccountPosition)
+    }
+
+    fun getAccountPosition(account: Account): AccountPosition {
+        logger.trace { "getAccountPosition for account: $account" }
+        val currentPositions = positionService.getCachedPositions(account.id)
+        return AccountPosition(
+            account,
+            positionTargetService.getAccountPositionTargets(account.id),
+            currentPositions.positions,
+            currentPositions.accountCash
+        )
+    }
+
+    fun refreshCurrentAccountPositions(account: Account): CurrentPositions {
+        logger.trace { "refreshCurrentAccountPositions" }
+        return positionService.refreshAccountPositions(account)
     }
 
     fun updateAccountPositionTargets(accountId: String, newPositions: List<PositionTarget>) {

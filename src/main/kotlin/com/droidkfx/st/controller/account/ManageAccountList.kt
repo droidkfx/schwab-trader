@@ -14,7 +14,7 @@ internal class ManageAccountList(
     selectedAccountName: ValueDataBinding<String?>,
     val accountData: ReadWriteListDataBinding<AccountPosition>,
 ) :
-    ManageAccountList(selectedAccountName, accountData.mapped { it.Account.name }) {
+    ManageAccountList(selectedAccountName, accountData.mapped { it.account.name }) {
 
     override suspend fun listSelectionChanged(name: String) {
         logger.debug { "listSelectionChanged: $name" }
@@ -23,7 +23,7 @@ internal class ManageAccountList(
 
     override suspend fun refresh() {
         logger.debug { "refresh" }
-        val accountPositions = accountPositionService.getAccountPositions(accountService.refreshAccounts())
+        val accountPositions = accountPositionService.mapAccountToAccountPosition(accountService.refreshAccounts())
         accountPositions.forEach {
             if (!accountData.contains(it)) {
                 accountData.add(it)

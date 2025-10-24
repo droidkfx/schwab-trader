@@ -18,7 +18,7 @@ class AccountControllerModule(
         logger.trace { "Initializing" }
     }
 
-    private val selectedAccountName = ValueDataBinding(accountData.firstOrNull()?.Account?.name)
+    private val selectedAccountName = ValueDataBinding(accountData.firstOrNull()?.account?.name)
 
     private val manageAccountList = ManageAccountList(
         accountService,

@@ -1,6 +1,8 @@
 package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
+import com.droidkfx.st.schwab.oauth.OauthStatus
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
@@ -13,7 +15,8 @@ class OrdersClient(
     client: HttpClient,
     oathToken: ValueDataBinding<String?> = ValueDataBinding(null),
     requestTokenRefresh: ValueDataBinding<Boolean>,
-) : BaseClient(config, client, requestTokenRefresh, oathToken, listOf("trader", "v1")) {
+    oauthTokenStatus: ReadOnlyValueDataBinding<OauthStatus>,
+) : BaseClient(config, client, requestTokenRefresh, oathToken, oauthTokenStatus, listOf("trader", "v1")) {
     override val logger: KLogger = logger {}
 
     fun getAccountOrders(

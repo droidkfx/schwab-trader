@@ -1,6 +1,8 @@
 package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
+import com.droidkfx.st.schwab.oauth.OauthStatus
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
@@ -9,6 +11,7 @@ import io.ktor.client.engine.java.Java
 class SchwabClientModule(
     config: SchwabClientConfig,
     oathAccessToken: ValueDataBinding<String?> = ValueDataBinding(null),
+    oathAccessTokenStatus: ReadOnlyValueDataBinding<OauthStatus>,
     requestRefresh: ValueDataBinding<Boolean>,
 ) {
     private val logger = logger {}
@@ -27,13 +30,15 @@ class SchwabClientModule(
         config = config,
         client = client,
         oathToken = oathAccessToken,
-        requestTokenRefresh = requestRefresh
+        requestTokenRefresh = requestRefresh,
+        oauthTokenStatus = oathAccessTokenStatus,
     )
     val ordersClient = OrdersClient(
         config = config,
         client = client,
         oathToken = oathAccessToken,
-        requestTokenRefresh = requestRefresh
+        requestTokenRefresh = requestRefresh,
+        oauthTokenStatus = oathAccessTokenStatus,
     )
     val transactionsClient = TransactionsClient()
     val userPreferenceClient = UserPreferenceClient()

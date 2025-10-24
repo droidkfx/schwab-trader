@@ -1,6 +1,8 @@
 package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
+import com.droidkfx.st.schwab.oauth.OauthStatus
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
 import io.github.oshai.kotlinlogging.KLogger
 import io.ktor.client.HttpClient
@@ -21,6 +23,7 @@ abstract class BaseClient(
     protected val client: HttpClient,
     protected val requestTokenRefresh: ValueDataBinding<Boolean>,
     protected val oathToken: ValueDataBinding<String?> = ValueDataBinding(null),
+    protected val oauthTokenStatus: ReadOnlyValueDataBinding<OauthStatus>,
     protected val defaultPathSegments: List<String> = emptyList()
 ) {
     protected abstract val logger: KLogger
@@ -37,6 +40,13 @@ abstract class BaseClient(
         method: HttpMethod,
         crossinline block: HttpRequestBuilder.() -> Unit = {},
     ) = runBlocking {
+        if (oauthTokenStatus.value == OauthStatus.EXPIRED) {
+            logger.info { "Oauth token expired, attempting token refresh" }
+            requestTokenRefresh.value = !requestTokenRefresh.value
+        } else if (oauthTokenStatus.value != OauthStatus.READY) {
+            return@runBlocking ApiResponse(error = ErrorResponse(emptyList(), "Oauth token not ready"))
+        }
+
         try {
             var resp = doRequestInternal(method, block)
 

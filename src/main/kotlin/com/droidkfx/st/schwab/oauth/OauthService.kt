@@ -15,11 +15,11 @@ class OauthService(
     val repo: OauthRepository,
     val client: OauthClient,
     val server: LocalServer,
+    val tokenStatus: ValueDataBinding<OauthStatus>,
     val authToken: ValueDataBinding<String?> = ValueDataBinding(null),
     tokenRefreshSignal: ValueDataBinding<Boolean>
 ) {
     private val logger = logger {}
-    private val tokenStatus = ValueDataBinding(OauthStatus.NOT_INITIALIZED)
     private var existingToken: OauthTokenResponse? = obtainAuth(doInit = false, allowRefresh = false)
         set(value) {
             field = value
@@ -32,7 +32,7 @@ class OauthService(
         }
     }
 
-    fun getStatus(): ReadOnlyValueDataBinding<OauthStatus> = tokenStatus
+    fun getStatus(): ReadOnlyValueDataBinding<OauthStatus> = tokenStatus.readOnly()
 
     fun obtainAuth(doInit: Boolean = true, allowRefresh: Boolean = true): OauthTokenResponse? {
         logger.trace { "obtainAuth" }
@@ -50,23 +50,26 @@ class OauthService(
             existingToken = runInitialAuthorization()
                 ?.apply { repo.saveToken(this) }
         }
-        return existingToken?.apply {
-            tokenStatus.value = if (expiresAt?.isAfter(Instant.now()) ?: false) {
-                logger.info { "token is valid" }
-                OauthStatus.READY
-            } else {
-                logger.info { "token is expired" }
-                OauthStatus.EXPIRED
-            }
-        } ?: run {
-            logger.info { "token is not initialized" }
-            tokenStatus.value = OauthStatus.NOT_INITIALIZED
-            null
+        return updateTokenStatus()
+    }
+
+    private fun updateTokenStatus(): OauthTokenResponse? = existingToken?.apply {
+        tokenStatus.value = if (expiresAt?.isAfter(Instant.now()) ?: false) {
+            logger.info { "token is valid" }
+            OauthStatus.READY
+        } else {
+            logger.info { "token is expired" }
+            OauthStatus.EXPIRED
         }
+    } ?: run {
+        logger.info { "token is not initialized" }
+        tokenStatus.value = OauthStatus.NOT_INITIALIZED
+        null
     }
 
     private fun refreshToken() {
         logger.debug { "refreshToken" }
+        tokenStatus.value = OauthStatus.INITIALIZING
         try {
             existingToken = existingToken?.refreshToken
                 ?.let { client.refreshOauth(it) }
@@ -76,6 +79,7 @@ class OauthService(
             repo.deleteToken()
             existingToken = null
         }
+        updateTokenStatus()
     }
 
     fun invalidateOauth() {

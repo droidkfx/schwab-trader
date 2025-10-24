@@ -8,6 +8,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 class OauthModule(
     config: ConfigEntity,
     oauthClient: OauthClient,
+    oauthTokenStatus: ValueDataBinding<OauthStatus>,
     oauthToken: ValueDataBinding<String?>,
     tokenRefreshSignal: ValueDataBinding<Boolean>
 ) {
@@ -19,5 +20,6 @@ class OauthModule(
 
     private val oauthLocalServer = LocalServer(config.schwabConfig.callbackServerConfig)
     private val oauthRepository = OauthRepository(config)
-    val oauthService = OauthService(oauthRepository, oauthClient, oauthLocalServer, oauthToken, tokenRefreshSignal)
+    val oauthService =
+        OauthService(oauthRepository, oauthClient, oauthLocalServer, oauthTokenStatus, oauthToken, tokenRefreshSignal)
 }

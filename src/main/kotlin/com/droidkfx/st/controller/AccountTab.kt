@@ -6,6 +6,7 @@ import com.droidkfx.st.position.PositionTarget
 import com.droidkfx.st.view.AccountTab
 import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import java.math.BigDecimal
 
 class AccountTab(
     private val accountPositionService: AccountPositionService,
@@ -45,8 +46,8 @@ class AccountTab(
 
         val totalAllocation = viewModel.data.sumOf { it.currentValue } + viewModel.accountCash.value
         viewModel.data.forEach {
-            it.currentAllocation = (it.currentValue / totalAllocation) * 100
-            if (it.allocationDelta < 0) {
+            it.currentAllocation = (it.currentValue / totalAllocation) * BigDecimal(100)
+            if (it.allocationDelta < BigDecimal.ZERO) {
                 it.tradeAction = "BUY"
             } else {
                 it.tradeAction = "HOLD"

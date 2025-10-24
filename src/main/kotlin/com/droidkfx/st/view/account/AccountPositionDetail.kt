@@ -7,6 +7,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
+import java.math.BigDecimal
 import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -17,7 +18,7 @@ import javax.swing.table.AbstractTableModel
 
 private class AccountPositionTableModelRow(
     var symbol: String? = null,
-    var allocationTarget: Double? = null
+    var allocationTarget: BigDecimal? = null
 ) {
     fun toPositionTarget() = symbol?.let { symbol ->
         allocationTarget?.let { allocationTarget ->
@@ -55,7 +56,7 @@ private class AccountPositionRowModel(val data: MutableList<AccountPositionTable
         }
         when (columnIndex) {
             0 -> data[rowIndex].symbol = value.toString()
-            1 -> data[rowIndex].allocationTarget = value.toString().toDoubleOrNull() ?: data[rowIndex].allocationTarget
+            1 -> data[rowIndex].allocationTarget = BigDecimal(value.toString()) ?: data[rowIndex].allocationTarget
         }
         if (rowIndex == data.size - 1) {
             data.add(AccountPositionTableModelRow())
@@ -67,7 +68,7 @@ private class AccountPositionRowModel(val data: MutableList<AccountPositionTable
         return when (columnIndex) {
             0 -> data[rowIndex].symbol
             1 -> data[rowIndex].allocationTarget?.let {
-                "%.2f %%".format(it.times(100))
+                "%.2f %%".format(it * BigDecimal(100))
             } ?: ""
 
             else -> null

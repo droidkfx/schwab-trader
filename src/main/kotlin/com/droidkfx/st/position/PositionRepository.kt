@@ -3,6 +3,7 @@ package com.droidkfx.st.position
 import com.droidkfx.st.config.ConfigEntity
 import com.droidkfx.st.util.repository.FileRepository
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import java.math.BigDecimal
 
 class PositionRepository(configEntity: ConfigEntity) :
     FileRepository(
@@ -11,7 +12,7 @@ class PositionRepository(configEntity: ConfigEntity) :
     ) {
     fun loadPositions(id: String): CurrentPositions {
         logger.trace { "loadPositions for account: $id" }
-        return load(id) ?: CurrentPositions(0.0, emptyList())
+        return load(id) ?: CurrentPositions(BigDecimal.ZERO, emptyList())
     }
 
     fun clear() {

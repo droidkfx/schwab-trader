@@ -3,6 +3,7 @@ package com.droidkfx.st.position
 import com.droidkfx.st.account.Account
 import com.droidkfx.st.schwab.client.AccountsClient
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import java.math.BigDecimal
 
 internal class PositionService(
     private val positionRepository: PositionRepository,
@@ -18,7 +19,7 @@ internal class PositionService(
         logger.trace { "refreshAccountPositions for account: ${account.id}" }
         val securitiesAccount = accountClient.getLinkedAccount(account.accountNumberHash, true).data
             ?.securitiesAccount
-        val currentValue = securitiesAccount?.currentBalances?.cashBalance ?: 0.0
+        val currentValue = securitiesAccount?.currentBalances?.cashBalance ?: BigDecimal.ZERO
         val positions = securitiesAccount
             ?.positions
             ?.map {

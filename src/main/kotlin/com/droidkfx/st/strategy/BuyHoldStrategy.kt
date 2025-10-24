@@ -2,16 +2,20 @@ package com.droidkfx.st.strategy
 
 import com.droidkfx.st.position.Position
 import com.droidkfx.st.position.PositionTarget
-import kotlin.math.absoluteValue
+import java.math.BigDecimal
 
 internal class BuyHoldStrategy : StrategyEngine {
 
-    data class PositionProperties(val position: Position, val target: PositionTarget, var delta: Double = 0.0)
+    data class PositionProperties(
+        val position: Position,
+        val target: PositionTarget,
+        var delta: BigDecimal = BigDecimal.ZERO
+    )
 
     override fun buildRecommendations(
         positions: List<Position>,
         allocationTargets: List<PositionTarget>,
-        accountCash: Double
+        accountCash: BigDecimal
     ): List<PositionRecommendation> {
         val positionAllocations = positions
             .mapNotNull {
@@ -21,14 +25,14 @@ internal class BuyHoldStrategy : StrategyEngine {
             }
         val totalManagedValue = positionAllocations.sumOf { it.position.lastKnownValue } + accountCash
         positionAllocations.forEach {
-            val actualAllocation = (it.position.lastKnownValue / totalManagedValue) * 100
+            val actualAllocation = (it.position.lastKnownValue / totalManagedValue) * BigDecimal(100)
             it.delta = actualAllocation - it.target.allocationTarget
         }
 
-        val (onlyBuyAllocations, holdAllocations) = positionAllocations.partition { it.delta < 0 }
-        val totalDelta = onlyBuyAllocations.sumOf { it.delta }.absoluteValue
+        val (onlyBuyAllocations, holdAllocations) = positionAllocations.partition { it.delta < BigDecimal.ZERO }
+        val totalDelta = onlyBuyAllocations.sumOf { it.delta }.abs()
         return onlyBuyAllocations.map {
-            val weigthedDelta = it.delta.absoluteValue / totalDelta
+            val weigthedDelta = it.delta.abs() / totalDelta
             val valueToAllocate = weigthedDelta * accountCash
             val sharesToAllocate = valueToAllocate / it.position.lastKnownPrice
 
@@ -37,6 +41,6 @@ internal class BuyHoldStrategy : StrategyEngine {
                 StrategyAction.BUY,
                 sharesToAllocate
             )
-        } + holdAllocations.map { PositionRecommendation(it.position.symbol, StrategyAction.HOLD, 0.0) }
+        } + holdAllocations.map { PositionRecommendation(it.position.symbol, StrategyAction.HOLD, BigDecimal.ZERO) }
     }
 }

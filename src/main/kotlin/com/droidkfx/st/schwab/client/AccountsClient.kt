@@ -2,12 +2,14 @@ package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
 import com.droidkfx.st.schwab.oauth.OauthStatus
+import com.droidkfx.st.util.KBigDecimal
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
 import kotlinx.serialization.Serializable
+import java.math.BigDecimal
 
 class AccountsClient(
     config: SchwabClientConfig,
@@ -68,35 +70,37 @@ data class LinkedAccountsResponse(
 
         @Serializable
         data class AccountBalance(
-            val accruedInterest: Double = 0.0,
-            val cashBalance: Double = 0.0,
+            val accruedInterest: KBigDecimal = KBigDecimal.ZERO,
+            val cashBalance: KBigDecimal = KBigDecimal.ZERO,
         )
 
         @Serializable
         data class LinkedAccountPosition(
-            val shortQuantity: Double = 0.0,
-            val averagePrice: Double = 0.0,
-            val currentDayProfitLoss: Double = 0.0,
-            val currentDayProfitLossPercentage: Double = 0.0,
-            val longQuantity: Double = 0.0,
-            val settledLongQuantity: Double = 0.0,
-            val settledShortQuantity: Double = 0.0,
-            val agedQuantity: Double = 0.0,
+            val shortQuantity: KBigDecimal = KBigDecimal.ZERO,
+            val averagePrice: KBigDecimal = KBigDecimal.ZERO,
+            val currentDayProfitLoss: KBigDecimal = KBigDecimal.ZERO,
+            val currentDayProfitLossPercentage: KBigDecimal = KBigDecimal.ZERO,
+            val longQuantity: KBigDecimal = KBigDecimal.ZERO,
+            val settledLongQuantity: KBigDecimal = KBigDecimal.ZERO,
+            val settledShortQuantity: KBigDecimal = KBigDecimal.ZERO,
+            val agedQuantity: KBigDecimal = KBigDecimal.ZERO,
             val instrument: AccountPositionInstrument,
-            val marketValue: Double = 0.0,
-            val maintenanceRequirement: Double = 0.0,
-            val averageLongPrice: Double = 0.0,
-            val averageShortPrice: Double = 0.0,
-            val taxLotAverageLongPrice: Double = 0.0,
-            val taxLotAverageShortPrice: Double = 0.0,
-            val longOpenProfitLoss: Double = 0.0,
-            val shortOpenProfitLoss: Double = 0.0,
-            val previousSessionLongQuantity: Double = 0.0,
-            val previousSessionShortQuantity: Double = 0.0,
-            val currentDayCost: Double = 0.0,
+            val marketValue: KBigDecimal = KBigDecimal.ZERO,
+            val maintenanceRequirement: KBigDecimal = KBigDecimal.ZERO,
+            val averageLongPrice: KBigDecimal = KBigDecimal.ZERO,
+            val averageShortPrice: KBigDecimal = KBigDecimal.ZERO,
+            val taxLotAverageLongPrice: KBigDecimal = KBigDecimal.ZERO,
+            val taxLotAverageShortPrice: KBigDecimal = KBigDecimal.ZERO,
+            val longOpenProfitLoss: KBigDecimal = KBigDecimal.ZERO,
+            val shortOpenProfitLoss: KBigDecimal = KBigDecimal.ZERO,
+            val previousSessionLongQuantity: KBigDecimal = KBigDecimal.ZERO,
+            val previousSessionShortQuantity: KBigDecimal = KBigDecimal.ZERO,
+            val currentDayCost: KBigDecimal = KBigDecimal.ZERO,
         ) {
-            val totalQuantity: Double = longQuantity + shortQuantity
-            val totalSettledQuantity: Double = settledLongQuantity + settledShortQuantity
+            val totalQuantity: BigDecimal
+                get() = longQuantity + shortQuantity
+            val totalSettledQuantity: BigDecimal
+                get() = settledLongQuantity + settledShortQuantity
 
 
             @Serializable
@@ -106,7 +110,7 @@ data class LinkedAccountsResponse(
                 val symbol: String = "",
                 val description: String = "",
                 val instrumentId: Int = 0,
-                val netChange: Double = 0.0,
+                val netChange: KBigDecimal = KBigDecimal.ZERO,
             ) {
                 enum class AccountPositionInstrumentType {
                     EQUITY, OPTION, INDEX, MUTUAL_FUND, CASH_EQUIVALENT, FIXED_INCOME, CURRENCY, COLLECTIVE_INVESTMENT

@@ -7,6 +7,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import javax.swing.JScrollPane
 import javax.swing.JTable
 import javax.swing.SwingUtilities
@@ -43,10 +44,13 @@ private class AllocationTableModel(
     ObjectTableModel<AllocationRowViewModel>(data, AllocationRowViewModel::class.java) {
     private var newRow: AllocationRowViewModel = defaultValue()
 
-    fun defaultValue(): AllocationRowViewModel = AllocationRowViewModel("", 0.0, 0.0, 0.0, 0.0, "", 0.0)
+    fun defaultValue(): AllocationRowViewModel = AllocationRowViewModel(
+        "", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+        BigDecimal.ZERO, "", BigDecimal.ZERO
+    )
 
     fun valueSetup(allocationRowViewModel: AllocationRowViewModel): Boolean {
-        return allocationRowViewModel.symbol.isNotEmpty() && allocationRowViewModel.allocationTarget > 0.0
+        return allocationRowViewModel.symbol.isNotEmpty() && allocationRowViewModel.allocationTarget > BigDecimal.ZERO
     }
 
     override fun getRowCount(): Int {

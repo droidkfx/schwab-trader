@@ -2,6 +2,7 @@ package com.droidkfx.st.view.model
 
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import java.math.BigDecimal
 import java.util.Locale.getDefault
 import javax.swing.table.AbstractTableModel
 import kotlin.reflect.KClass
@@ -24,38 +25,38 @@ open class DefaultReadTableValueMapper : ReadWriteTableValueMapper {
     }
 }
 
-open class DoubleReadTableValueMapper(private val format: String = "%.2f") : ReadWriteTableValueMapper {
+open class BigDecimalReadTableValueMapper(private val format: String = "%.2f") : ReadWriteTableValueMapper {
     override fun mapOut(value: Any): String {
-        if (value !is Double) {
+        if (value !is BigDecimal) {
             return ""
         }
-        if (value == 0.0) {
+        if (value == BigDecimal.ZERO) {
             return "-"
         }
         return format.format(value)
     }
 
-    override fun mapIn(value: String): Double {
-        return value.toDoubleOrNull() ?: 0.0
+    override fun mapIn(value: String): BigDecimal {
+        return BigDecimal(value.toDoubleOrNull() ?: 0.0)
     }
 }
 
-class DollarReadTableValueMapper : DoubleReadTableValueMapper() {
+class DollarReadTableValueMapper : BigDecimalReadTableValueMapper() {
     override fun mapOut(value: Any): String {
         return "$ " + super.mapOut(value)
     }
 
-    override fun mapIn(value: String): Double {
+    override fun mapIn(value: String): BigDecimal {
         return super.mapIn(value.replace("$ ", ""))
     }
 }
 
-class PercentReadTableValueMapper : DoubleReadTableValueMapper("%05.2f") {
+class PercentReadTableValueMapper : BigDecimalReadTableValueMapper("%05.2f") {
     override fun mapOut(value: Any): String {
         return super.mapOut(value) + " %"
     }
 
-    override fun mapIn(value: String): Double {
+    override fun mapIn(value: String): BigDecimal {
         return super.mapIn(value.replace(" %", ""))
     }
 }

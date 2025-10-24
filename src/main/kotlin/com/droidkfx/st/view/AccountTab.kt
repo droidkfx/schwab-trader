@@ -56,17 +56,23 @@ abstract class AccountTab(
                     )
                 })
                 add(saveAllocationsButton)
+                val processOrdersButton = JButton("Process Orders").apply {
+                    isEnabled = false
+                    addCoActionListener {
+                        processOrders()
+                    }
+                    addActionListener { isEnabled = false }
+                }
                 add(JButton("Refresh Data").apply {
                     addCoActionListener {
                         refreshData()
                         SwingUtilities.invokeLater {
+                            processOrdersButton.isEnabled = true
                             allocationTable.notifyDataChanged()
                         }
                     }
                 })
-                add(JButton("Process Orders").apply {
-                    addCoActionListener { processOrders() }
-                })
+                add(processOrdersButton)
                 add(JLabel("Account Cash: $ ${"%.2f".format(viewModel.accountCash.value)}").apply {
                     viewModel.accountCash.addSwingListener { text = "Account Cash: $ ${"%.2f".format(it)}" }
                 })

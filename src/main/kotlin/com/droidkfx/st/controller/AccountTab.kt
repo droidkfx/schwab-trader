@@ -25,7 +25,7 @@ class AccountTab(
 
     override suspend fun saveAccountPositions() {
         logger.debug { "saveAccountPositions" }
-        accountPositionService.updateAccountPositions(
+        accountPositionService.updateAccountPositionTargets(
             viewModel.account.id,
             viewModel.data.map {
                 PositionTarget(it.symbol, it.allocationTarget)

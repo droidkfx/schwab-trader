@@ -4,20 +4,14 @@ import com.droidkfx.st.config.ConfigEntity
 import com.droidkfx.st.util.repository.FileRepository
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-internal class PositionRepository(configEntity: ConfigEntity) :
+class PositionRepository(configEntity: ConfigEntity) :
     FileRepository(
         logger {},
-        "${configEntity.repositoryRoot}/position/target"
+        "${configEntity.repositoryRoot}/position/current"
     ) {
-
-    fun loadPositions(accountId: String): List<PositionTarget> {
-        logger.trace { "loadPositions" }
-        return load(accountId) ?: emptyList()
-    }
-
-    fun savePositions(accountId: String, newPositions: List<PositionTarget>) {
-        logger.trace { "savePositions" }
-        save(accountId, newPositions)
+    fun loadPositions(id: String): List<Position> {
+        logger.trace { "loadPositions for account: $id" }
+        return load(id) ?: emptyList()
     }
 
     fun clear() {

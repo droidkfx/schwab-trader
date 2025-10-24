@@ -3,6 +3,7 @@ package com.droidkfx.st.controller.account
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.position.PositionTarget
+import com.droidkfx.st.position.withNewPositionTargets
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.readOnly
@@ -21,14 +22,14 @@ class ManageAccountsDialog internal constructor(
         accountId: String,
         newPositions: List<PositionTarget>
     ) {
-        accountPositionService.updateAccountPositions(accountId, newPositions)
+        accountPositionService.updateAccountPositionTargets(accountId, newPositions)
 
         val accountIndex = data.indexOfFirst { it.Account.id == accountId }
         if (accountIndex == -1) {
             logger.error { "Account index not found: $accountIndex" }
         }
         val originalElement = data[accountIndex]
-        val newElement = AccountPosition(originalElement.Account, newPositions)
+        val newElement = originalElement.withNewPositionTargets(newPositions)
         data[accountIndex] = newElement
     }
 }

@@ -6,7 +6,8 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class AccountPositionService internal constructor(
     private val accountService: AccountService,
-    private val positionService: PositionTargetService
+    private val positionTargetService: PositionTargetService,
+    private val positionService: PositionService
 ) {
     private val logger = logger {}
 
@@ -18,17 +19,22 @@ class AccountPositionService internal constructor(
     fun getAccountPositions(accounts: List<Account>): List<AccountPosition> {
         logger.trace { "getAccountPositions" }
         return accounts.map {
-            AccountPosition(it, positionService.getAccountPositionTargets(it.id))
+            AccountPosition(
+                it,
+                positionTargetService.getAccountPositionTargets(it.id),
+                positionService.getCachedPositions(it.id)
+            )
         }
     }
 
-    fun updateAccountPositions(accountId: String, newPositions: List<PositionTarget>) {
+    fun updateAccountPositionTargets(accountId: String, newPositions: List<PositionTarget>) {
         logger.trace { "updateAccountPositions $accountId" }
-        positionService.updateAccountPositionTargets(accountId, newPositions)
+        positionTargetService.updateAccountPositionTargets(accountId, newPositions)
     }
 
     fun clear() {
         logger.trace { "clear" }
+        positionTargetService.clear()
         positionService.clear()
     }
 }

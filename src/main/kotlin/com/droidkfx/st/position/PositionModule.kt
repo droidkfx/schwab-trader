@@ -11,7 +11,12 @@ class PositionModule(configModule: ConfigModule, accountModule: AccountModule) {
         logger.trace { "Initializing" }
     }
 
+    private val targetPositionRepository = TargetPositionRepository(configModule.configService.getConfig())
+    private val targetPositionService = PositionTargetService(targetPositionRepository)
+
     private val positionRepository = PositionRepository(configModule.configService.getConfig())
-    private val positionService = PositionTargetService(positionRepository)
-    val accountPositionService = AccountPositionService(accountModule.accountService, positionService)
+    private val positionService: PositionService = PositionService(positionRepository)
+
+    val accountPositionService =
+        AccountPositionService(accountModule.accountService, targetPositionService, positionService)
 }

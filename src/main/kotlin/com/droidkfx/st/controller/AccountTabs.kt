@@ -11,7 +11,7 @@ import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.util.databind.toDataBinding
 import com.droidkfx.st.view.AccountTabs
 import com.droidkfx.st.view.model.AccountTabViewModel
-import com.droidkfx.st.view.model.AllocationRowViewModel
+import com.droidkfx.st.view.model.toAllocationRows
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class AccountTabs(
@@ -24,21 +24,7 @@ class AccountTabs(
     accountData.mapped { ap ->
         AccountTabViewModel(
             ap.account,
-            ap.positionTargets
-                .map { pTarget ->
-                    val currentPosition = ap.currentPositions.firstOrNull { it.symbol == pTarget.symbol }
-                    AllocationRowViewModel(
-                        pTarget.symbol,
-                        pTarget.allocationTarget,
-                        currentPosition?.quantity ?: 0.0,
-                        currentPosition?.lastKnownPrice ?: 0.0,
-                        0.0,
-                        "TBD",
-                        0.0
-                    )
-                }
-                .toMutableList()
-                .toDataBinding(),
+            ap.toAllocationRows().toDataBinding(),
             ValueDataBinding(ap.currentCash)
         )
     },

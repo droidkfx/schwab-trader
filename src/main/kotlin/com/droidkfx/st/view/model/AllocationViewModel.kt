@@ -1,5 +1,7 @@
 package com.droidkfx.st.view.model
 
+import com.droidkfx.st.position.AccountPosition
+
 data class AllocationRowViewModel(
     @field:Column(name = "Symbol", position = 0)
     var symbol: String,
@@ -29,4 +31,25 @@ data class AllocationRowViewModel(
     val currentValue: Double
         @Column(name = "Value", mapper = DollarReadTableValueMapper::class, position = 4)
         get() = currentPrice * currentShares
+}
+
+fun AccountPosition.toAllocationRows(): MutableList<AllocationRowViewModel> {
+    val rows = mutableListOf<AllocationRowViewModel>()
+    this.positionTargets.map { target ->
+        val currentPosition = this.currentPositions.firstOrNull { it.symbol == target.symbol }
+        AllocationRowViewModel(
+            symbol = target.symbol,
+            allocationTarget = target.allocationTarget,
+            currentShares = currentPosition?.quantity ?: 0.0,
+            currentPrice = currentPosition?.lastKnownPrice ?: 0.0,
+            currentAllocation = 0.0,
+            tradeAction = "TBD",
+            tradeShares = 0.0
+        )
+    }.toCollection(rows)
+    val totalValue = rows.sumOf { it.currentValue }
+    rows.forEach { row ->
+        row.currentAllocation = (row.currentValue / totalValue) * 100
+    }
+    return rows
 }

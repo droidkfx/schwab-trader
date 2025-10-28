@@ -6,12 +6,9 @@ import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.schwab.oauth.OauthStatus
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
-import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.mapped
-import com.droidkfx.st.util.databind.toDataBinding
 import com.droidkfx.st.view.AccountTabs
 import com.droidkfx.st.view.model.AccountTabViewModel
-import com.droidkfx.st.view.model.toAllocationRows
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class AccountTabs(
@@ -22,11 +19,7 @@ class AccountTabs(
     accountTabProvider: (AccountTabViewModel) -> AccountTab,
 ) : AccountTabs(
     accountData.mapped { ap ->
-        AccountTabViewModel(
-            ap.account,
-            ap.toAllocationRows().toDataBinding(),
-            ValueDataBinding(ap.currentCash)
-        )
+        AccountTabViewModel(ap)
     },
     oauthData.mapped { it == OauthStatus.READY },
     accountTabProvider

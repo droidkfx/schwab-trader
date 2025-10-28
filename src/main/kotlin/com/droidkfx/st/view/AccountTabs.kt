@@ -30,7 +30,7 @@ abstract class AccountTabs(
 
     private fun buildTabs() {
         accountTabs.forEachIndexed { index, it ->
-            addTab(it.account.name, accountTabProvider(it))
+            addTab(it.accountNameDataBinding.value, accountTabProvider(it))
             it.accountNameDataBinding.addSwingListener {
                 setTitleAt(index, it)
             }

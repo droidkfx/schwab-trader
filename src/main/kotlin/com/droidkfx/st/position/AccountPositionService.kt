@@ -35,14 +35,25 @@ class AccountPositionService internal constructor(
         )
     }
 
-    fun refreshAccountPositions(account: Account): CurrentPositions {
+    fun refreshAccountPosition(ap: AccountPosition): AccountPosition {
         logger.trace { "refreshCurrentAccountPositions" }
-        return positionService.refreshAccountPositions(account)
+        val currentPositions = positionService.refreshAccountPositions(ap.account)
+        val newRecommendations = strategyEngine.buildRecommendations(
+            currentPositions.positions,
+            ap.positionTargets,
+            currentPositions.accountCash
+        )
+        return ap.copy(
+            currentPositions = currentPositions.positions,
+            currentRecommendedChanges = newRecommendations,
+            currentCash = currentPositions.accountCash
+        )
     }
 
-    fun updateAccountPositionTargets(accountId: String, newPositions: List<PositionTarget>) {
+    fun updateAccountPositionTargets(accountId: String, newPositions: List<PositionTarget>): AccountPosition {
         logger.trace { "updateAccountPositions $accountId" }
         positionTargetService.updateAccountPositionTargets(accountId, newPositions)
+        return getAccountPosition(accountService.getAccount(accountId))
     }
 
     fun clear() {

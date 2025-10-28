@@ -22,4 +22,9 @@ class AccountRepository(configEntity: ConfigEntity) : FileRepository(
         logger.trace { "clear" }
         deleteAll()
     }
+
+    fun getAccount(accountId: String): Account {
+        logger.trace { "getAccount $accountId" }
+        return load(accountId) ?: throw IllegalArgumentException("Account with id $accountId not found")
+    }
 }

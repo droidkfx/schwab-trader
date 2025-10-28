@@ -24,6 +24,9 @@ abstract class AllocationTable(data: ReadOnlyListDataBinding<AllocationRowViewMo
             JTable(allocationTableModel).apply {
                 autoCreateRowSorter = true
             })
+        data.addSwingListener {
+            notifyDataChanged()
+        }
     }
 
     fun addTableModelListener(l: TableModelListener) {

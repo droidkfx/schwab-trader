@@ -41,4 +41,9 @@ class AccountService(private val accountRepository: AccountRepository, private v
         logger.trace { "saveAccount $account" }
         accountRepository.saveAccount(account)
     }
+
+    fun getAccount(accountId: String): Account {
+        logger.trace { "getAccount $accountId" }
+        return accountRepository.getAccount(accountId)
+    }
 }

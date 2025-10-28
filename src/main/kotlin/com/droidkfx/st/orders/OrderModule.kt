@@ -1,5 +1,7 @@
 package com.droidkfx.st.orders
 
-class OrderModule {
-    val orderService: OrderService = OrderService()
+import com.droidkfx.st.schwab.client.SchwabClientModule
+
+class OrderModule(clientModule: SchwabClientModule) {
+    val orderService: OrderService = OrderService(clientModule.ordersClient)
 }

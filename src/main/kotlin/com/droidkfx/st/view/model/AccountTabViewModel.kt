@@ -2,6 +2,7 @@ package com.droidkfx.st.view.model
 
 import com.droidkfx.st.account.Account
 import com.droidkfx.st.position.AccountPosition
+import com.droidkfx.st.strategy.PositionRecommendation
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.toDataBinding
@@ -24,6 +25,9 @@ data class AccountTabViewModel(
 
     val accountId: String
         get() = account.id
+
+    val recommendations: List<PositionRecommendation>
+        get() = accountPosition.currentRecommendedChanges
 
     fun currentAccountPosition(): AccountPosition = accountPosition.copy()
 

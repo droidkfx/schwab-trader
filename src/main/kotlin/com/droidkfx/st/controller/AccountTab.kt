@@ -44,6 +44,11 @@ class AccountTab(
     }
 
     override suspend fun processOrders() {
+        logger.debug { "processOrders" }
+        val orderPreviews = viewModel.recommendations.map {
+            orderService.previewOrder(viewModel.account, it)
+        }
+        println(orderPreviews)
         TODO("Not yet implemented")
     }
 }

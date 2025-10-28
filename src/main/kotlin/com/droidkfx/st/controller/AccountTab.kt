@@ -1,6 +1,7 @@
 package com.droidkfx.st.controller
 
 import com.droidkfx.st.account.AccountService
+import com.droidkfx.st.orders.OrderService
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.position.PositionTarget
 import com.droidkfx.st.view.AccountTab
@@ -10,6 +11,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 class AccountTab(
     private val accountPositionService: AccountPositionService,
     private val accountService: AccountService,
+    private val orderService: OrderService,
     private val viewModel: AccountTabViewModel,
 ) : AccountTab(viewModel) {
     private val logger = logger {}

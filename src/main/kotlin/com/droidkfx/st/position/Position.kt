@@ -1,6 +1,6 @@
 package com.droidkfx.st.position
 
-import com.droidkfx.st.util.KBigDecimal
+import com.droidkfx.st.util.serialization.KBigDecimal
 import kotlinx.serialization.Serializable
 
 @Serializable

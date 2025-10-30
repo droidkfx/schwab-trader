@@ -2,7 +2,7 @@ package com.droidkfx.st.strategy
 
 import com.droidkfx.st.position.Position
 import com.droidkfx.st.position.PositionTarget
-import com.droidkfx.st.util.KBigDecimal
+import com.droidkfx.st.util.serialization.KBigDecimal
 import java.math.BigDecimal
 
 

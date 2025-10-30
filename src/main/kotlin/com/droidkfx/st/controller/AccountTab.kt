@@ -4,6 +4,7 @@ import com.droidkfx.st.account.AccountService
 import com.droidkfx.st.orders.OrderService
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.position.PositionTarget
+import com.droidkfx.st.strategy.StrategyAction
 import com.droidkfx.st.view.AccountTab
 import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
@@ -45,10 +46,17 @@ class AccountTab(
 
     override suspend fun processOrders() {
         logger.debug { "processOrders" }
-        val orderPreviews = viewModel.recommendations.map {
-            orderService.previewOrder(viewModel.account, it)
-        }
+        val orderPreviews = viewModel.recommendations
+            .filter { it.recommendation != StrategyAction.HOLD }
+            .map {
+                orderService.previewOrder(viewModel.account, it)
+            }
+
+        viewModel.recommendations
+            .filter { it.recommendation != StrategyAction.HOLD }
+            .map {
+                orderService.order(viewModel.account, it)
+            }
         println(orderPreviews)
-        TODO("Not yet implemented")
     }
 }

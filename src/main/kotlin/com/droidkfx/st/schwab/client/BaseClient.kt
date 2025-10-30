@@ -61,7 +61,8 @@ abstract class BaseClient(
 
             respBody = resp.body<String>()
             if (resp.status.value in 200..299) {
-                ApiResponse(json.decodeFromString<T>(respBody))
+                if (T::class == Unit::class) ApiResponse()
+                else ApiResponse(json.decodeFromString<T>(respBody))
             } else if (respBody == "") {
                 ApiResponse(error = ErrorResponse(emptyList(), "${resp.status.value} ${resp.status.description}"))
             } else {

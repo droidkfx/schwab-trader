@@ -3,6 +3,7 @@ package com.droidkfx.st.strategy
 import com.droidkfx.st.position.Position
 import com.droidkfx.st.position.PositionTarget
 import java.math.BigDecimal
+import java.math.RoundingMode
 
 internal class BuyHoldStrategy : StrategyEngine {
 
@@ -34,11 +35,11 @@ internal class BuyHoldStrategy : StrategyEngine {
         return onlyBuyAllocations.map {
             val weigthedDelta = it.delta.abs() / totalDelta
             val valueToAllocate = weigthedDelta * accountCash
-            val sharesToAllocate = valueToAllocate / it.position.lastKnownPrice
+            val sharesToAllocate = (valueToAllocate / it.position.lastKnownPrice).setScale(0, RoundingMode.FLOOR)
 
             PositionRecommendation(
                 it.position.symbol,
-                StrategyAction.BUY,
+                if (sharesToAllocate == BigDecimal.ZERO) StrategyAction.HOLD else StrategyAction.BUY,
                 sharesToAllocate
             )
         } + holdAllocations.map { PositionRecommendation(it.position.symbol, StrategyAction.HOLD, BigDecimal.ZERO) }

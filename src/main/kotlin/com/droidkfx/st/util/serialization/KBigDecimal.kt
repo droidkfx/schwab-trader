@@ -1,4 +1,4 @@
-package com.droidkfx.st.util
+package com.droidkfx.st.util.serialization
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer

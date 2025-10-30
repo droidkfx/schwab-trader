@@ -7,6 +7,9 @@ import com.droidkfx.st.util.databind.ValueDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.java.Java
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 
 class SchwabClientModule(
     config: SchwabClientConfig,
@@ -20,7 +23,15 @@ class SchwabClientModule(
         logger.trace { "Initializing" }
     }
 
-    private val client = HttpClient(Java)
+    private val client = HttpClient(Java) {
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+                isLenient = true
+                coerceInputValues = true
+            })
+        }
+    }
 
     val oathClient = OauthClient(
         config = config,

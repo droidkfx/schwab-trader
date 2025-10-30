@@ -10,8 +10,10 @@ import io.ktor.client.call.body
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.URLProtocol
+import io.ktor.http.contentType
 import io.ktor.http.path
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
@@ -47,6 +49,7 @@ abstract class BaseClient(
             return@runBlocking ApiResponse(error = ErrorResponse(emptyList(), "Oauth token not ready"))
         }
 
+        var respBody: String? = null
         try {
             var resp = doRequestInternal(method, block)
 
@@ -56,7 +59,7 @@ abstract class BaseClient(
                 resp = doRequestInternal(method, block)
             }
 
-            val respBody = resp.body<String>()
+            respBody = resp.body<String>()
             if (resp.status.value in 200..299) {
                 ApiResponse(json.decodeFromString<T>(respBody))
             } else if (respBody == "") {
@@ -65,6 +68,8 @@ abstract class BaseClient(
                 ApiResponse(error = json.decodeFromString(respBody))
             }
         } catch (e: Exception) {
+            logger.error(e) { "Error making request" }
+            logger.error { "Response body: $respBody" }
             ApiResponse(error = ErrorResponse(emptyList(), e.message ?: "Unknown error"))
         }.also {
             logger.trace { "Response: $it" }
@@ -92,11 +97,28 @@ abstract class BaseClient(
     protected inline fun <reified T> get(crossinline block: HttpRequestBuilder.() -> Unit = {}): ApiResponse<T> =
         request(HttpMethod.Get, block)
 
+    protected inline fun <reified T> post(crossinline block: HttpRequestBuilder.() -> Unit = {}): ApiResponse<T> =
+        request(HttpMethod.Post) {
+            contentType(ContentType.Application.Json)
+            block()
+        }
+
     protected inline fun <reified T> getAt(
         vararg segments: String = emptyArray(),
         crossinline block: HttpRequestBuilder.() -> Unit = {}
     ): ApiResponse<T> =
         get {
+            url {
+                path(*defaultPathSegments.toTypedArray(), *segments)
+            }
+            block()
+        }
+
+    protected inline fun <reified T> postAt(
+        vararg segments: String = emptyArray(),
+        crossinline block: HttpRequestBuilder.() -> Unit = {}
+    ): ApiResponse<T> =
+        post {
             url {
                 path(*defaultPathSegments.toTypedArray(), *segments)
             }

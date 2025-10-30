@@ -27,6 +27,10 @@ dependencies {
     implementation("io.ktor:ktor-server-core:${properties["ktor_version"]}")
     implementation("io.ktor:ktor-server-netty:${properties["ktor_version"]}")
     implementation("io.ktor:ktor-server-html-builder:${properties["ktor_version"]}")
+    implementation("io.ktor:ktor-server-content-negotiation:${properties["ktor_version"]}")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:${properties["ktor_version"]}")
+    implementation("io.ktor:ktor-client-content-negotiation:3.2.3")
+    implementation("io.ktor:ktor-serialization-jackson:3.2.3")
 
     testImplementation(kotlin("test"))
 }

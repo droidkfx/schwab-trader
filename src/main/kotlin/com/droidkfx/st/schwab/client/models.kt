@@ -287,7 +287,6 @@ data class PreviewOrder(
 
 @Serializable
 data class OrderActivity(
-    // TODO why is this not documented as such?
     val activityType: Activity? = null,
     val executionType: String? = null,
     val quantity: KBigDecimal? = null,
@@ -351,17 +350,13 @@ data class ServiceError(
 
 @Serializable
 data class OrderLegCollection(
-    // TODO why is this not documented as such?
     val orderLegType: OrderLegType? = null,
     val legId: Int? = null,
     val instrument: TransactionInstrument? = null,
     val instruction: Instruction? = null,
-    // TODO why is this not documented as such?
     val positionEffect: PositionEffect? = null,
     val quantity: KBigDecimal? = null,
-    // TODO why is this not documented as such?
     val quantityType: QuantityType? = null,
-    // TODO why is this not documented as such?
     val divCapGains: DivCapGains? = null,
     val toSymbol: String? = null,
 ) {
@@ -386,7 +381,6 @@ typealias SecuritiesAccount = SecuritiesAccountBase
 
 @Serializable
 sealed class SecuritiesAccountBase {
-    //    abstract val type: Type?
     abstract val accountNumber: String?
     abstract val roundTrips: Int?
     abstract val isDayTrader: Boolean?
@@ -403,7 +397,6 @@ sealed class SecuritiesAccountBase {
 @Serializable
 @SerialName("MARGIN")
 class MarginAccount(
-//    override val type: Type = Type.MARGIN,
     override val accountNumber: String? = null,
     override val roundTrips: Int? = null,
     override val isDayTrader: Boolean? = null,
@@ -478,7 +471,6 @@ data class MarginBalance(
 @Serializable
 @SerialName("CASH")
 class CashAccount(
-//    override val type: Type = Type.CASH,
     override val accountNumber: String? = null,
     override val roundTrips: Int? = null,
     override val isDayTrader: Boolean? = null,
@@ -527,7 +519,6 @@ data class CashBalance(
 @Serializable
 @JsonClassDiscriminator("assetType")
 sealed class TransactionBaseInstrument {
-    //    abstract val assetType: AssetType?
     abstract val cusip: String?
     abstract val symbol: String?
     abstract val description: String?
@@ -539,7 +530,6 @@ sealed class TransactionBaseInstrument {
 @Serializable
 @JsonClassDiscriminator("assetType")
 sealed class AccountsBaseInstrument() {
-    //    abstract val assetType: AssetType?
     abstract val cusip: String?
     abstract val symbol: String?
     abstract val description: String?
@@ -547,14 +537,11 @@ sealed class AccountsBaseInstrument() {
     abstract val netChange: KBigDecimal?
 }
 
-//typealias AccountsInstrument = TransactionBaseInstrument
 typealias TransactionInstrument = TransactionBaseInstrument
 
 @Serializable
 @SerialName("CASH_EQUIVALENT")
 class TransactionCashEquivalent(
-//    @Transient
-//    override val assetType: AssetType = AssetType.CASH_EQUIVALENT,
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
@@ -570,8 +557,6 @@ class TransactionCashEquivalent(
 @Serializable
 @SerialName("COLLECTIVE_INVESTMENT")
 class CollectiveInvestment(
-//    @Transient
-//    override val assetType: AssetType = AssetType.COLLECTIVE_INVESTMENT,
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
@@ -596,8 +581,6 @@ enum class AssetType {
 @Serializable
 @SerialName("CURRENCY")
 class Currency(
-//    @Transient
-//    override val assetType: AssetType = AssetType.CURRENCY,
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
@@ -608,8 +591,6 @@ class Currency(
 @Serializable
 @SerialName("EQUITY")
 class TransactionEquity(
-//    @Transient
-//    override val assetType: AssetType = AssetType.EQUITY,
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
@@ -625,8 +606,6 @@ class TransactionEquity(
 @Serializable
 @SerialName("FIXED_INCOME")
 class TransactionFixedIncome(
-//    @Transient
-//    override val assetType: AssetType = AssetType.FIXED_INCOME,
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
@@ -646,8 +625,6 @@ class TransactionFixedIncome(
 @Serializable
 @SerialName("FOREX")
 class Forex(
-//    @Transient
-//    override val assetType: AssetType = AssetType.FOREX,
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
@@ -686,8 +663,6 @@ class Forex(
 @Serializable
 @SerialName("MUTUAL_FUND")
 class TransactionMutualFund(
-//    @Transient
-//    override val assetType: AssetType = AssetType.MUTUAL_FUND,
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
@@ -706,23 +681,36 @@ class TransactionMutualFund(
     }
 }
 
-// TODO this is complicated
-//@Serializable
-//@SerialName("OPTION")
-//class TransactionOption(
-//    override val assetType: AssetType = AssetType.OPTION,
-//    override val cusip: String? = null,
-//    override val symbol: String? = null,
-//    override val description: String? = null,
-//    override val instrumentId: Int? = null,
-//    override val netChange: KBigDecimal? = null,
-//) : TransactionBaseInstrument()
+@Serializable
+@SerialName("OPTION")
+class TransactionOption(
+    override val cusip: String? = null,
+    override val symbol: String? = null,
+    override val description: String? = null,
+    override val instrumentId: Int? = null,
+    override val netChange: KBigDecimal? = null,
+    val expirationDate: KInstant? = null,
+    val optionDeliverables: TransactionAPIOptionDeliverable? = null,
+    val optionPremiumMultiplier: Int? = null,
+    val putCall: PutCall? = null,
+    val strikePrice: KBigDecimal? = null,
+    val type: Type? = null,
+    val underlyingSymbol: String? = null,
+    val underlyingCusip: String? = null,
+    val deliverable: TransactionInstrument? = null,
+) : TransactionBaseInstrument() {
+    enum class PutCall {
+        PUT, CALL, UNKNOWN
+    }
+
+    enum class Type {
+        VANILLA, BINARY, BARRIER, UNKNOWN
+    }
+}
 
 @Serializable
 @SerialName("PRODUCT")
 class Product(
-//    @Transient
-//    override val assetType: AssetType = AssetType.PRODUCT,
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
@@ -734,64 +722,6 @@ class Product(
         TBD, UNKNOWN
     }
 }
-
-//@Serializable
-//@SerialName("CASH_EQUIVALENT")
-//class AccountCashEquivalent(
-////    @Transient
-////    override val assetType: AssetType = AssetType.CASH_EQUIVALENT,
-//    override val cusip: String? = null,
-//    override val symbol: String? = null,
-//    override val description: String? = null,
-//    override val instrumentId: Int? = null,
-//    override val netChange: KBigDecimal? = null,
-//) : AccountsBaseInstrument()
-//
-//@Serializable
-//@SerialName("EQUITY")
-//class AccountEquity(
-////    @Transient
-////    override val assetType: AssetType = AssetType.EQUITY,
-//    override val cusip: String? = null,
-//    override val symbol: String? = null,
-//    override val description: String? = null,
-//    override val instrumentId: Int? = null,
-//    override val netChange: KBigDecimal? = null,
-//) : AccountsBaseInstrument()
-//
-//@Serializable
-//@SerialName("FIXED_INCOME")
-//class AccountFixedIncome(
-////    @Transient
-////    override val assetType: AssetType = AssetType.FIXED_INCOME,
-//    override val cusip: String? = null,
-//    override val symbol: String? = null,
-//    override val description: String? = null,
-//    override val instrumentId: Int? = null,
-//    override val netChange: KBigDecimal? = null,
-//) : AccountsBaseInstrument()
-//
-//@Serializable
-//@SerialName("MUTUAL_FUND")
-//class AccountMutualFund(
-////    @Transient
-////    override val assetType: AssetType = AssetType.MUTUAL_FUND,
-//    override val cusip: String? = null,
-//    override val symbol: String? = null,
-//    override val description: String? = null,
-//    override val instrumentId: Int? = null,
-//    override val netChange: KBigDecimal? = null,
-//) : AccountsBaseInstrument()
-
-//@Serializable
-//class AccountOption(
-//    override val assetType: AssetType = AssetType.OPTION,
-//    override val cusip: String? = null,
-//    override val symbol: String? = null,
-//    override val description: String? = null,
-//    override val instrumentId: Int? = null,
-//    override val netChange: KBigDecimal? = null,
-//) : AccountsBaseInstrument()
 
 @Serializable
 data class AccountAPIOptionDeliverable(

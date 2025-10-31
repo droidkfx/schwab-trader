@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "2.2.0"
     kotlin("plugin.serialization") version "2.2.20"
+    id("jacoco")
 //    id("dev.msfjarvis.tracelog") version "0.1.3"
 }
 
@@ -37,8 +38,23 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter:${properties["junit_version"]}")
 }
 
+tasks.build {
+    dependsOn("jacocoTestReport")
+}
+
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.jacocoTestReport {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+//        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+    }
+    finalizedBy("jacocoTestCoverageVerification")
 }
 
 kotlin {

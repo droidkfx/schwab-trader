@@ -29,10 +29,12 @@ dependencies {
     implementation("io.ktor:ktor-server-html-builder:${properties["ktor_version"]}")
     implementation("io.ktor:ktor-server-content-negotiation:${properties["ktor_version"]}")
     implementation("io.ktor:ktor-serialization-kotlinx-json:${properties["ktor_version"]}")
-    implementation("io.ktor:ktor-client-content-negotiation:3.2.3")
-    implementation("io.ktor:ktor-serialization-jackson:3.2.3")
+    implementation("io.ktor:ktor-client-content-negotiation:${properties["ktor_version"]}")
+    implementation("io.ktor:ktor-serialization-jackson:${properties["ktor_version"]}")
 
     testImplementation(kotlin("test"))
+    testImplementation("org.junit.jupiter:junit-jupiter:${properties["junit_version"]}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter:${properties["junit_version"]}")
 }
 
 tasks.test {

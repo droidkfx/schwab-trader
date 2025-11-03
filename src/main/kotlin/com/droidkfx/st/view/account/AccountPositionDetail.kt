@@ -68,7 +68,7 @@ private class AccountPositionRowModel(val data: MutableList<AccountPositionTable
         return when (columnIndex) {
             0 -> data[rowIndex].symbol
             1 -> data[rowIndex].allocationTarget?.let {
-                "%.2f %%".format(it * BigDecimal(100))
+                "%.2f %%".format(it)
             } ?: ""
 
             else -> null

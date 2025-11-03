@@ -38,6 +38,16 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter:${properties["junit_version"]}")
 }
 
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "com.droidkfx.st.MainKt"
+    }
+    configurations["compileClasspath"].forEach { file: File ->
+        from(zipTree(file.absoluteFile))
+    }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+}
+
 tasks.build {
     dependsOn("jacocoTestReport")
 }

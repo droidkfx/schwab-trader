@@ -40,7 +40,7 @@ abstract class FileRepository(protected val logger: KLogger, protected val rootP
         return file.inputStream().use {
             json.decodeFromStream<T>(it)
         }.also {
-            logger.debug { "${T::class} loaded" }
+            logger.debug { "${T::class.simpleName} loaded from file: ${file.nameWithoutExtension}" }
         }
     }
 

@@ -63,7 +63,7 @@ class ModelsSerializationTest {
     @Test
     fun orderLegCollection_roundTrip() = assertRoundTrip(sampleOrderLegCollection())
 
-    // Securities account sealed hierarchy
+    // Securities' account sealed hierarchy
     @Test
     fun marginAccount_roundTrip() = assertRoundTrip(sampleMarginAccount())
     @Test
@@ -181,7 +181,7 @@ class EmptyModelsSerializationTest {
     @Test
     fun empty_orderLegCollection_roundTrip() = assertEmptyRoundTrip<OrderLegCollection>()
 
-    // Securities account sealed hierarchy
+    // Securities' account sealed hierarchy
     @Test
     fun empty_marginAccount_roundTrip() = assertEmptyRoundTrip<MarginAccount>()
     @Test

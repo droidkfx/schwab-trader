@@ -72,7 +72,7 @@ class AccountRepositoryTest {
         assertNotNull(remaining)
         assertTrue(remaining.isEmpty())
 
-        // Also ensure directory exists but is empty of json files
+        // Also, ensure a directory exists but is empty of JSON files
         val acctDir = tempRoot.resolve("account").toFile()
         val jsonFiles = acctDir.listFiles { _, name -> name.endsWith(".json") }
         assertTrue(jsonFiles == null || jsonFiles.isEmpty())

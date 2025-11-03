@@ -54,12 +54,18 @@ class OauthClient(
             }
             val body = StringBuilder()
             body.append("grant_type=${grantType}")
-            if (grantType == "authorization_code") {
-                body.append("&code=${token}&redirect_uri=${config.callbackServerConfig.url()}")
-            } else if (grantType == "refresh_token") {
-                body.append("&refresh_token=${token}")
-            } else {
-                throw IllegalArgumentException("Unsupported grant type: $grantType")
+            when (grantType) {
+                "authorization_code" -> {
+                    body.append("&code=${token}&redirect_uri=${config.callbackServerConfig.url()}")
+                }
+
+                "refresh_token" -> {
+                    body.append("&refresh_token=${token}")
+                }
+
+                else -> {
+                    throw IllegalArgumentException("Unsupported grant type: $grantType")
+                }
             }
 
             setBody(body.toString())

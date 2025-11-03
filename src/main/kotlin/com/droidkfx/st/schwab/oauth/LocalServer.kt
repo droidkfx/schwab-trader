@@ -52,7 +52,7 @@ class LocalServer(
                     val error = call.request.queryParameters["error"]
                     val state = call.request.queryParameters["state"]
 
-                    // Show a simple page to user
+                    // Show a simple page to the user
                     call.respondHtml(HttpStatusCode.OK) {
                         head {
                             title {

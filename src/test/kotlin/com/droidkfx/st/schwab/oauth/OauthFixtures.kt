@@ -8,7 +8,7 @@ fun defaultOauthTokenResponse(
     scope: String = "openid",
     refreshToken: String = "refresh-token",
     accessToken: String = "access-token",
-    // middle segment must be standard base64 decodable JSON with an "exp" claim
+    // the middle segment must be standard base64 decodable JSON with an "exp" claim
     idToken: String = "header.eyJleHAiOjIwMDAwMDAwMH0.signature",
 ): OauthTokenResponse = OauthTokenResponse(
     expiresIn = expiresIn,

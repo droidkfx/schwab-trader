@@ -6,8 +6,8 @@ import com.droidkfx.st.position.PositionTarget
 import com.droidkfx.st.util.databind.ReadOnlyListDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.mapped
-import com.droidkfx.st.view.GoldenRatioSize
 import com.droidkfx.st.view.addSwingListener
+import com.droidkfx.st.view.goldenRatioSize
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.BorderLayout
 import java.awt.Frame
@@ -37,7 +37,7 @@ abstract class ManageAccountsDialog(
 
     init {
         logger.trace { "Initializing" }
-        minimumSize = GoldenRatioSize(500)
+        minimumSize = goldenRatioSize(500)
 
         selectedAccountName.addSwingListener { setAccountByName(it) }
         data.addSwingListener { list ->

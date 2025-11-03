@@ -33,7 +33,7 @@ object BigDecimalSerializer : KSerializer<BigDecimal> {
     /**
      * If encoding JSON uses [JsonUnquotedLiteral] to encode the exact [BigDecimal] value.
      *
-     * Otherwise, [value] is encoded using encodes using [Encoder.encodeString].
+     * Otherwise, [value] is encoded using [Encoder.encodeString].
      */
     override fun serialize(encoder: Encoder, value: BigDecimal) =
         when (encoder) {

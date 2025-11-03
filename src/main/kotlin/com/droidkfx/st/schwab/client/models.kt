@@ -2,8 +2,8 @@
 
 package com.droidkfx.st.schwab.client
 
-import KInstant
 import com.droidkfx.st.util.serialization.KBigDecimal
+import com.droidkfx.st.util.serialization.KInstant
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

@@ -3,6 +3,7 @@ package com.droidkfx.st.view.model
 import com.droidkfx.st.position.AccountPosition
 import java.math.BigDecimal
 
+@Suppress("unused")
 data class AllocationRowViewModel(
     @field:Column(name = "Symbol", position = 0)
     var symbol: String,

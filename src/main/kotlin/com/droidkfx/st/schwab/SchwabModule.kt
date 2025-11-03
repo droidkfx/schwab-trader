@@ -17,7 +17,7 @@ class SchwabModule(configModule: ConfigModule) {
     val oauthTokenBinding = ValueDataBinding<String?>(null)
     val oauthTokenStatus = ValueDataBinding(OauthStatus.NOT_INITIALIZED)
     val tokenRefreshSignal = ValueDataBinding(false)
-    private lateinit var requestRefresh: () -> Unit
+
     val clientModule = SchwabClientModule(
         configModule.configService.getConfig().schwabConfig,
         oauthTokenBinding,

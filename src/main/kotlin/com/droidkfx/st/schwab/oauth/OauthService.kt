@@ -36,15 +36,15 @@ class OauthService(
 
     fun obtainAuth(doInit: Boolean = true, allowRefresh: Boolean = true): OauthTokenResponse? {
         logger.trace { "obtainAuth" }
-        // Load existing token from file
+        // Load existing token from the file
         if (existingToken == null) {
             existingToken = repo.loadExistingToken()
         }
-        // If existing token is expired, try to refresh it
+        // If an existing token is expired, try to refresh it
         if (allowRefresh && existingToken?.expiresAt?.isBefore(Instant.now()) == true) {
             refreshToken()
         }
-        // If no existing token, try to obtain one by Oauth
+        // If no existing token, try to get one by Oauth
         if (existingToken == null && doInit) {
             logger.debug { "token found, trying to obtain one" }
             existingToken = runInitialAuthorization()

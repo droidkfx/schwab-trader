@@ -46,7 +46,7 @@ class PositionRepositoryTest {
     fun `loadPositions returns default when missing`() {
         val accountId = "missing"
         val loaded = repository.loadPositions(accountId)
-        assertEquals(CurrentPositions(BigDecimal.ZERO, emptyList<Position>()), loaded)
+        assertEquals(CurrentPositions(BigDecimal.ZERO, emptyList()), loaded)
     }
 
     @Test
@@ -58,8 +58,8 @@ class PositionRepositoryTest {
         repository.clear()
 
         // After clear, both account files should be gone
-        assertEquals(CurrentPositions(BigDecimal.ZERO, emptyList<Position>()), repository.loadPositions("a1"))
-        assertEquals(CurrentPositions(BigDecimal.ZERO, emptyList<Position>()), repository.loadPositions("a2"))
+        assertEquals(CurrentPositions(BigDecimal.ZERO, emptyList()), repository.loadPositions("a1"))
+        assertEquals(CurrentPositions(BigDecimal.ZERO, emptyList()), repository.loadPositions("a2"))
 
         val dir = tempRoot.resolve("position").resolve("current").toFile()
         val jsonFiles = dir.listFiles { _, name -> name.endsWith(".json") }

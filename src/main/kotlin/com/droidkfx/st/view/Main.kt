@@ -28,7 +28,7 @@ abstract class Main(
             logger.warn { "No icon found @ 'AppIcon.png'" }
         }
         this.apply {
-            size = GoldenRatioSize(800)
+            size = goldenRatioSize(800)
             minimumSize = size
             defaultCloseOperation = EXIT_ON_CLOSE
 

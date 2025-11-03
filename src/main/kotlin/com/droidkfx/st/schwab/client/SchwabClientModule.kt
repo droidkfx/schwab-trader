@@ -51,6 +51,12 @@ class SchwabClientModule(
         requestTokenRefresh = requestRefresh,
         oauthTokenStatus = oathAccessTokenStatus,
     )
-    val transactionsClient = TransactionsClient()
+    val transactionsClient = TransactionsClient(
+        config = config,
+        client = client,
+        oathToken = oathAccessToken,
+        requestTokenRefresh = requestRefresh,
+        oauthTokenStatus = oathAccessTokenStatus,
+    )
     val userPreferenceClient = UserPreferenceClient()
 }

@@ -7,11 +7,11 @@ import com.droidkfx.st.strategy.PositionRecommendation
 import com.droidkfx.st.strategy.StrategyAction
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
+import com.droidkfx.st.util.serialization.KInstant
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
-import java.time.OffsetDateTime
 
 class OrdersClient(
     config: SchwabClientConfig,
@@ -24,15 +24,15 @@ class OrdersClient(
 
     fun getAccountOrders(
         accountNumber: String,
-        fromEnteredTime: OffsetDateTime,
-        toEnteredTime: OffsetDateTime,
-        status: String? = null,
+        fromEnteredTime: KInstant,
+        toEnteredTime: KInstant,
+        status: ApiOrderStatus? = null,
         maxResults: Int? = null
     ): ApiResponse<List<Order>> = getAt("accounts", accountNumber, "orders") {
         url {
             parameters["fromEnteredTime"] = fromEnteredTime.toString()
             parameters["toEnteredTime"] = toEnteredTime.toString()
-            status?.let { parameters["status"] = it }
+            status?.let { parameters["status"] = it.toString() }
             maxResults?.let { parameters["maxResults"] = it.toString() }
         }
     }

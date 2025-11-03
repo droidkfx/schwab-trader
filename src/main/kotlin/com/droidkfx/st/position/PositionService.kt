@@ -1,6 +1,7 @@
 package com.droidkfx.st.position
 
 import com.droidkfx.st.account.Account
+import com.droidkfx.st.orders.OrderService
 import com.droidkfx.st.schwab.client.AccountsClient
 import com.droidkfx.st.schwab.client.CashAccount
 import com.droidkfx.st.schwab.client.MarginAccount
@@ -12,6 +13,7 @@ internal class PositionService(
     private val positionRepository: PositionRepository,
     private val accountClient: AccountsClient,
     private val transactionService: TransactionService,
+    private val orderService: OrderService
 ) {
     private val logger = logger {}
     fun getCachedPositions(id: String): CurrentPositions {
@@ -26,10 +28,22 @@ internal class PositionService(
         if (securitiesAccount == null) {
             logger.error { "No securities account found for account: ${account.id}" }
         }
-        val currentValue = when (securitiesAccount) {
+        var currentValue = when (securitiesAccount) {
             is MarginAccount -> securitiesAccount.initialBalances?.cashBalance ?: BigDecimal.ZERO
             is CashAccount -> securitiesAccount.initialBalances?.cashBalance ?: BigDecimal.ZERO
             else -> BigDecimal.ZERO
+        }
+
+        val openOrders = orderService.getOpenOrders(account)
+        openOrders.forEach { order ->
+            logger.warn { "outstanding order: ${order}" }
+        }
+
+        val transactions = transactionService.getTransactionsToday(account)
+        transactions.forEach { transaction ->
+            // they come in as negative
+            logger.debug { "removing funds for transaction: ${transaction.netAmount} ${transaction.transferItems?.map { it.instrument?.symbol }}" }
+            currentValue -= transaction.netAmount?.abs() ?: BigDecimal.ZERO
         }
 
         val positions = securitiesAccount

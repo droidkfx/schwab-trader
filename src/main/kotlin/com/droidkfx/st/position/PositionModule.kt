@@ -2,6 +2,7 @@ package com.droidkfx.st.position
 
 import com.droidkfx.st.account.AccountModule
 import com.droidkfx.st.config.ConfigModule
+import com.droidkfx.st.orders.OrderModule
 import com.droidkfx.st.schwab.client.SchwabClientModule
 import com.droidkfx.st.strategy.StrategyModule
 import com.droidkfx.st.transaction.TransactionModule
@@ -12,6 +13,7 @@ class PositionModule(
     accountModule: AccountModule,
     clientModule: SchwabClientModule,
     strategyModule: StrategyModule,
+    orderModule: OrderModule,
     transactionModule: TransactionModule
 ) {
     private val logger = logger {}
@@ -27,7 +29,8 @@ class PositionModule(
     private val positionService: PositionService = PositionService(
         positionRepository,
         clientModule.accountsClient,
-        transactionModule.transactionService
+        transactionModule.transactionService,
+        orderModule.orderService,
     )
 
     val accountPositionService = AccountPositionService(

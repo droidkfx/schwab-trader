@@ -87,7 +87,7 @@ class OrderStrategy(
     val enteredTime: KInstant? = null,
     val orderBalance: OrderBalance? = null,
     val orderStrategyType: OrderStrategyType? = null,
-    val orderVersion: Int? = null,
+    val orderVersion: Long? = null,
     val session: Session? = null,
     val status: ApiOrderStatus? = null,
     val allOrNone: Boolean? = null,
@@ -225,14 +225,14 @@ data class Order(
     val activationPrice: KBigDecimal? = null,
     val specialInstruction: SpecialInstruction? = null,
     val orderStrategyType: OrderStrategyType? = null,
-    val orderId: Int? = null,
+    val orderId: Long? = null,
     val cancelable: Boolean? = null,
     val editable: Boolean? = null,
     val status: Status? = null,
     val enteredTime: KInstant? = null,
     val closeTime: KInstant? = null,
     val tag: String? = null,
-    val accountNumber: Int? = null,
+    val accountNumber: Long? = null,
     val orderActivityCollection: List<OrderActivity>? = null,
     val replacingOrderCollection: List<JsonObject>? = null,
     val childOrderStrategies: List<JsonObject>? = null,
@@ -264,7 +264,7 @@ data class OrderRequest(
     val activationPrice: KBigDecimal? = null,
     val specialInstruction: SpecialInstruction? = null,
     val orderStrategyType: OrderStrategyType? = null,
-    val orderId: Int? = null,
+    val orderId: Long? = null,
     val cancelable: Boolean? = null,
     val editable: Boolean? = null,
     val status: Status? = null,
@@ -279,7 +279,7 @@ data class OrderRequest(
 
 @Serializable
 data class PreviewOrder(
-    val orderId: Int? = null,
+    val orderId: Long? = null,
     val orderStrategy: OrderStrategy? = null,
     val orderValidationResult: OrderValidationResult? = null,
     val commissionAndFee: CommissionAndFee? = null,
@@ -300,11 +300,11 @@ data class OrderActivity(
 
 @Serializable
 data class ExecutionLeg(
-    val legId: Int? = null,
+    val legId: Long? = null,
     val price: KBigDecimal? = null,
     val quantity: KBigDecimal? = null,
     val mismarkedQuantity: KBigDecimal? = null,
-    val instrumentId: Int? = null,
+    val instrumentId: Long? = null,
     val time: KInstant? = null,
 )
 
@@ -351,7 +351,7 @@ data class ServiceError(
 @Serializable
 data class OrderLegCollection(
     val orderLegType: OrderLegType? = null,
-    val legId: Int? = null,
+    val legId: Long? = null,
     val instrument: TransactionInstrument? = null,
     val instruction: Instruction? = null,
     val positionEffect: PositionEffect? = null,
@@ -382,7 +382,7 @@ typealias SecuritiesAccount = SecuritiesAccountBase
 @Serializable
 sealed class SecuritiesAccountBase {
     abstract val accountNumber: String?
-    abstract val roundTrips: Int?
+    abstract val roundTrips: Long?
     abstract val isDayTrader: Boolean?
     abstract val isClosingOnlyRestricted: Boolean?
     abstract val pfcbFlag: Boolean?
@@ -398,7 +398,7 @@ sealed class SecuritiesAccountBase {
 @SerialName("MARGIN")
 class MarginAccount(
     override val accountNumber: String? = null,
-    override val roundTrips: Int? = null,
+    override val roundTrips: Long? = null,
     override val isDayTrader: Boolean? = null,
     override val isClosingOnlyRestricted: Boolean? = null,
     override val pfcbFlag: Boolean? = null,
@@ -472,7 +472,7 @@ data class MarginBalance(
 @SerialName("CASH")
 class CashAccount(
     override val accountNumber: String? = null,
-    override val roundTrips: Int? = null,
+    override val roundTrips: Long? = null,
     override val isDayTrader: Boolean? = null,
     override val isClosingOnlyRestricted: Boolean? = null,
     override val pfcbFlag: Boolean? = null,
@@ -522,7 +522,7 @@ sealed class TransactionBaseInstrument {
     abstract val cusip: String?
     abstract val symbol: String?
     abstract val description: String?
-    abstract val instrumentId: Int?
+    abstract val instrumentId: Long?
     abstract val netChange: KBigDecimal?
 }
 
@@ -533,7 +533,7 @@ sealed class AccountsBaseInstrument() {
     abstract val cusip: String?
     abstract val symbol: String?
     abstract val description: String?
-    abstract val instrumentId: Int?
+    abstract val instrumentId: Long?
     abstract val netChange: KBigDecimal?
 }
 
@@ -545,7 +545,7 @@ class TransactionCashEquivalent(
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
-    override val instrumentId: Int? = null,
+    override val instrumentId: Long? = null,
     override val netChange: KBigDecimal? = null,
     val type: Type? = null,
 ) : TransactionBaseInstrument() {
@@ -560,7 +560,7 @@ class CollectiveInvestment(
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
-    override val instrumentId: Int? = null,
+    override val instrumentId: Long? = null,
     override val netChange: KBigDecimal? = null,
     val type: Type? = null,
 ) : TransactionBaseInstrument() {
@@ -584,7 +584,7 @@ class Currency(
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
-    override val instrumentId: Int? = null,
+    override val instrumentId: Long? = null,
     override val netChange: KBigDecimal? = null,
 ) : TransactionBaseInstrument()
 
@@ -594,7 +594,7 @@ class TransactionEquity(
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
-    override val instrumentId: Int? = null,
+    override val instrumentId: Long? = null,
     override val netChange: KBigDecimal? = null,
     val type: Type? = null,
 ) : TransactionBaseInstrument() {
@@ -609,7 +609,7 @@ class TransactionFixedIncome(
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
-    override val instrumentId: Int? = null,
+    override val instrumentId: Long? = null,
     override val netChange: KBigDecimal? = null,
     val type: Type? = null,
     val maturityDate: String? = null,
@@ -628,7 +628,7 @@ class Forex(
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
-    override val instrumentId: Int? = null,
+    override val instrumentId: Long? = null,
     override val netChange: KBigDecimal? = null,
     val type: Type? = null,
     val baseCurrency: Currency? = null,
@@ -646,7 +646,7 @@ class Forex(
 //    override val cusip: String? = null,
 //    override val symbol: String? = null,
 //    override val description: String? = null,
-//    override val instrumentId: Int? = null,
+//    override val instrumentId: Long? = null,
 //    override val netChange: KBigDecimal? = null,
 //) : TransactionBaseInstrument()
 //
@@ -656,7 +656,7 @@ class Forex(
 //    override val cusip: String? = null,
 //    override val symbol: String? = null,
 //    override val description: String? = null,
-//    override val instrumentId: Int? = null,
+//    override val instrumentId: Long? = null,
 //    override val netChange: KBigDecimal? = null,
 //) : TransactionBaseInstrument()
 
@@ -666,7 +666,7 @@ class TransactionMutualFund(
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
-    override val instrumentId: Int? = null,
+    override val instrumentId: Long? = null,
     override val netChange: KBigDecimal? = null,
     val fundFamilyName: String? = null,
     val fundFamilySymbol: String? = null,
@@ -687,11 +687,11 @@ class TransactionOption(
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
-    override val instrumentId: Int? = null,
+    override val instrumentId: Long? = null,
     override val netChange: KBigDecimal? = null,
     val expirationDate: KInstant? = null,
     val optionDeliverables: TransactionAPIOptionDeliverable? = null,
-    val optionPremiumMultiplier: Int? = null,
+    val optionPremiumMultiplier: Long? = null,
     val putCall: PutCall? = null,
     val strikePrice: KBigDecimal? = null,
     val type: Type? = null,
@@ -714,7 +714,7 @@ class Product(
     override val cusip: String? = null,
     override val symbol: String? = null,
     override val description: String? = null,
-    override val instrumentId: Int? = null,
+    override val instrumentId: Long? = null,
     override val netChange: KBigDecimal? = null,
     val type: Type? = null,
 ) : TransactionBaseInstrument() {
@@ -738,8 +738,8 @@ data class AccountAPIOptionDeliverable(
 @Serializable
 data class TransactionAPIOptionDeliverable(
     val rootSymbol: String? = null,
-    val strikePercent: Int? = null,
-    val deliverableNumber: Int? = null,
+    val strikePercent: Long? = null,
+    val deliverableNumber: Long? = null,
     val deliverableUnits: KBigDecimal? = null,
     val deliverable: TransactionInstrument? = null,
     val assetType: AssetType? = null,
@@ -755,7 +755,7 @@ enum class TransactionType {
 
 @Serializable
 data class Transaction(
-    val activityId: Int? = null,
+    val activityId: Long? = null,
     val time: KInstant? = null,
     val user: UserDetails? = null,
     val description: String? = null,
@@ -765,8 +765,8 @@ data class Transaction(
     val subAccount: SubAccountType? = null,
     val tradeDate: KInstant? = null,
     val settlementDate: KInstant? = null,
-    val positionId: Int? = null,
-    val orderId: Int? = null,
+    val positionId: Long? = null,
+    val orderId: Long? = null,
     val netAmount: KBigDecimal? = null,
     val activityType: ActivityType? = null,
     val transferItems: List<TransferItem>? = null,

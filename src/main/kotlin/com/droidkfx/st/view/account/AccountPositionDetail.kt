@@ -56,7 +56,7 @@ private class AccountPositionRowModel(val data: MutableList<AccountPositionTable
         }
         when (columnIndex) {
             0 -> data[rowIndex].symbol = value.toString()
-            1 -> data[rowIndex].allocationTarget = BigDecimal(value.toString()) ?: data[rowIndex].allocationTarget
+            1 -> data[rowIndex].allocationTarget = BigDecimal(value.toString())
         }
         if (rowIndex == data.size - 1) {
             data.add(AccountPositionTableModelRow())

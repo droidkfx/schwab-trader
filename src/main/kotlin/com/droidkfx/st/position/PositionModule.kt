@@ -4,13 +4,15 @@ import com.droidkfx.st.account.AccountModule
 import com.droidkfx.st.config.ConfigModule
 import com.droidkfx.st.schwab.client.SchwabClientModule
 import com.droidkfx.st.strategy.StrategyModule
+import com.droidkfx.st.transaction.TransactionModule
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class PositionModule(
     configModule: ConfigModule,
     accountModule: AccountModule,
     clientModule: SchwabClientModule,
-    strategyModule: StrategyModule
+    strategyModule: StrategyModule,
+    transactionModule: TransactionModule
 ) {
     private val logger = logger {}
 
@@ -22,13 +24,16 @@ class PositionModule(
     private val targetPositionService = PositionTargetService(targetPositionRepository)
 
     private val positionRepository = PositionRepository(configModule.configService.getConfig())
-    private val positionService: PositionService = PositionService(positionRepository, clientModule.accountsClient)
+    private val positionService: PositionService = PositionService(
+        positionRepository,
+        clientModule.accountsClient,
+        transactionModule.transactionService
+    )
 
-    val accountPositionService =
-        AccountPositionService(
-            accountModule.accountService,
-            targetPositionService,
-            positionService,
-            strategyModule.defaultStrategy
-        )
+    val accountPositionService = AccountPositionService(
+        accountModule.accountService,
+        targetPositionService,
+        positionService,
+        strategyModule.defaultStrategy,
+    )
 }

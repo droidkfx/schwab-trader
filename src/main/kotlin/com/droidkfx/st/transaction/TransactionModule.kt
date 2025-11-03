@@ -8,4 +8,6 @@ class TransactionModule {
     init {
         logger.trace { "Initializing" }
     }
+
+    val transactionService = TransactionService()
 }

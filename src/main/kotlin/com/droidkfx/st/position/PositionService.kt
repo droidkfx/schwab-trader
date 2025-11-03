@@ -4,12 +4,14 @@ import com.droidkfx.st.account.Account
 import com.droidkfx.st.schwab.client.AccountsClient
 import com.droidkfx.st.schwab.client.CashAccount
 import com.droidkfx.st.schwab.client.MarginAccount
+import com.droidkfx.st.transaction.TransactionService
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import java.math.BigDecimal
 
 internal class PositionService(
     private val positionRepository: PositionRepository,
     private val accountClient: AccountsClient,
+    private val transactionService: TransactionService,
 ) {
     private val logger = logger {}
     fun getCachedPositions(id: String): CurrentPositions {

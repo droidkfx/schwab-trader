@@ -20,7 +20,13 @@ fun main() {
     val accountModule = AccountModule(configModule, schwabModule)
     val strategyModule = StrategyModule()
     val transactionModule = TransactionModule()
-    val positionModule = PositionModule(configModule, accountModule, schwabModule.clientModule, strategyModule)
+    val positionModule = PositionModule(
+        configModule,
+        accountModule,
+        schwabModule.clientModule,
+        strategyModule,
+        transactionModule
+    )
     val orderModule = OrderModule(schwabModule.clientModule)
     val controllerModule = ControllerModule(
         schwabModule,

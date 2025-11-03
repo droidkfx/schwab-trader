@@ -1,8 +1,8 @@
-package com.droidkfx.st.order
+package com.droidkfx.st.transaction
 
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class OrderModule {
+class TransactionModule {
     private val logger = logger {}
 
     init {

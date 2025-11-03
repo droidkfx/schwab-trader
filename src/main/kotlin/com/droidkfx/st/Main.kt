@@ -7,6 +7,7 @@ import com.droidkfx.st.orders.OrderModule
 import com.droidkfx.st.position.PositionModule
 import com.droidkfx.st.schwab.SchwabModule
 import com.droidkfx.st.strategy.StrategyModule
+import com.droidkfx.st.transaction.TransactionModule
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 val logger = KotlinLogging.logger {}
@@ -18,6 +19,7 @@ fun main() {
     val schwabModule = SchwabModule(configModule)
     val accountModule = AccountModule(configModule, schwabModule)
     val strategyModule = StrategyModule()
+    val transactionModule = TransactionModule()
     val positionModule = PositionModule(configModule, accountModule, schwabModule.clientModule, strategyModule)
     val orderModule = OrderModule(schwabModule.clientModule)
     val controllerModule = ControllerModule(

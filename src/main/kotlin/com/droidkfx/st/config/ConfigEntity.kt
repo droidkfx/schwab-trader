@@ -4,27 +4,27 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CallbackServerConfig(
-    val host: String,
-    val port: Int,
-    val callbackPath: String,
-    val sslCertLocation: String,
-    val sslCertPassword: String,
-    val sslCertAlias: String,
-    val sslCertType: String,
+    val host: String = "127.0.0.1",
+    val port: Int = 41241,
+    val callbackPath: String = "",
+    val sslCertLocation: String = getUsersAppDirPath() + "/creds/localhost.pfx",
+    val sslCertPassword: String = "",
+    val sslCertAlias: String = "",
+    val sslCertType: String = "PKCS12",
 ) {
     fun url() = "https://$host:$port$callbackPath"
 }
 
 @Serializable
 data class SchwabClientConfig(
-    val key: String,
-    val secret: String,
-    val baseApiUrl: String,
-    val callbackServerConfig: CallbackServerConfig,
+    val key: String = "key",
+    val secret: String = "secret",
+    val baseApiUrl: String = "api.schwabapi.com",
+    val callbackServerConfig: CallbackServerConfig = CallbackServerConfig(),
 )
 
 @Serializable
 data class ConfigEntity(
-    val schwabConfig: SchwabClientConfig,
-    val repositoryRoot: String,
+    val schwabConfig: SchwabClientConfig = SchwabClientConfig(),
+    val repositoryRoot: String = getUsersAppDirPath() + "/data",
 )

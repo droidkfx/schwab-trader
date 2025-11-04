@@ -14,7 +14,7 @@ val logger = KotlinLogging.logger {}
 
 fun main() {
     logger.info { "Starting Schwab Trader" }
-    val configModule = ConfigModule("application.no-commit.config.json")
+    val configModule = ConfigModule()
 
     val schwabModule = SchwabModule(configModule)
     val accountModule = AccountModule(configModule, schwabModule)

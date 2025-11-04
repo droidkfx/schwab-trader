@@ -6,7 +6,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 
-abstract class FileRepository(protected val logger: KLogger, protected val rootPath: String) {
+abstract class FileRepository(protected open val logger: KLogger, protected val rootPath: String) {
     protected val json = Json {
         ignoreUnknownKeys = true
         prettyPrint = true

@@ -2,12 +2,13 @@ package com.droidkfx.st.config
 
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class ConfigModule(location: String = "application.config.json") {
+class ConfigModule() {
     private val logger = logger {}
 
     init {
-        logger.trace { "Initializing from: $location" }
+        logger.trace { "Initializing" }
     }
 
-    val configService = ConfigService(location)
+    private val configRepository = ConfigRepository()
+    val configService = ConfigService(configRepository)
 }

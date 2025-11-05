@@ -21,6 +21,9 @@ abstract class MenuBar(
             this.add(JMenuItem("Reset Data").apply {
                 addCoActionListener { onClearAllData() }
             })
+            this.add(JMenuItem("Settings").apply {
+                addActionListener { onSettings() }
+            })
         })
         add(JMenu("Auth").apply {
             this.add(JMenuItem("Update Oath").apply {
@@ -40,6 +43,7 @@ abstract class MenuBar(
     abstract suspend fun onOauthInvalidate()
     abstract suspend fun onManageAccounts()
     abstract suspend fun onClearAllData()
+    abstract fun onSettings()
 }
 
 

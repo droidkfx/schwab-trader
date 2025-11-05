@@ -2,6 +2,7 @@ package com.droidkfx.st.controller
 
 import com.droidkfx.st.account.AccountModule
 import com.droidkfx.st.controller.account.AccountControllerModule
+import com.droidkfx.st.controller.setting.SettingsModule
 import com.droidkfx.st.orders.OrderModule
 import com.droidkfx.st.position.PositionModule
 import com.droidkfx.st.schwab.SchwabModule
@@ -32,8 +33,11 @@ class ControllerModule(
         accountData,
     )
 
+    private val settingsModule = SettingsModule()
+
     private val oauthService = schwabModule.oauthModule.oauthService
     private val menuBarController = MenuBar(
+        settingsModule.settingsDialog,
         positionModule.accountPositionService,
         accountModule.accountService,
         oauthService,

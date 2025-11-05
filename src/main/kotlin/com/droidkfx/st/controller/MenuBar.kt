@@ -2,6 +2,7 @@ package com.droidkfx.st.controller
 
 import com.droidkfx.st.account.AccountService
 import com.droidkfx.st.controller.account.ManageAccountsDialog
+import com.droidkfx.st.controller.setting.SettingsDialog
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.schwab.oauth.OauthService
@@ -12,6 +13,7 @@ import com.droidkfx.st.view.MenuBar
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class MenuBar(
+    private val settingsDialog: SettingsDialog,
     private val accountPositionService: AccountPositionService,
     private val accountService: AccountService,
     private val oauthService: OauthService,
@@ -39,11 +41,17 @@ class MenuBar(
     }
 
     override suspend fun onClearAllData() {
+        logger.trace { "onClearAllData" }
         accountPositionService.clear()
         accountService.clear()
         oauthService.invalidateOauth()
         accountData.clear()
         // TODO reset internal data bindings after clear
+    }
+
+    override fun onSettings() {
+        logger.trace { "onSettings" }
+        settingsDialog.showDialog()
     }
 
     companion object {

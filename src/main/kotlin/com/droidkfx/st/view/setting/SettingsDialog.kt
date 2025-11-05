@@ -1,16 +1,22 @@
 package com.droidkfx.st.view.setting
 
+import com.droidkfx.st.config.ConfigEntity
+import com.droidkfx.st.util.databind.ValueDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import java.awt.BorderLayout
 import java.awt.Frame
-import java.awt.GridBagLayout
 import java.awt.event.WindowAdapter
 import java.awt.event.WindowEvent
 import javax.swing.JDialog
 import javax.swing.JLabel
+import javax.swing.JList
 import javax.swing.JPanel
+import javax.swing.border.EmptyBorder
 
 @Suppress("USELESS_CAST") // Cast is required for overload ambiguity on Frame
-abstract class SettingsDialog() : JDialog(
+abstract class SettingsDialog(
+    private val applicationConfig: ValueDataBinding<ConfigEntity>,
+) : JDialog(
     null as? Frame,
     "Application Settings",
     true,
@@ -19,11 +25,12 @@ abstract class SettingsDialog() : JDialog(
 
     init {
         logger.trace { "Initializing" }
-        add(JPanel(GridBagLayout()).apply {
-            add(JLabel("Not yet implemented"))
-            add(
-                JLabel("You can change the application settings in the 'config.json' file located in the 'config' directory."),
-            )
+        add(JPanel(BorderLayout()).apply {
+            border = EmptyBorder(10, 10, 10, 10)
+            add(JList(arrayOf("Not yet implemented")), BorderLayout.WEST)
+            add(JPanel().apply {
+                add(JLabel("Application Settings"))
+            }, BorderLayout.CENTER)
         })
 
         addWindowListener(object : WindowAdapter() {

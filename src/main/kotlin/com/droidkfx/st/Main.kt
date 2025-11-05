@@ -30,6 +30,7 @@ fun main() {
         transactionModule
     )
     val controllerModule = ControllerModule(
+        configModule,
         schwabModule,
         accountModule,
         positionModule,

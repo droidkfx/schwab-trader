@@ -2,12 +2,13 @@ package com.droidkfx.st.schwab.oauth
 
 import com.droidkfx.st.config.ConfigEntity
 import com.droidkfx.st.schwab.client.OauthTokenResponse
+import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.repository.FileRepository
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class OauthRepository(configEntity: ConfigEntity) : FileRepository(
+class OauthRepository(configEntity: ValueDataBinding<ConfigEntity>) : FileRepository(
     logger {},
-    "${configEntity.repositoryRoot}/oauth"
+    "${configEntity.value.repositoryRoot}/oauth"
 ) {
 
     fun loadExistingToken(): OauthTokenResponse? {

@@ -21,7 +21,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 
 abstract class BaseClient(
-    protected val config: SchwabClientConfig,
+    protected val config: ReadOnlyValueDataBinding<SchwabClientConfig>,
     protected val client: HttpClient,
     protected val requestTokenRefresh: ValueDataBinding<Boolean>,
     protected val oathToken: ValueDataBinding<String?> = ValueDataBinding(null),
@@ -84,7 +84,7 @@ abstract class BaseClient(
         this.method = method
         url {
             protocol = URLProtocol.HTTPS
-            host = config.baseApiUrl
+            host = config.value.baseApiUrl
             path(*defaultPathSegments.toTypedArray())
         }
 

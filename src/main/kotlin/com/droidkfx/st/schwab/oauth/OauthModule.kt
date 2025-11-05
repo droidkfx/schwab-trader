@@ -6,7 +6,7 @@ import com.droidkfx.st.util.databind.ValueDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class OauthModule(
-    config: ConfigEntity,
+    config: ValueDataBinding<ConfigEntity>,
     oauthClient: OauthClient,
     oauthTokenStatus: ValueDataBinding<OauthStatus>,
     oauthToken: ValueDataBinding<String?>,
@@ -18,7 +18,7 @@ class OauthModule(
         logger.trace { "Initializing" }
     }
 
-    private val oauthLocalServer = LocalServer(config.schwabConfig.callbackServerConfig)
+    private val oauthLocalServer = LocalServer(config.value.schwabConfig.callbackServerConfig)
     private val oauthRepository = OauthRepository(config)
     val oauthService =
         OauthService(oauthRepository, oauthClient, oauthLocalServer, oauthTokenStatus, oauthToken, tokenRefreshSignal)

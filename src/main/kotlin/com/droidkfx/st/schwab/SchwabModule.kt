@@ -19,7 +19,7 @@ class SchwabModule(configModule: ConfigModule) {
     val tokenRefreshSignal = ValueDataBinding(false)
 
     val clientModule = SchwabClientModule(
-        configModule.configService.getConfig().schwabConfig,
+        configModule.configService.getConfig(),
         oauthTokenBinding,
         oauthTokenStatus,
         tokenRefreshSignal,

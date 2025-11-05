@@ -2,6 +2,7 @@ package com.droidkfx.st.schwab.client
 
 import com.droidkfx.st.config.SchwabClientConfig
 import com.droidkfx.st.schwab.oauth.LocalServer
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -28,7 +29,7 @@ import java.util.UUID
 import kotlin.io.encoding.Base64
 
 class OauthClient(
-    val config: SchwabClientConfig,
+    val config: ReadOnlyValueDataBinding<SchwabClientConfig>,
     val client: HttpClient,
 ) {
     private val logger = logger {}
@@ -48,7 +49,7 @@ class OauthClient(
     ): OauthTokenResponse = runBlocking {
         client.post {
             url.apply {
-                host = config.baseApiUrl
+                host = config.value.baseApiUrl
                 protocol = URLProtocol.HTTPS
                 encodedPath = "/v1/oauth/token"
             }
@@ -56,7 +57,7 @@ class OauthClient(
             body.append("grant_type=${grantType}")
             when (grantType) {
                 "authorization_code" -> {
-                    body.append("&code=${token}&redirect_uri=${config.callbackServerConfig.url()}")
+                    body.append("&code=${token}&redirect_uri=${config.value.callbackServerConfig.url()}")
                 }
 
                 "refresh_token" -> {
@@ -69,7 +70,7 @@ class OauthClient(
             }
 
             setBody(body.toString())
-            val authorization = Base64.encode("${config.key}:${config.secret}".toByteArray())
+            val authorization = Base64.encode("${config.value.key}:${config.value.secret}".toByteArray())
             headers.append("Authorization", "Basic $authorization")
             headers.append("Content-Type", "application/x-www-form-urlencoded")
             headers.append("Accept", "application/json")
@@ -85,8 +86,8 @@ class OauthClient(
         val state = UUID.randomUUID().toString()
         openBrowser(
             buildAuthorizeUrl(
-                config.key,
-                config.callbackServerConfig.url(),
+                config.value.key,
+                config.value.callbackServerConfig.url(),
                 state
             )
         )
@@ -104,7 +105,7 @@ class OauthClient(
             "response_type=code",
             "state=${state.urlEncode()}"
         )
-        return "https://${config.baseApiUrl}/v1/oauth/authorize?${params.joinToString("&")}"
+        return "https://${config.value.baseApiUrl}/v1/oauth/authorize?${params.joinToString("&")}"
     }
 
     private fun openBrowser(url: String) {

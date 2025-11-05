@@ -14,7 +14,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
 
 class OrdersClient(
-    config: SchwabClientConfig,
+    config: ReadOnlyValueDataBinding<SchwabClientConfig>,
     client: HttpClient,
     oathToken: ValueDataBinding<String?> = ValueDataBinding(null),
     requestTokenRefresh: ValueDataBinding<Boolean>,

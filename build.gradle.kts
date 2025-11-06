@@ -5,7 +5,7 @@ plugins {
 //    id("dev.msfjarvis.tracelog") version "0.1.3"
 }
 
-group = "com.droidkfx.games.snake"
+group = "com.droidkfx.schwabtrader"
 version = "1.0-SNAPSHOT"
 
 repositories {
@@ -65,6 +65,19 @@ tasks.jacocoTestReport {
 //        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
     }
     finalizedBy("jacocoTestCoverageVerification")
+}
+
+tasks.register<Copy>("releaseJarWin") {
+    val outputDir = ("${System.getenv("APPDATA")}\\..\\Local\\schwab-trader")
+
+    dependsOn("jar")
+    from(tasks.jar.get().archiveFile)
+    include("schwab-trader-${project.version}.jar")
+    into(outputDir)
+    rename("schwab-trader-${project.version}.jar", "app.jar")
+    doLast {
+        println("JAR Released to: $outputDir")
+    }
 }
 
 kotlin {

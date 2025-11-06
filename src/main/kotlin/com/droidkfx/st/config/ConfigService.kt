@@ -1,6 +1,7 @@
 package com.droidkfx.st.config
 
 import com.droidkfx.st.util.databind.ValueDataBinding
+import com.droidkfx.st.util.databind.toDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class ConfigService internal constructor(private val configRepository: ConfigRepository) {
@@ -8,7 +9,7 @@ class ConfigService internal constructor(private val configRepository: ConfigRep
 
     fun getConfig(): ValueDataBinding<ConfigEntity> {
         logger.trace { "getConfig" }
-        val valueDataBinding = ValueDataBinding(configRepository.loadConfig())
+        val valueDataBinding = configRepository.loadConfig().toDataBinding()
         valueDataBinding.addListener { updateConfig(it) }
         return valueDataBinding
     }

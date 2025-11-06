@@ -5,6 +5,7 @@ import com.droidkfx.st.schwab.client.SchwabClientModule
 import com.droidkfx.st.schwab.oauth.OauthModule
 import com.droidkfx.st.schwab.oauth.OauthStatus
 import com.droidkfx.st.util.databind.ValueDataBinding
+import com.droidkfx.st.util.databind.toDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class SchwabModule(configModule: ConfigModule) {
@@ -15,8 +16,8 @@ class SchwabModule(configModule: ConfigModule) {
     }
 
     val oauthTokenBinding = ValueDataBinding<String?>(null)
-    val oauthTokenStatus = ValueDataBinding(OauthStatus.NOT_INITIALIZED)
-    val tokenRefreshSignal = ValueDataBinding(false)
+    val oauthTokenStatus = OauthStatus.NOT_INITIALIZED.toDataBinding()
+    val tokenRefreshSignal = false.toDataBinding()
 
     val clientModule = SchwabClientModule(
         configModule.configService.getConfig(),

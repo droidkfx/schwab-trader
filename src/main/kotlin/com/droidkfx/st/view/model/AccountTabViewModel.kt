@@ -12,8 +12,8 @@ data class AccountTabViewModel(
     private var accountPosition: AccountPosition,
 ) {
     val data: ReadWriteListDataBinding<AllocationRowViewModel> = accountPosition.toAllocationRows().toDataBinding()
-    val accountNameDataBinding: ValueDataBinding<String> = ValueDataBinding(account.name)
-    val accountCash: ValueDataBinding<BigDecimal> = ValueDataBinding(accountPosition.currentCash)
+    val accountNameDataBinding: ValueDataBinding<String> = account.name.toDataBinding()
+    val accountCash: ValueDataBinding<BigDecimal> = accountPosition.currentCash.toDataBinding()
 
     fun setAccountName(name: String) {
         account.name = name

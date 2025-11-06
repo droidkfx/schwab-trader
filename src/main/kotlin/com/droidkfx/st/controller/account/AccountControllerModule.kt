@@ -4,7 +4,7 @@ import com.droidkfx.st.account.AccountService
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
-import com.droidkfx.st.util.databind.ValueDataBinding
+import com.droidkfx.st.util.databind.toDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class AccountControllerModule(
@@ -18,7 +18,7 @@ class AccountControllerModule(
         logger.trace { "Initializing" }
     }
 
-    private val selectedAccountName = ValueDataBinding(accountData.firstOrNull()?.account?.name)
+    private val selectedAccountName = accountData.firstOrNull()?.account?.name.toDataBinding()
 
     private val manageAccountList = ManageAccountList(
         accountService,

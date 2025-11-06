@@ -1,8 +1,11 @@
 package com.droidkfx.st.view
 
+import com.droidkfx.st.util.databind.DataBindChangeListener
+import com.droidkfx.st.util.databind.DataBindValueListener
 import com.droidkfx.st.util.databind.ListDataBinding
 import com.droidkfx.st.util.databind.ListDataBindingEvent
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import com.droidkfx.st.util.databind.asChangeListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -12,8 +15,12 @@ import javax.swing.JMenuItem
 import javax.swing.SwingUtilities
 import javax.swing.event.ListSelectionEvent
 
-internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(listener: (T) -> Unit) {
-    addListener { SwingUtilities.invokeLater { listener(it) } }
+internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(listener: DataBindChangeListener<T>) {
+    addListener { oldValue, newValue -> SwingUtilities.invokeLater { listener(oldValue, newValue) } }
+}
+
+internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(listener: DataBindValueListener<T>) {
+    this.addSwingListener(listener.asChangeListener())
 }
 
 internal fun <T> ListDataBinding<T>.addSwingListener(listener: (ListDataBindingEvent<T>) -> Unit) {

@@ -1,6 +1,6 @@
 package com.droidkfx.st.position
 
-import com.droidkfx.st.config.defaultConfigEntity
+import com.droidkfx.st.util.databind.toDataBinding
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -16,7 +16,7 @@ class TargetPositionRepositoryTest {
     @BeforeEach
     fun setUp() {
         tempRoot = Files.createTempDirectory("target-position-repo-test-")
-        repository = TargetPositionRepository(defaultConfigEntity(repositoryRoot = tempRoot.toString()))
+        repository = TargetPositionRepository(tempRoot.toString().toDataBinding())
     }
 
     @AfterEach

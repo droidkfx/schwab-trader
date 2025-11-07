@@ -1,6 +1,6 @@
 package com.droidkfx.st.account
 
-import com.droidkfx.st.config.defaultConfigEntity
+import com.droidkfx.st.util.databind.toDataBinding
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -18,7 +18,7 @@ class AccountRepositoryTest {
     @BeforeEach
     fun setUp() {
         tempRoot = Files.createTempDirectory("acct-repo-test-")
-        repository = AccountRepository(defaultConfigEntity(repositoryRoot = tempRoot.toString()))
+        repository = AccountRepository(tempRoot.toString().toDataBinding())
     }
 
     @AfterEach

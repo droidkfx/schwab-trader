@@ -1,12 +1,13 @@
 package com.droidkfx.st.config
 
+import com.droidkfx.st.util.databind.toDataBinding
 import com.droidkfx.st.util.repository.FileRepository
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 internal class ConfigRepository() :
     FileRepository(
         logger {},
-        getUsersAppDirPath()
+        getUsersAppDirPath().toDataBinding()
     ) {
 
     private var currentConfig: ConfigEntity? = null

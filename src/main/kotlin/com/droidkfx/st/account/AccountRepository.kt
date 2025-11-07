@@ -1,13 +1,13 @@
 package com.droidkfx.st.account
 
-import com.droidkfx.st.config.ConfigEntity
-import com.droidkfx.st.util.databind.ValueDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import com.droidkfx.st.util.databind.readOnlyMapped
 import com.droidkfx.st.util.repository.FileRepository
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class AccountRepository(configEntity: ValueDataBinding<ConfigEntity>) : FileRepository(
+class AccountRepository(rootPath: ReadOnlyValueDataBinding<String>) : FileRepository(
     logger {},
-    "${configEntity.value.repositoryRoot}/account"
+    rootPath.readOnlyMapped { "$it/account" }
 ) {
     fun loadAccounts(): List<Account> {
         logger.trace { "loadAccounts" }

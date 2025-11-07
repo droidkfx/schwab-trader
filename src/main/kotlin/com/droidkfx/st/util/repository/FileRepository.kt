@@ -1,12 +1,16 @@
 package com.droidkfx.st.util.repository
 
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import io.github.oshai.kotlinlogging.KLogger
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import java.io.File
 
-abstract class FileRepository(protected open val logger: KLogger, protected val rootPath: String) {
+abstract class FileRepository(
+    protected open val logger: KLogger,
+    protected val rootPath: ReadOnlyValueDataBinding<String>
+) {
     protected val json = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
@@ -46,7 +50,7 @@ abstract class FileRepository(protected open val logger: KLogger, protected val 
 
     internal inline fun <reified T> loadAll(): List<T> {
         logger.trace { "loadAll ${T::class.simpleName}" }
-        val files = File(rootPath).listFiles { _, name -> name.endsWith(".json") }
+        val files = File(rootPath.value).listFiles { _, name -> name.endsWith(".json") }
         return files?.mapNotNull { load(it) } ?: emptyList()
     }
 
@@ -58,9 +62,9 @@ abstract class FileRepository(protected open val logger: KLogger, protected val 
     }
 
     internal fun deleteAll() {
-        val files = File(rootPath).listFiles { _, name -> name.endsWith(".json") }
+        val files = File(rootPath.value).listFiles { _, name -> name.endsWith(".json") }
         files?.forEach { it.delete() }
     }
 
-    internal fun getFile(path: String) = File("$rootPath/$path.json")
+    internal fun getFile(path: String) = File("${rootPath.value}/$path.json")
 }

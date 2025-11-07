@@ -6,6 +6,7 @@ import com.droidkfx.st.orders.OrderModule
 import com.droidkfx.st.schwab.client.SchwabClientModule
 import com.droidkfx.st.strategy.StrategyModule
 import com.droidkfx.st.transaction.TransactionModule
+import com.droidkfx.st.util.databind.readOnlyMapped
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class PositionModule(
@@ -22,10 +23,11 @@ class PositionModule(
         logger.trace { "Initializing" }
     }
 
-    private val targetPositionRepository = TargetPositionRepository(configModule.configService.getConfig())
+    val rootPath = configModule.configService.getConfig().readOnlyMapped { it.repositoryRoot }
+    private val targetPositionRepository = TargetPositionRepository(rootPath)
     private val targetPositionService = PositionTargetService(targetPositionRepository)
 
-    private val positionRepository = PositionRepository(configModule.configService.getConfig())
+    private val positionRepository = PositionRepository(rootPath)
     private val positionService: PositionService = PositionService(
         positionRepository,
         clientModule.accountsClient,

@@ -1,14 +1,14 @@
 package com.droidkfx.st.position
 
-import com.droidkfx.st.config.ConfigEntity
-import com.droidkfx.st.util.databind.ValueDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import com.droidkfx.st.util.databind.readOnlyMapped
 import com.droidkfx.st.util.repository.FileRepository
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-internal class TargetPositionRepository(configEntity: ValueDataBinding<ConfigEntity>) :
+internal class TargetPositionRepository(rootPath: ReadOnlyValueDataBinding<String>) :
     FileRepository(
         logger {},
-        "${configEntity.value.repositoryRoot}/position/target"
+        rootPath.readOnlyMapped { "$it/position/target" }
     ) {
 
     fun loadTargetPositions(accountId: String): List<PositionTarget> {

@@ -1,6 +1,6 @@
 package com.droidkfx.st.schwab.oauth
 
-import com.droidkfx.st.config.defaultConfigEntity
+import com.droidkfx.st.util.databind.toDataBinding
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -17,7 +17,7 @@ class OauthRepositoryTest {
     @BeforeEach
     fun setUp() {
         tempRoot = Files.createTempDirectory("oauth-repo-test-")
-        repository = OauthRepository(defaultConfigEntity(repositoryRoot = tempRoot.toString()))
+        repository = OauthRepository(tempRoot.toString().toDataBinding())
     }
 
     @AfterEach

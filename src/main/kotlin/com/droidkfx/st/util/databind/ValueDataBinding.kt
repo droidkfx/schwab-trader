@@ -25,12 +25,12 @@ class ValueDataBinding<T>(initialValue: T) : ReadOnlyValueDataBinding<T>, ReadWr
 
     override var value: T = initialValue
         set(newValue) {
-            logger.trace { "value $newValue" }
             val oldValue = field
             if (oldValue == newValue) {
                 logger.trace { "Value not changed, ignoring" }
                 return
             }
+            logger.trace { "value changed from $oldValue to $newValue" }
             field = newValue
             listeners.forEach {
                 logger.trace { "Invoking listener $it" }
@@ -53,33 +53,61 @@ interface ReadWriteValueDataBinding<T> : SubscribeDataBinding<T> {
 }
 
 fun <T> ValueDataBinding<T>.readOnly(): ReadOnlyValueDataBinding<T> {
-    return this.mapped { it }
+    return this.readOnlyMapped { it }
 }
 
 fun <T> T.toDataBinding(): ValueDataBinding<T> = ValueDataBinding(this)
 
-fun <T, U> ReadOnlyValueDataBinding<T>.mapped(mapper: (T) -> U): ReadOnlyValueDataBinding<U> {
-    return object : ReadOnlyValueDataBinding<U> {
-        private val logger = logger {}
+private abstract class MappedDataBinding<T, U>(
+    private val delegate: SubscribeDataBinding<T>,
+    protected val mapperFrom: (T) -> U
+) : SubscribeDataBinding<U> {
+    private val logger = logger {}
 
-        private val delegate = mapper
-        override fun addListener(listener: DataBindChangeListener<U>) {
-            this@mapped.addListener { oldValue, newValue ->
-                val mappedOldValue = delegate(oldValue)
-                val mappedNewValue = delegate(newValue)
-                if (mappedOldValue == mappedNewValue) {
-                    logger.trace { "Value not changed, ignoring" }
-                    return@addListener
-                }
-                listener(delegate(oldValue), delegate(newValue))
+    override fun addListener(listener: DataBindChangeListener<U>) {
+        delegate.addListener { oldValue, newValue ->
+            val mappedOldValue = mapperFrom(oldValue)
+            val mappedNewValue = mapperFrom(newValue)
+            if (mappedOldValue == mappedNewValue) {
+                logger.trace { "Value not changed, ignoring" }
+                return@addListener
             }
+            listener(mapperFrom(oldValue), mapperFrom(newValue))
         }
-
-        override fun addListener(listener: DataBindValueListener<U>) {
-            addListener(listener.asChangeListener())
-        }
-
-        override val value: U
-            get() = delegate(this@mapped.value)
     }
+
+    override fun addListener(listener: DataBindValueListener<U>) {
+        addListener(listener.asChangeListener())
+    }
+}
+
+private class ReadOnlyMappedDataBinding<T, U>(
+    private val delegate: ReadOnlyValueDataBinding<T>,
+    mapperFrom: (T) -> U
+) : MappedDataBinding<T, U>(delegate, mapperFrom), ReadOnlyValueDataBinding<U> {
+    override val value: U
+        get() = mapperFrom(delegate.value)
+}
+
+private class ReadWriteMappedDataBinding<T, U>(
+    private val delegate: ReadWriteValueDataBinding<T>,
+    mapperFrom: (T) -> U,
+    private val mapperTo: (T, U) -> T
+) : MappedDataBinding<T, U>(delegate, mapperFrom), ReadWriteValueDataBinding<U> {
+    override var value: U
+        get() = mapperFrom(delegate.value)
+        set(value) {
+            delegate.value = mapperTo(delegate.value, value)
+        }
+}
+
+fun <T, U> ReadOnlyValueDataBinding<T>.readOnlyMapped(mapper: (T) -> U): ReadOnlyValueDataBinding<U> {
+    return ReadOnlyMappedDataBinding(this, mapper)
+}
+
+fun <T, U> ReadWriteValueDataBinding<T>.mapped(
+    mapperFrom: (T) -> U,
+    mapperUp: (T, U) -> T
+): ReadWriteValueDataBinding<U> {
+    return ReadWriteMappedDataBinding(this, mapperFrom, mapperUp)
 }

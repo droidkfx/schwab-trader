@@ -8,7 +8,7 @@ import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.schwab.oauth.OauthService
 import com.droidkfx.st.schwab.oauth.OauthStatus
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
-import com.droidkfx.st.util.databind.mapped
+import com.droidkfx.st.util.databind.readOnlyMapped
 import com.droidkfx.st.view.MenuBar
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
@@ -20,8 +20,8 @@ class MenuBar(
     private val manageAccountsDialog: ManageAccountsDialog,
     private val accountData: ReadWriteListDataBinding<AccountPosition>
 ) : MenuBar(
-    oauthService.getTokenStatusBinding().mapped(::oauthEnabled),
-    oauthService.getTokenStatusBinding().mapped(::invalidateEnabled)
+    oauthService.getTokenStatusBinding().readOnlyMapped(::oauthEnabled),
+    oauthService.getTokenStatusBinding().readOnlyMapped(::invalidateEnabled)
 ) {
     private val logger = logger {}
 

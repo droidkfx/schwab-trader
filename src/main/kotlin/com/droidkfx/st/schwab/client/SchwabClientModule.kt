@@ -4,7 +4,7 @@ import com.droidkfx.st.config.ConfigEntity
 import com.droidkfx.st.schwab.oauth.OauthStatus
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
-import com.droidkfx.st.util.databind.mapped
+import com.droidkfx.st.util.databind.readOnlyMapped
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.java.Java
@@ -34,7 +34,7 @@ class SchwabClientModule(
         }
     }
 
-    val schwabConfig = config.mapped { it.schwabConfig }
+    val schwabConfig = config.readOnlyMapped { it.schwabConfig }
 
     val oathClient = OauthClient(
         config = schwabConfig,

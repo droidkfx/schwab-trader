@@ -7,6 +7,7 @@ import com.droidkfx.st.schwab.oauth.OauthStatus
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.mapped
+import com.droidkfx.st.util.databind.readOnlyMapped
 import com.droidkfx.st.view.AccountTabs
 import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
@@ -21,7 +22,7 @@ class AccountTabs(
     accountData.mapped { ap ->
         AccountTabViewModel(ap)
     },
-    oauthData.mapped { it == OauthStatus.READY },
+    oauthData.readOnlyMapped { it == OauthStatus.READY },
     accountTabProvider
 ) {
     private val logger = logger {}

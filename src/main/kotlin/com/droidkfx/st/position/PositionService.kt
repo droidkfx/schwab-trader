@@ -4,6 +4,7 @@ import com.droidkfx.st.account.Account
 import com.droidkfx.st.orders.OrderService
 import com.droidkfx.st.schwab.client.AccountsClient
 import com.droidkfx.st.schwab.client.CashAccount
+import com.droidkfx.st.schwab.client.Instruction
 import com.droidkfx.st.schwab.client.MarginAccount
 import com.droidkfx.st.transaction.TransactionService
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
@@ -34,11 +35,6 @@ internal class PositionService(
             else -> BigDecimal.ZERO
         }
 
-        val openOrders = orderService.getOpenOrders(account)
-        openOrders.forEach { order ->
-            logger.warn { "outstanding order: ${order}" }
-        }
-
         val transactions = transactionService.getTransactionsToday(account)
         transactions.forEach { transaction ->
             // they come in as negative
@@ -55,6 +51,26 @@ internal class PositionService(
                     it.marketPrice
                 )
             }
+
+        val openOrders = orderService.getOpenOrders(account)
+        openOrders.forEach { order ->
+            logger.warn { "outstanding order: ${order}" }
+            order.orderLegCollection?.forEach { legCollection ->
+                legCollection.instrument?.let { instrument ->
+                    positions?.firstOrNull { it.symbol == instrument.symbol }?.let { position ->
+                        when (legCollection.instruction) {
+                            Instruction.BUY, Instruction.BUY_TO_CLOSE, Instruction.BUY_TO_COVER -> {
+                                currentValue -= (legCollection.quantity)?.times(position.lastKnownPrice)
+                                    ?: BigDecimal.ZERO
+                            }
+
+                            else -> {}
+                        }
+
+                    }
+                }
+            }
+        }
         return positions?.let { newPositions ->
             CurrentPositions(currentValue, newPositions).also {
                 positionRepository.savePositions(account.id, it)

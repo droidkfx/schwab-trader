@@ -1,6 +1,7 @@
 package com.droidkfx.st.view.model
 
 import com.droidkfx.st.position.AccountPosition
+import com.droidkfx.st.strategy.StrategyAction
 import java.math.BigDecimal
 
 @Suppress("unused")
@@ -28,7 +29,9 @@ data class AllocationRowViewModel(
 
     val expectedCost: BigDecimal
         @Column(name = "Expected Cost", mapper = DollarReadTableValueMapper::class, position = 9)
-        get() = currentPrice * tradeShares * if (tradeAction == "SELL") BigDecimal(-1.0) else BigDecimal(1.0)
+        get() = currentPrice * tradeShares * if (tradeAction == StrategyAction.SELL.name) BigDecimal(-1.0) else BigDecimal(
+            1.0
+        )
 
     val currentValue: BigDecimal
         @Column(name = "Value", mapper = DollarReadTableValueMapper::class, position = 4)

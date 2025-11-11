@@ -1,6 +1,8 @@
 package com.droidkfx.st.view
 
 import com.droidkfx.st.controller.AllocationTable
+import com.droidkfx.st.strategy.StrategyAction
+import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import java.awt.BorderLayout
@@ -25,7 +27,7 @@ abstract class AccountTab(
                 saveAccountPositions()
                 SwingUtilities.invokeLater { isEnabled = false }
             }
-            viewModel.data.addSwingListener {
+            viewModel.data.mapped { it.symbol to it.allocationTarget }.addSwingListener {
                 isEnabled = true
             }
         }
@@ -67,8 +69,10 @@ abstract class AccountTab(
                     addCoActionListener {
                         refreshData()
                         SwingUtilities.invokeLater {
-                            processOrdersButton.isEnabled = true
-                            allocationTable.notifyDataChanged()
+                            processOrdersButton.isEnabled = viewModel.data.any {
+                                it.tradeAction == StrategyAction.BUY.name || it.tradeAction == StrategyAction.SELL.name
+                            }
+//                            allocationTable.notifyDataChanged()
                         }
                     }
                 })

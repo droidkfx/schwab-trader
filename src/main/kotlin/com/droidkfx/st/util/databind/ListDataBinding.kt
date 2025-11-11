@@ -12,7 +12,23 @@ enum class ListDataBindingEventType {
     ADD, REMOVE, UPDATE
 }
 
-class ListDataBindingEvent<T>(val index: Int, val element: T, val type: ListDataBindingEventType)
+class ValueUpdatedListDataBindingEvent<T>(
+    index: Int,
+    currentValue: T,
+    val previousValue: T
+) : ListDataBindingEvent<T>(index, currentValue, ListDataBindingEventType.UPDATE) {
+    val shouldEmit = currentValue != previousValue
+
+    override fun <U> mapped(mapper: (T) -> U): ValueUpdatedListDataBindingEvent<U> {
+        return ValueUpdatedListDataBindingEvent(index, mapper(currentValue), mapper(previousValue))
+    }
+}
+
+open class ListDataBindingEvent<T>(val index: Int, val currentValue: T, val type: ListDataBindingEventType) {
+    open fun <U> mapped(mapper: (T) -> U): ListDataBindingEvent<U> {
+        return ListDataBindingEvent(index, mapper(currentValue), type)
+    }
+}
 
 fun <T> List<T>.toDataBinding(): ReadOnlyListDataBinding<T> = ReadOnlyListDataBindingImpl(this)
 
@@ -55,7 +71,16 @@ private class MappedListDataBinding<T, U>(
         throw UnsupportedOperationException("Not yet implemented")
 
     override fun addListener(listener: (ListDataBindingEvent<U>) -> Unit) {
-        delegate.addListener { listener(ListDataBindingEvent(it.index, mapper(it.element), it.type)) }
+        delegate.addListener {
+            val mappedEvent = it.mapped(mapper)
+            if (mappedEvent is ValueUpdatedListDataBindingEvent) {
+                if (mappedEvent.shouldEmit) {
+                    listener(mappedEvent)
+                }
+            } else {
+                listener(mappedEvent)
+            }
+        }
     }
 }
 
@@ -148,7 +173,7 @@ private class ReadWriteListDataBindingImpl<T>(val delegate: MutableList<T>) :
 
     override fun set(index: Int, element: T): T {
         val retValue = delegate.set(index, element)
-        listeners.forEach { it(ListDataBindingEvent(index, element, ListDataBindingEventType.UPDATE)) }
+        listeners.forEach { it(ValueUpdatedListDataBindingEvent(index, element, retValue)) }
         return retValue
     }
 

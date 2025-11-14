@@ -497,7 +497,7 @@ data class CashInitialBalance(
     val mutualFundValue: KBigDecimal? = null,
     val shortOptionMarketValue: KBigDecimal? = null,
     val shortStockValue: KBigDecimal? = null,
-    val isInCall: KBigDecimal? = null,
+    val isInCall: Boolean? = null,
     val unsettledCash: KBigDecimal? = null,
     val cashDebitCallValue: KBigDecimal? = null,
     val pendingDeposits: KBigDecimal? = null,

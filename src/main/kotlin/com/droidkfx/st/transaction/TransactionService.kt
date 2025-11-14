@@ -13,19 +13,22 @@ class TransactionService(private val transactionsClient: TransactionsClient) {
 
     fun getTransactionsToday(account: Account): List<Transaction> {
         logger.trace { "getTransactions" }
-        val response = transactionsClient.getTransactions(
-            account.accountNumberHash,
-            LocalDate.now()
-                .atStartOfDay(ZoneId.systemDefault())
-                .toInstant(),
-            LocalDate.now()
-                .plusDays(1)
-                .atStartOfDay(ZoneId.systemDefault())
-                .toInstant()
-                .minusNanos(1),
-            symbol = null,
-            TransactionType.TRADE
-        )
-        return response.data ?: emptyList()
+        return TransactionType.entries.map {
+            logger.info { "Getting transactions for type: $it" }
+            val response = transactionsClient.getTransactions(
+                account.accountNumberHash,
+                LocalDate.now()
+                    .atStartOfDay(ZoneId.systemDefault())
+                    .toInstant(),
+                LocalDate.now()
+                    .plusDays(1)
+                    .atStartOfDay(ZoneId.systemDefault())
+                    .toInstant()
+                    .minusNanos(1),
+                symbol = null,
+                type = it
+            )
+            response.data ?: emptyList()
+        }.flatten()
     }
 }

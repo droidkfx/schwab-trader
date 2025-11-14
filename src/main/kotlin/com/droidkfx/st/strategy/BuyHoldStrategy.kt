@@ -42,7 +42,7 @@ internal class BuyHoldStrategy : StrategyEngine {
 
         val easyBuyAllocations = onlyBuyAllocations.map {
             val weigthedDelta = it.delta.abs() / totalDelta
-            val valueToAllocate = weigthedDelta * accountCash
+            val valueToAllocate = if (accountCash < BigDecimal.ZERO) BigDecimal.ZERO else weigthedDelta * accountCash
             val sharesToAllocate = (valueToAllocate / it.position.lastKnownPrice).setScale(0, RoundingMode.FLOOR)
             val unallocatedValue = valueToAllocate - (sharesToAllocate * it.position.lastKnownPrice)
             cashToAllocate += unallocatedValue

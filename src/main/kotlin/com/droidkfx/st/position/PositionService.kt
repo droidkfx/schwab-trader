@@ -38,8 +38,8 @@ internal class PositionService(
         val transactions = transactionService.getTransactionsToday(account)
         transactions.forEach { transaction ->
             // they come in as negative
-            logger.debug { "removing funds for transaction: ${transaction.netAmount} ${transaction.transferItems?.map { it.instrument?.symbol }}" }
-            currentValue -= transaction.netAmount?.abs() ?: BigDecimal.ZERO
+            logger.debug { "adjusting funds for transaction: ${transaction.netAmount} ${transaction.transferItems?.map { it.instrument?.symbol }}" }
+            currentValue += transaction.netAmount ?: BigDecimal.ZERO
         }
 
         val positions = securitiesAccount

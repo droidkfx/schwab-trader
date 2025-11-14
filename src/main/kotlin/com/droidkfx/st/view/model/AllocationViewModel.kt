@@ -55,7 +55,11 @@ fun AccountPosition.toAllocationRows(): MutableList<AllocationRowViewModel> {
     }.toCollection(rows)
     val totalValue = rows.sumOf { it.currentValue }
     rows.forEach { row ->
-        row.currentAllocation = (row.currentValue / totalValue) * BigDecimal(100)
+        if (totalValue == BigDecimal.ZERO) {
+            row.currentAllocation = BigDecimal.ZERO
+        } else {
+            row.currentAllocation = (row.currentValue / totalValue) * BigDecimal(100)
+        }
     }
     return rows
 }

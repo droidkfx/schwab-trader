@@ -19,9 +19,19 @@ class OrderService(private val ordersClient: OrdersClient) {
         if (recommendation.recommendation == StrategyAction.HOLD) {
             logger.debug { "No order requested" }
         } else {
-            logger.debug { "submitting order" }
+            logger.debug {
+                "submitting order ${recommendation.recommendation} for ${recommendation.symbol} @ ${
+                    recommendation.price.setScale(
+                        2
+                    )
+                }"
+            }
             val response = ordersClient.order(account, recommendation)
-            logger.debug { "order submitted, $response" }
+            if (response.error != null) {
+                logger.error { "Error placing order: ${response.error}" }
+            } else {
+                logger.debug { "Order placed successfully" }
+            }
         }
     }
 
@@ -32,7 +42,7 @@ class OrderService(private val ordersClient: OrdersClient) {
             return null
         } else {
             val previewOrder = ordersClient.previewOrder(account, recommendation)
-            logger.debug { "order preview, $previewOrder" }
+            logger.trace { "order preview, $previewOrder" }
             return previewOrder.data
         }
     }

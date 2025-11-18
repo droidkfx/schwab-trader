@@ -815,8 +815,7 @@ data class UserPreference(
     val accounts: List<UserPreferenceAccount>? = null,
     val streamerInfo: List<StreamerInfo>? = null,
     val offers: List<Offer>? = null,
-
-    )
+)
 
 @Serializable
 data class UserPreferenceAccount(
@@ -827,8 +826,7 @@ data class UserPreferenceAccount(
     val accountColor: String? = null,
     val displayAcctId: String? = null,
     val autoPositionEffect: Boolean? = null,
-
-    )
+)
 
 @Serializable
 data class StreamerInfo(
@@ -842,6 +840,16 @@ data class StreamerInfo(
 @Serializable
 data class Offer(
     val level2Permissions: Boolean? = null,
-    val mktDataPermission: String? = null,
+    val mktDataPermission: String? = null
+)
 
+// TODO actually map this model to the Schwab API
+@Serializable
+data class QuoteResponse(
+    val quote: QuoteData
+) {
+    @Serializable
+    data class QuoteData(
+        val lastPrice: KBigDecimal? = null,
     )
+}

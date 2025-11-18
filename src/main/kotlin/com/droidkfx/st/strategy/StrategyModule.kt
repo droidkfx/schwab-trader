@@ -1,5 +1,9 @@
 package com.droidkfx.st.strategy
 
-class StrategyModule {
-    val defaultStrategy: StrategyEngine = BuyHoldStrategy()
+import com.droidkfx.st.schwab.client.SchwabClientModule
+
+class StrategyModule(clientModule: SchwabClientModule) {
+    val defaultStrategy: StrategyEngine = BuyHoldStrategy(
+        clientModule.quotesClient
+    )
 }

@@ -61,5 +61,12 @@ class SchwabClientModule(
         requestTokenRefresh = requestRefresh,
         oauthTokenStatus = oathAccessTokenStatus,
     )
+    val quotesClient = QuotesClient(
+        config = schwabConfig,
+        client = client,
+        oathToken = oathAccessToken,
+        requestTokenRefresh = requestRefresh,
+        oauthTokenStatus = oathAccessTokenStatus,
+    )
     val userPreferenceClient = UserPreferenceClient()
 }

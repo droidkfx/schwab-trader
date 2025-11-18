@@ -2,10 +2,13 @@ package com.droidkfx.st.strategy
 
 import com.droidkfx.st.position.Position
 import com.droidkfx.st.position.PositionTarget
+import com.droidkfx.st.schwab.client.QuotesClient
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-internal class BuyHoldStrategy : StrategyEngine {
+internal class BuyHoldStrategy(
+    private val quotesClient: QuotesClient
+) : StrategyEngine {
 
     data class PositionProperties(
         val position: Position,
@@ -18,16 +21,35 @@ internal class BuyHoldStrategy : StrategyEngine {
         allocationTargets: List<PositionTarget>,
         accountCash: BigDecimal
     ): List<PositionRecommendation> {
-        val positionAllocations = positions
-            .mapNotNull {
-                allocationTargets
-                    .firstOrNull { target -> target.symbol == it.symbol }
-                    ?.let { target -> PositionProperties(it, target) }
-            }
+        val knownPositions = allocationTargets.map { target ->
+            positions.firstOrNull { it.symbol == target.symbol }
+                ?.let { PositionProperties(it, target) }
+                ?: PositionProperties(Position(target.symbol, BigDecimal.ZERO), target)
+        }
+
+        val (unmappedPositions, mappedPositions) = knownPositions.partition { it.position.lastKnownPrice == BigDecimal.ZERO }
+        val fetchedQuotes = unmappedPositions.map { it.position.symbol }.let {
+            if (it.isEmpty()) emptyMap()
+            else quotesClient.getQuotesForSymbols(it).data ?: emptyMap()
+        }
+
+        val positionAllocations = mappedPositions + unmappedPositions.mapNotNull {
+            it.copy(
+                position = it.position.copy(
+                    lastKnownPrice = fetchedQuotes[it.position.symbol]?.quote?.lastPrice ?: BigDecimal.ZERO
+                )
+            ).let { if (it.position.lastKnownPrice == BigDecimal.ZERO) null else it }
+        }
+
         val totalManagedValue = positionAllocations.sumOf { it.position.lastKnownValue } + accountCash
         positionAllocations.forEach {
-            val actualAllocation = (it.position.lastKnownValue / totalManagedValue) * BigDecimal(100)
-            it.delta = actualAllocation - it.target.allocationTarget
+            // can't use `==` because that requires scale to be equal
+            val actualAllocation = if (totalManagedValue.compareTo(BigDecimal.ZERO) == 0) {
+                BigDecimal.ZERO
+            } else {
+                (it.position.lastKnownValue / totalManagedValue) * BigDecimal(100)
+            }
+            it.delta = (actualAllocation - it.target.allocationTarget).setScale(4)
         }
 
         val (onlyBuyAllocations, holdAllocations) = positionAllocations.partition { it.delta < BigDecimal.ZERO }
@@ -53,7 +75,8 @@ internal class BuyHoldStrategy : StrategyEngine {
                 PositionRecommendation(
                     it.position.symbol,
                     if (sharesToAllocate == BigDecimal.ZERO) StrategyAction.HOLD else StrategyAction.BUY,
-                    sharesToAllocate
+                    sharesToAllocate,
+                    it.position.lastKnownPrice
                 )
             )
         }
@@ -84,7 +107,8 @@ internal class BuyHoldStrategy : StrategyEngine {
             PositionRecommendation(
                 it.position.symbol,
                 StrategyAction.HOLD,
-                BigDecimal.ZERO
+                BigDecimal.ZERO,
+                it.position.lastKnownPrice
             )
         }
     }

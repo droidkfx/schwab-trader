@@ -75,7 +75,7 @@ internal class PositionService(
             CurrentPositions(currentValue, newPositions).also {
                 positionRepository.savePositions(account.id, it)
             }
-        } ?: getCachedPositions(account.id)
+        } ?: getCachedPositions(account.id).copy(accountCash = currentValue)
     }
 
     fun clear() {

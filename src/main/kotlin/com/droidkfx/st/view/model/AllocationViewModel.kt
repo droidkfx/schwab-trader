@@ -47,7 +47,7 @@ fun AccountPosition.toAllocationRows(): MutableList<AllocationRowViewModel> {
             symbol = target.symbol,
             allocationTarget = target.allocationTarget,
             currentShares = currentPosition?.quantity ?: BigDecimal.ZERO,
-            currentPrice = currentPosition?.lastKnownPrice ?: BigDecimal.ZERO,
+            currentPrice = currentPosition?.lastKnownPrice ?: currentRecommendation?.price ?: BigDecimal.ZERO,
             currentAllocation = BigDecimal.ZERO,
             tradeAction = currentRecommendation?.recommendation?.name ?: "TBD",
             tradeShares = currentRecommendation?.quantity ?: BigDecimal.ZERO
@@ -55,7 +55,7 @@ fun AccountPosition.toAllocationRows(): MutableList<AllocationRowViewModel> {
     }.toCollection(rows)
     val totalValue = rows.sumOf { it.currentValue }
     rows.forEach { row ->
-        if (totalValue == BigDecimal.ZERO) {
+        if (totalValue.compareTo(BigDecimal.ZERO) == 0) {
             row.currentAllocation = BigDecimal.ZERO
         } else {
             row.currentAllocation = (row.currentValue / totalValue) * BigDecimal(100)

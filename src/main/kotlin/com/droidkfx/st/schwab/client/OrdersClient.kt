@@ -12,6 +12,7 @@ import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
+import java.math.RoundingMode
 
 class OrdersClient(
     config: ReadOnlyValueDataBinding<SchwabClientConfig>,
@@ -42,7 +43,8 @@ class OrdersClient(
 //            val quantity = recommendation.quantity.setScale(0, RoundingMode.FLOOR)
             val quantity = recommendation.quantity
             val body = OrderRequest(
-                orderType = OrderTypeRequest.MARKET,
+                orderType = OrderTypeRequest.LIMIT,
+                price = recommendation.price.setScale(2, RoundingMode.FLOOR),
                 session = Session.NORMAL,
                 duration = Duration.DAY,
                 orderStrategyType = OrderStrategyType.SINGLE,
@@ -62,7 +64,8 @@ class OrdersClient(
 //            val quantity = recommendation.quantity.setScale(0, RoundingMode.FLOOR)
             val quantity = recommendation.quantity
             val body = OrderRequest(
-                orderType = OrderTypeRequest.MARKET,
+                orderType = OrderTypeRequest.LIMIT,
+                price = recommendation.price.setScale(2, RoundingMode.FLOOR),
                 session = Session.NORMAL,
                 duration = Duration.DAY,
                 orderStrategyType = OrderStrategyType.SINGLE,

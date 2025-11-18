@@ -52,13 +52,13 @@ class AccountTab(
             .map {
                 orderService.previewOrder(viewModel.account, it)
             }.toList()
-        println(orderPreviews)
-
-        viewModel.recommendations
-            .filter { it.recommendation != StrategyAction.HOLD }
-            .parallelStream()
-            .map {
-                orderService.order(viewModel.account, it)
-            }.toList()
+        if (orderPreviews.all { it != null }) {
+            viewModel.recommendations
+                .filter { it.recommendation != StrategyAction.HOLD }
+                .parallelStream()
+                .map {
+                    orderService.order(viewModel.account, it)
+                }.toList()
+        }
     }
 }

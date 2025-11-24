@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Pre Commit" type="CompoundRunConfigurationType">
+    <toRun name="schwab-trader [jacocoTestReport]" type="GradleRunConfiguration" />
+    <method v="2" />
+  </configuration>
+</component>

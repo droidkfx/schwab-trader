@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>Main.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st</a>
+    &gt; <span class="el_source">Main.kt</span></div>
+<h1>Main.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st
+
+import com.droidkfx.st.account.AccountModule
+import com.droidkfx.st.config.ConfigModule
+import com.droidkfx.st.controller.ControllerModule
+import com.droidkfx.st.orders.OrderModule
+import com.droidkfx.st.position.PositionModule
+import com.droidkfx.st.schwab.SchwabModule
+import com.droidkfx.st.strategy.StrategyModule
+import com.droidkfx.st.transaction.TransactionModule
+import io.github.oshai.kotlinlogging.KotlinLogging
+
+<span class="nc" id="L13">val logger = KotlinLogging.logger {}</span>
+
+fun main() {
+<span class="nc" id="L16">    logger.info { &quot;Starting Schwab Trader&quot; }</span>
+<span class="nc" id="L17">    val configModule = ConfigModule()</span>
+
+<span class="nc" id="L19">    val schwabModule = SchwabModule(configModule)</span>
+<span class="nc" id="L20">    val accountModule = AccountModule(configModule, schwabModule)</span>
+<span class="nc" id="L21">    val strategyModule = StrategyModule(schwabModule.clientModule)</span>
+<span class="nc" id="L22">    val orderModule = OrderModule(schwabModule.clientModule)</span>
+<span class="nc" id="L23">    val transactionModule = TransactionModule(schwabModule.clientModule)</span>
+<span class="nc" id="L24">    val positionModule = PositionModule(</span>
+<span class="nc" id="L25">        configModule,</span>
+<span class="nc" id="L26">        accountModule,</span>
+<span class="nc" id="L27">        schwabModule.clientModule,</span>
+<span class="nc" id="L28">        strategyModule,</span>
+<span class="nc" id="L29">        orderModule,</span>
+<span class="nc" id="L30">        transactionModule</span>
+    )
+<span class="nc" id="L32">    val controllerModule = ControllerModule(</span>
+<span class="nc" id="L33">        configModule,</span>
+<span class="nc" id="L34">        schwabModule,</span>
+<span class="nc" id="L35">        accountModule,</span>
+<span class="nc" id="L36">        positionModule,</span>
+<span class="nc" id="L37">        orderModule</span>
+    )
+
+<span class="nc" id="L40">    controllerModule.mainController.showAndRun()</span>
+<span class="nc" id="L41">}</span>
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

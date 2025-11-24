@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>AccountTabViewModel.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.view.model</a>
+    &gt; <span class="el_source">AccountTabViewModel.kt</span></div>
+<h1>AccountTabViewModel.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.view.model
+
+import com.droidkfx.st.account.Account
+import com.droidkfx.st.position.AccountPosition
+import com.droidkfx.st.strategy.PositionRecommendation
+import com.droidkfx.st.util.databind.ReadWriteListDataBinding
+import com.droidkfx.st.util.databind.ValueDataBinding
+import com.droidkfx.st.util.databind.toDataBinding
+import java.math.BigDecimal
+
+<span class="nc" id="L11">data class AccountTabViewModel(</span>
+<span class="nc" id="L12">    private var accountPosition: AccountPosition,</span>
+) {
+<span class="nc" id="L14">    val data: ReadWriteListDataBinding&lt;AllocationRowViewModel&gt; = accountPosition.toAllocationRows().toDataBinding()</span>
+<span class="nc"
+      id="L15">    val accountNameDataBinding: ValueDataBinding&lt;String&gt; = account.name.toDataBinding()</span>
+<span class="nc" id="L16">    val accountCash: ValueDataBinding&lt;BigDecimal&gt; = accountPosition.currentCash.toDataBinding()</span>
+
+    fun setAccountName(name: String) {
+<span class="nc" id="L19">        account.name = name</span>
+<span class="nc" id="L20">        accountNameDataBinding.value = name</span>
+<span class="nc" id="L21">    }</span>
+
+    val account: Account
+<span class="nc" id="L24">        get() = accountPosition.account</span>
+
+    val accountId: String
+<span class="nc" id="L27">        get() = account.id</span>
+
+    val recommendations: List&lt;PositionRecommendation&gt;
+<span class="nc" id="L30">        get() = accountPosition.currentRecommendedChanges</span>
+
+<span class="nc" id="L32">    fun currentAccountPosition(): AccountPosition = accountPosition.copy()</span>
+
+    fun updateAccountPosition(ap: AccountPosition) {
+<span class="nc" id="L35">        this.accountPosition = ap</span>
+<span class="nc" id="L36">        setAccountName(ap.account.name)</span>
+<span class="nc" id="L37">        accountCash.value = ap.currentCash</span>
+<span class="nc" id="L38">    }</span>
+
+    fun rebuildAllocationRows() {
+<span class="nc" id="L41">        val newRows = accountPosition.toAllocationRows()</span>
+<span class="nc bnc" id="L42"
+      title="All 2 branches missed.">        for (row: AllocationRowViewModel in newRows) {</span>
+<span class="nc" id="L43">            data.indexOfFirst { it.symbol == row.symbol }.let {</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                if (it == -1) {</span>
+<span class="nc" id="L45">                    data.add(row)</span>
+                } else {
+<span class="nc" id="L47">                    data[it] = row</span>
+<span class="nc" id="L48">                }</span>
+            }
+        }
+<span class="nc" id="L51">    }</span>
+}
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

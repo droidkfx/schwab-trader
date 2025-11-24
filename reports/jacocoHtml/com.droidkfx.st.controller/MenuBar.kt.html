@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>MenuBar.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.controller</a>
+    &gt; <span class="el_source">MenuBar.kt</span></div>
+<h1>MenuBar.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.controller
+
+import com.droidkfx.st.account.AccountService
+import com.droidkfx.st.controller.account.ManageAccountsDialog
+import com.droidkfx.st.controller.setting.SettingsDialog
+import com.droidkfx.st.position.AccountPosition
+import com.droidkfx.st.position.AccountPositionService
+import com.droidkfx.st.schwab.oauth.OauthService
+import com.droidkfx.st.schwab.oauth.OauthStatus
+import com.droidkfx.st.util.databind.ReadWriteListDataBinding
+import com.droidkfx.st.util.databind.readOnlyMapped
+import com.droidkfx.st.view.MenuBar
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
+
+<span class="nc" id="L15">class MenuBar(</span>
+<span class="nc" id="L16">    private val settingsDialog: SettingsDialog,</span>
+<span class="nc" id="L17">    private val accountPositionService: AccountPositionService,</span>
+<span class="nc" id="L18">    private val accountService: AccountService,</span>
+<span class="nc" id="L19">    private val oauthService: OauthService,</span>
+<span class="nc" id="L20">    private val manageAccountsDialog: ManageAccountsDialog,</span>
+<span class="nc" id="L21">    private val accountData: ReadWriteListDataBinding&lt;AccountPosition&gt;</span>
+) : MenuBar(
+<span class="nc" id="L23">    oauthService.getTokenStatusBinding().readOnlyMapped(::oauthEnabled),</span>
+<span class="nc" id="L24">    oauthService.getTokenStatusBinding().readOnlyMapped(::invalidateEnabled)</span>
+) {
+<span class="nc" id="L26">    private val logger = logger {}</span>
+
+    override suspend fun onOauthUpdate() {
+<span class="nc" id="L29">        logger.trace { &quot;onOauthUpdate&quot; }</span>
+<span class="nc" id="L30">        oauthService.obtainAuth()</span>
+<span class="nc" id="L31">    }</span>
+
+    override suspend fun onOauthInvalidate() {
+<span class="nc" id="L34">        logger.trace { &quot;onOauthInvalidate&quot; }</span>
+<span class="nc" id="L35">        oauthService.invalidateOauth()</span>
+<span class="nc" id="L36">    }</span>
+
+    override suspend fun onManageAccounts() {
+<span class="nc" id="L39">        logger.trace { &quot;onManageAccounts&quot; }</span>
+<span class="nc" id="L40">        manageAccountsDialog.showDialog()</span>
+<span class="nc" id="L41">    }</span>
+
+    override suspend fun onClearAllData() {
+<span class="nc" id="L44">        logger.trace { &quot;onClearAllData&quot; }</span>
+<span class="nc" id="L45">        accountPositionService.clear()</span>
+<span class="nc" id="L46">        accountService.clear()</span>
+<span class="nc" id="L47">        oauthService.invalidateOauth()</span>
+<span class="nc" id="L48">        accountData.clear()</span>
+        // TODO reset internal data bindings after clear
+<span class="nc" id="L50">    }</span>
+
+    override fun onSettings() {
+<span class="nc" id="L53">        logger.trace { &quot;onSettings&quot; }</span>
+<span class="nc" id="L54">        settingsDialog.showDialog()</span>
+<span class="nc" id="L55">    }</span>
+
+    companion object {
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        fun oauthEnabled(status: OauthStatus): Boolean = when (status) {</span>
+<span class="nc" id="L59">            OauthStatus.READY, OauthStatus.INITIALIZING -&gt; false</span>
+<span class="nc" id="L60">            OauthStatus.EXPIRED, OauthStatus.NOT_INITIALIZED -&gt; true</span>
+<span class="nc" id="L61">        }</span>
+
+<span class="nc bnc" id="L63" title="All 2 branches missed.">        fun invalidateEnabled(status: OauthStatus): Boolean = when (status) {</span>
+<span class="nc" id="L64">            OauthStatus.READY, OauthStatus.EXPIRED -&gt; true</span>
+<span class="nc" id="L65">            OauthStatus.INITIALIZING, OauthStatus.NOT_INITIALIZED -&gt; false</span>
+<span class="nc" id="L66">        }</span>
+    }
+}
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

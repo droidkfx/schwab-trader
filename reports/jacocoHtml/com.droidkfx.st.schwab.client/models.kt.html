@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>models.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.schwab.client</a>
+    &gt; <span class="el_source">models.kt</span></div>
+<h1>models.kt</h1>
+<pre class="source lang-java linenums">@file:Suppress(&quot;unused&quot;)
+
+package com.droidkfx.st.schwab.client
+
+import com.droidkfx.st.util.serialization.KBigDecimal
+import com.droidkfx.st.util.serialization.KInstant
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonClassDiscriminator
+import kotlinx.serialization.json.JsonObject
+
+<span class="pc bpc" id="L13" title="1 of 2 branches missed.">@Serializable</span>
+<span class="fc" id="L14">data class AccountNumberHash(</span>
+<span class="pc" id="L15">    val accountNumber: String,</span>
+<span class="pc" id="L16">    val hashValue: String</span>
+)
+
+enum class Session {
+<span class="fc" id="L20">    NORMAL, AM, PM, SEAMLESS</span>
+}
+
+enum class Duration {
+<span class="fc" id="L24">    DAY, GOOD_TILL_CANCEL, FILL_OR_KILL, IMMEDIATE_OR_CANCEL, END_OF_WEEK, END_OF_MONTH, NEXT_END_OF_MONTH, UNKNOWN</span>
+}
+
+enum class OrderType {
+<span class="fc" id="L28">    MARKET, LIMIT, STOP, STOP_LIMIT, TRAILING_STOP, CABINET, NON_MARKETABLE, MARKET_ON_CLOSE, EXERCISE, TRAILING_STOP_LIMIT, NET_DEBIT, NET_CREDIT, NET_ZERO, LIMIT_ON_CLOSE, UNKNOWN</span>
+}
+
+// Note that UNKNOWN is not a valid request type
+typealias OrderTypeRequest = OrderType
+
+enum class ComplexOrderStrategyType {
+<span class="fc" id="L35">    NONE, COVERED, VERTICAL, BACK_RATIO, CALENDAR, DIAGONAL, STRADDLE, STRANGLE, COLLAR_SYNTHETIC, BUTTERFLY, CONDOR, IRON_CONDOR, VERTICAL_ROLL, COLLAR_WITH_STOCK, DOUBLE_DIAGONAL, UNBALANCED_BUTTERFLY, UNBALANCED_CONDOR, UNBALANCED_IRON_CONDOR, UNBALANCED_VERTICAL_ROLL, MUTUAL_FUND_SWAP, CUSTOM</span>
+}
+
+enum class RequestedDestination {
+<span class="fc" id="L39">    INET, ECN_ARCA, CBOE, AMEX, PHLX, ISE, BOX, NYSE, NASDAQ, BATS, C2, AUTO</span>
+}
+
+typealias StopPriceLinkBasis = PriceLinkBasis
+
+typealias StopPriceLinkType = PriceLinkType
+
+enum class StopType {
+<span class="fc" id="L47">    STANDARD, BID, ASK, LAST, MARK</span>
+}
+
+enum class PriceLinkBasis {
+<span class="fc" id="L51">    MANUAL, BASE, TRIGGER, LAST, BID, ASK, ASK_BID, MARK, AVERAGE</span>
+}
+
+enum class PriceLinkType {
+<span class="fc" id="L55">    VALUE, PERCENT, TICK</span>
+}
+
+enum class TaxLotMethod {
+<span class="fc" id="L59">    FIFO, LIFO, HIGH_COST, LOW_COST, AVERAGE_COST, SPECIFIC_LOT, LOSS_HARVESTER</span>
+}
+
+enum class SpecialInstruction {
+<span class="fc" id="L63">    ALL_OR_NONE, DO_NOT_REDUCE, ALL_OR_NONE_DO_NOT_REDUCE</span>
+}
+
+enum class OrderStrategyType {
+<span class="fc" id="L67">    SINGLE, CANCEL, RECALL, PAIR, FLATTEN, TWO_DAY_SWAP, BLAST_ALL, OCO, TRIGGER</span>
+}
+
+enum class Status {
+<span class="fc" id="L71">    AWAITING_PARENT_ORDER, AWAITING_CONDITION, AWAITING_STOP_CONDITION, AWAITING_MANUAL_REVIEW, ACCEPTED, AWAITING_UR_OUT, PENDING_ACTIVATION, QUEUED, WORKING, REJECTED, PENDING_CANCEL, CANCELED, PENDING_REPLACE, REPLACED, FILLED, EXPIRED, NEW, AWAITING_RELEASE_TIME, PENDING_ACKNOWLEDGEMENT, PENDING_RECALL, UNKNOWN</span>
+}
+
+enum class AmountIndicator {
+<span class="fc" id="L75">    DOLLARS, SHARES, ALL_SHARES, PERCENTAGE, UNKNOWN</span>
+}
+
+enum class SettlementInstruction {
+<span class="fc" id="L79">    REGULAR, CASH, NEXT_DAY, UNKNOWN</span>
+}
+
+<span class="pc bpc" id="L82" title="95 of 186 branches missed.">@Serializable</span>
+<span class="fc" id="L83">class OrderStrategy(</span>
+<span class="pc" id="L84">    val accountNumber: String? = null,</span>
+<span class="pc" id="L85">    val advancedOrderType: AdvancedOrderType? = null,</span>
+<span class="pc" id="L86">    val closeTime: KInstant? = null,</span>
+<span class="pc" id="L87">    val enteredTime: KInstant? = null,</span>
+<span class="pc" id="L88">    val orderBalance: OrderBalance? = null,</span>
+<span class="pc" id="L89">    val orderStrategyType: OrderStrategyType? = null,</span>
+<span class="pc" id="L90">    val orderVersion: Long? = null,</span>
+<span class="pc" id="L91">    val session: Session? = null,</span>
+<span class="pc" id="L92">    val status: ApiOrderStatus? = null,</span>
+<span class="pc" id="L93">    val allOrNone: Boolean? = null,</span>
+<span class="pc" id="L94">    val discretionary: Boolean? = null,</span>
+<span class="pc" id="L95">    val duration: Duration? = null,</span>
+<span class="pc" id="L96">    val filledQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L97">    val orderType: OrderType? = null,</span>
+<span class="pc" id="L98">    val orderValue: KBigDecimal? = null,</span>
+<span class="pc" id="L99">    val price: KBigDecimal? = null,</span>
+<span class="pc" id="L100">    val quantity: KBigDecimal? = null,</span>
+<span class="pc" id="L101">    val remainingQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L102">    val sellNonMarginableFirst: Boolean? = null,</span>
+<span class="pc" id="L103">    val settlementInstruction: SettlementInstruction? = null,</span>
+<span class="pc" id="L104">    val strategy: ComplexOrderStrategyType? = null,</span>
+<span class="pc" id="L105">    val amountIndicator: AmountIndicator? = null,</span>
+<span class="pc" id="L106">    val orderLegs: List&lt;OrderLeg&gt;? = null,</span>
+<span class="fc" id="L107">) {</span>
+    enum class AdvancedOrderType {
+<span class="fc" id="L109">        NONE, OTO, OCO, OTOCO, OT2OCO, OT3OCO, BLAST_ALL, OTA, PAIR</span>
+    }
+}
+
+<span class="pc bpc" id="L113" title="41 of 82 branches missed.">@Serializable</span>
+<span class="pc" id="L114">data class OrderLeg(</span>
+<span class="pc" id="L115">    val askPrice: KBigDecimal? = null,</span>
+<span class="pc" id="L116">    val bidPrice: KBigDecimal? = null,</span>
+<span class="pc" id="L117">    val lastPrice: KBigDecimal? = null,</span>
+<span class="pc" id="L118">    val markPrice: KBigDecimal? = null,</span>
+<span class="pc" id="L119">    val projectedCommission: KBigDecimal? = null,</span>
+<span class="pc" id="L120">    val quantity: KBigDecimal? = null,</span>
+<span class="pc" id="L121">    val finalSymbol: String? = null,</span>
+<span class="pc" id="L122">    val legId: Long? = null,</span>
+<span class="pc" id="L123">    val assetType: AssetType? = null,</span>
+<span class="pc" id="L124">    val instruction: Instruction? = null,</span>
+<span class="nc" id="L125">)</span>
+
+<span class="pc bpc" id="L127" title="17 of 34 branches missed.">@Serializable</span>
+<span class="pc" id="L128">data class OrderBalance(</span>
+<span class="pc" id="L129">    val orderValue: KBigDecimal? = null,</span>
+<span class="pc" id="L130">    val projectedAvailableFund: KBigDecimal? = null,</span>
+<span class="pc" id="L131">    val projectedBuyingPower: KBigDecimal? = null,</span>
+<span class="pc" id="L132">    val projectedCommission: KBigDecimal? = null,</span>
+<span class="nc" id="L133">)</span>
+
+<span class="pc bpc" id="L135" title="21 of 42 branches missed.">@Serializable</span>
+<span class="pc" id="L136">data class OrderValidationResult(</span>
+<span class="pc" id="L137">    val alerts: List&lt;OrderValidationDetail&gt;? = null,</span>
+<span class="pc" id="L138">    val accepts: List&lt;OrderValidationDetail&gt;? = null,</span>
+<span class="pc" id="L139">    val rejects: List&lt;OrderValidationDetail&gt;? = null,</span>
+<span class="pc" id="L140">    val reviews: List&lt;OrderValidationDetail&gt;? = null,</span>
+<span class="pc" id="L141">    val warns: List&lt;OrderValidationDetail&gt;? = null,</span>
+<span class="nc" id="L142">)</span>
+
+<span class="pc bpc" id="L144" title="27 of 50 branches missed.">@Serializable</span>
+<span class="pc" id="L145">data class OrderValidationDetail(</span>
+<span class="pc" id="L146">    val validationRuleName: String? = null,</span>
+<span class="pc" id="L147">    val message: String? = null,</span>
+<span class="pc" id="L148">    val activityMessage: String? = null,</span>
+<span class="pc" id="L149">    val originalSeverity: ApiRuleAction? = null,</span>
+<span class="pc" id="L150">    val overrideName: String? = null,</span>
+<span class="pc" id="L151">    val overrideSeverity: ApiRuleAction? = null,</span>
+<span class="nc" id="L152">)</span>
+
+enum class ApiRuleAction {
+<span class="fc" id="L155">    ACCEPT, ALERT, REJECT, REVIEW, UNKNOWN</span>
+}
+
+<span class="pc bpc" id="L158" title="13 of 26 branches missed.">@Serializable</span>
+<span class="pc" id="L159">data class CommissionAndFee(</span>
+<span class="pc" id="L160">    val commission: Commission? = null,</span>
+<span class="pc" id="L161">    val fee: Fees? = null,</span>
+<span class="pc" id="L162">    val trueCommission: Commission? = null,</span>
+<span class="nc" id="L163">)</span>
+
+<span class="pc bpc" id="L165" title="5 of 10 branches missed.">@Serializable</span>
+<span class="pc" id="L166">data class Commission(</span>
+<span class="pc" id="L167">    val commissionLegs: List&lt;CommissionLeg&gt;? = null</span>
+<span class="nc" id="L168">)</span>
+
+<span class="pc bpc" id="L170" title="5 of 10 branches missed.">@Serializable</span>
+<span class="pc" id="L171">data class CommissionLeg(</span>
+<span class="pc" id="L172">    val commissionValues: List&lt;CommissionValue&gt;? = null</span>
+<span class="nc" id="L173">)</span>
+
+typealias CommissionValue = FeeValue
+
+<span class="pc bpc" id="L177" title="5 of 10 branches missed.">@Serializable</span>
+<span class="pc" id="L178">data class Fees(</span>
+<span class="pc" id="L179">    val feeLegs: List&lt;FeeLeg&gt;? = null</span>
+<span class="nc" id="L180">)</span>
+
+<span class="pc bpc" id="L182" title="5 of 10 branches missed.">@Serializable</span>
+<span class="pc" id="L183">data class FeeLeg(</span>
+<span class="pc" id="L184">    val feeValues: List&lt;FeeValue&gt;? = null</span>
+<span class="nc" id="L185">)</span>
+
+<span class="pc bpc" id="L187" title="9 of 18 branches missed.">@Serializable</span>
+<span class="pc" id="L188">data class FeeValue(</span>
+<span class="pc" id="L189">    val value: KBigDecimal? = null,</span>
+<span class="pc" id="L190">    val type: FeeType? = null,</span>
+<span class="nc" id="L191">)</span>
+
+enum class FeeType {
+<span class="fc" id="L194">    COMMISSION, SEC_FEE, STR_FEE, R_FEE, CDSC_FEE, OPT_REG_FEE, ADDITIONAL_FEE, MISCELLANEOUS_FEE, FTT, FUTURES_CLEARING_FEE, FUTURES_DESK_OFFICE_FEE, FUTURES_EXCHANGE_FEE, FUTURES_GLOBEX_FEE, FUTURES_NFA_FEE, FUTURES_PIT_BROKERAGE_FEE, FUTURES_TRANSACTION_FEE, LOW_PROCEEDS_COMMISSION, BASE_CHARGE, GENERAL_CHARGE, GST_FEE, TAF_FEE, INDEX_OPTION_FEE, TEFRA_TAX, STATE_TAX, UNKNOWN</span>
+}
+
+<span class="pc bpc" id="L197" title="5 of 10 branches missed.">@Serializable</span>
+<span class="pc" id="L198">data class Account(</span>
+<span class="pc" id="L199">    val securitiesAccount: SecuritiesAccount? = null,</span>
+<span class="nc" id="L200">)</span>
+
+<span class="pc bpc" id="L202" title="154 of 294 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L203" title="4 of 8 branches missed.">data class Order(</span>
+<span class="pc" id="L204">    val session: Session? = null,</span>
+<span class="pc" id="L205">    val duration: Duration? = null,</span>
+<span class="pc" id="L206">    val orderType: OrderType? = null,</span>
+<span class="pc" id="L207">    val cancelTime: KInstant? = null,</span>
+<span class="pc" id="L208">    val complexOrderStrategyType: ComplexOrderStrategyType? = null,</span>
+<span class="pc" id="L209">    val quantity: KBigDecimal? = null,</span>
+<span class="pc" id="L210">    val filledQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L211">    val remainingQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L212">    val requestedDestination: RequestedDestination? = null,</span>
+<span class="pc" id="L213">    val destinationLinkName: String? = null,</span>
+<span class="pc" id="L214">    val releaseTime: KInstant? = null,</span>
+<span class="pc" id="L215">    val stopPrice: KBigDecimal? = null,</span>
+<span class="pc" id="L216">    val stopPriceLinkBasis: StopPriceLinkBasis? = null,</span>
+<span class="pc" id="L217">    val stopPriceLinkType: StopPriceLinkType? = null,</span>
+<span class="pc" id="L218">    val stopPriceOffset: KBigDecimal? = null,</span>
+<span class="pc" id="L219">    val stopType: StopType? = null,</span>
+<span class="pc" id="L220">    val priceLinkBasis: PriceLinkBasis? = null,</span>
+<span class="pc" id="L221">    val priceLinkType: PriceLinkType? = null,</span>
+<span class="pc" id="L222">    val price: KBigDecimal? = null,</span>
+<span class="pc" id="L223">    val taxLotMethod: TaxLotMethod? = null,</span>
+<span class="pc" id="L224">    val orderLegCollection: List&lt;OrderLegCollection&gt;? = null,</span>
+<span class="pc" id="L225">    val activationPrice: KBigDecimal? = null,</span>
+<span class="pc" id="L226">    val specialInstruction: SpecialInstruction? = null,</span>
+<span class="pc" id="L227">    val orderStrategyType: OrderStrategyType? = null,</span>
+<span class="pc" id="L228">    val orderId: Long? = null,</span>
+<span class="pc" id="L229">    val cancelable: Boolean? = null,</span>
+<span class="pc" id="L230">    val editable: Boolean? = null,</span>
+<span class="pc" id="L231">    val status: Status? = null,</span>
+<span class="pc" id="L232">    val enteredTime: KInstant? = null,</span>
+<span class="pc" id="L233">    val closeTime: KInstant? = null,</span>
+<span class="pc" id="L234">    val tag: String? = null,</span>
+<span class="pc" id="L235">    val accountNumber: Long? = null,</span>
+<span class="pc" id="L236">    val orderActivityCollection: List&lt;OrderActivity&gt;? = null,</span>
+<span class="pc" id="L237">    val replacingOrderCollection: List&lt;JsonObject&gt;? = null,</span>
+<span class="pc" id="L238">    val childOrderStrategies: List&lt;JsonObject&gt;? = null,</span>
+<span class="pc" id="L239">    val statusDescription: String? = null,</span>
+<span class="fc" id="L240">)</span>
+
+<span class="pc bpc" id="L242" title="147 of 278 branches missed.">@Serializable</span>
+<span class="pc bpc" id="L243" title="2 of 4 branches missed.">data class OrderRequest(</span>
+<span class="pc" id="L244">    val session: Session? = null,</span>
+<span class="pc" id="L245">    val duration: Duration? = null,</span>
+<span class="pc" id="L246">    val orderType: OrderTypeRequest? = null,</span>
+<span class="pc" id="L247">    val cancelTime: KInstant? = null,</span>
+<span class="pc" id="L248">    val complexOrderStrategyType: ComplexOrderStrategyType? = null,</span>
+<span class="pc" id="L249">    val quantity: KBigDecimal? = null,</span>
+<span class="pc" id="L250">    val filledQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L251">    val remainingQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L252">    val destinationLinkName: String? = null,</span>
+<span class="pc" id="L253">    val releaseTime: KInstant? = null,</span>
+<span class="pc" id="L254">    val stopPrice: KBigDecimal? = null,</span>
+<span class="pc" id="L255">    val stopPriceLinkBasis: StopPriceLinkBasis? = null,</span>
+<span class="pc" id="L256">    val stopPriceLinkType: StopPriceLinkType? = null,</span>
+<span class="pc" id="L257">    val stopPriceOffset: KBigDecimal? = null,</span>
+<span class="pc" id="L258">    val stopType: StopType? = null,</span>
+<span class="pc" id="L259">    val priceLinkBasis: PriceLinkBasis? = null,</span>
+<span class="pc" id="L260">    val priceLinkType: PriceLinkType? = null,</span>
+<span class="pc" id="L261">    val price: KBigDecimal? = null,</span>
+<span class="pc" id="L262">    val taxLotMethod: TaxLotMethod? = null,</span>
+<span class="pc" id="L263">    val orderLegCollection: List&lt;OrderLegCollection&gt;? = null,</span>
+<span class="pc" id="L264">    val activationPrice: KBigDecimal? = null,</span>
+<span class="pc" id="L265">    val specialInstruction: SpecialInstruction? = null,</span>
+<span class="pc" id="L266">    val orderStrategyType: OrderStrategyType? = null,</span>
+<span class="pc" id="L267">    val orderId: Long? = null,</span>
+<span class="pc" id="L268">    val cancelable: Boolean? = null,</span>
+<span class="pc" id="L269">    val editable: Boolean? = null,</span>
+<span class="pc" id="L270">    val status: Status? = null,</span>
+<span class="pc" id="L271">    val enteredTime: KInstant? = null,</span>
+<span class="pc" id="L272">    val closeTime: KInstant? = null,</span>
+<span class="pc" id="L273">    val accountNumber: KInstant? = null,</span>
+<span class="pc" id="L274">    val orderActivityCollection: List&lt;OrderActivity&gt;? = null,</span>
+<span class="pc" id="L275">    val replacingOrderCollection: List&lt;JsonObject&gt;? = null,</span>
+<span class="pc" id="L276">    val childOrderStrategies: List&lt;JsonObject&gt;? = null,</span>
+<span class="pc" id="L277">    val statusDescription: String? = null,</span>
+<span class="fc" id="L278">)</span>
+
+<span class="pc bpc" id="L280" title="17 of 34 branches missed.">@Serializable</span>
+<span class="pc" id="L281">data class PreviewOrder(</span>
+<span class="pc" id="L282">    val orderId: Long? = null,</span>
+<span class="pc" id="L283">    val orderStrategy: OrderStrategy? = null,</span>
+<span class="pc" id="L284">    val orderValidationResult: OrderValidationResult? = null,</span>
+<span class="pc" id="L285">    val commissionAndFee: CommissionAndFee? = null,</span>
+<span class="nc" id="L286">)</span>
+
+<span class="pc bpc" id="L288" title="21 of 42 branches missed.">@Serializable</span>
+<span class="pc" id="L289">data class OrderActivity(</span>
+<span class="pc" id="L290">    val activityType: Activity? = null,</span>
+<span class="pc" id="L291">    val executionType: String? = null,</span>
+<span class="pc" id="L292">    val quantity: KBigDecimal? = null,</span>
+<span class="pc" id="L293">    val orderRemainingQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L294">    val executionLegs: List&lt;ExecutionLeg&gt;? = null,</span>
+<span class="nc" id="L295">) {</span>
+    enum class Activity {
+<span class="fc" id="L297">        EXECUTION, ORDER_ACTION</span>
+    }
+}
+
+<span class="pc bpc" id="L301" title="26 of 50 branches missed.">@Serializable</span>
+<span class="fc" id="L302">data class ExecutionLeg(</span>
+<span class="pc" id="L303">    val legId: Long? = null,</span>
+<span class="pc" id="L304">    val price: KBigDecimal? = null,</span>
+<span class="pc" id="L305">    val quantity: KBigDecimal? = null,</span>
+<span class="pc" id="L306">    val mismarkedQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L307">    val instrumentId: Long? = null,</span>
+<span class="pc" id="L308">    val time: KInstant? = null,</span>
+<span class="fc" id="L309">)</span>
+
+<span class="pc bpc" id="L311" title="84 of 162 branches missed.">@Serializable</span>
+<span class="pc" id="L312">data class Position(</span>
+<span class="pc" id="L313">    val shortQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L314">    val averagePrice: KBigDecimal? = null,</span>
+<span class="pc" id="L315">    val currentDayProfitLoss: KBigDecimal? = null,</span>
+<span class="pc" id="L316">    val currentDayProfitLossPercentage: KBigDecimal? = null,</span>
+<span class="pc" id="L317">    val longQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L318">    val settledLongQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L319">    val settledShortQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L320">    val agedQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L321">    val instrument: TransactionInstrument? = null,</span>
+<span class="pc" id="L322">    val marketValue: KBigDecimal? = null,</span>
+<span class="pc" id="L323">    val maintenanceRequirement: KBigDecimal? = null,</span>
+<span class="pc" id="L324">    val averageLongPrice: KBigDecimal? = null,</span>
+<span class="pc" id="L325">    val averageShortPrice: KBigDecimal? = null,</span>
+<span class="pc" id="L326">    val taxLotAverageLongPrice: KBigDecimal? = null,</span>
+<span class="pc" id="L327">    val taxLotAverageShortPrice: KBigDecimal? = null,</span>
+<span class="pc" id="L328">    val longOpenProfitLoss: KBigDecimal? = null,</span>
+<span class="pc" id="L329">    val shortOpenProfitLoss: KBigDecimal? = null,</span>
+<span class="pc" id="L330">    val previousSessionLongQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L331">    val previousSessionShortQuantity: KBigDecimal? = null,</span>
+<span class="pc" id="L332">    val currentDayCost: KBigDecimal? = null,</span>
+<span class="nc" id="L333">) {</span>
+    val totalQuantity: KBigDecimal
+        get() {
+<span class="nc bnc" id="L336" title="All 4 branches missed.">            return (longQuantity ?: KBigDecimal.ZERO) + (shortQuantity ?: KBigDecimal.ZERO)</span>
+        }
+
+    val marketPrice: KBigDecimal
+        get() {
+<span class="nc bnc" id="L341" title="All 2 branches missed.">            return (marketValue ?: KBigDecimal.ZERO) / (totalQuantity)</span>
+        }
+}
+
+<span class="pc bpc" id="L345" title="9 of 18 branches missed.">@Serializable</span>
+<span class="pc" id="L346">data class ServiceError(</span>
+<span class="pc" id="L347">    val message: String? = null,</span>
+<span class="pc" id="L348">    val errors: List&lt;String&gt;? = null</span>
+<span class="nc" id="L349">)</span>
+
+<span class="pc bpc" id="L351" title="38 of 74 branches missed.">@Serializable</span>
+<span class="pc" id="L352">data class OrderLegCollection(</span>
+<span class="pc" id="L353">    val orderLegType: OrderLegType? = null,</span>
+<span class="pc" id="L354">    val legId: Long? = null,</span>
+<span class="pc" id="L355">    val instrument: TransactionInstrument? = null,</span>
+<span class="pc" id="L356">    val instruction: Instruction? = null,</span>
+<span class="pc" id="L357">    val positionEffect: PositionEffect? = null,</span>
+<span class="pc" id="L358">    val quantity: KBigDecimal? = null,</span>
+<span class="pc" id="L359">    val quantityType: QuantityType? = null,</span>
+<span class="pc" id="L360">    val divCapGains: DivCapGains? = null,</span>
+<span class="pc" id="L361">    val toSymbol: String? = null,</span>
+<span class="nc" id="L362">) {</span>
+    enum class OrderLegType {
+<span class="fc" id="L364">        EQUITY, OPTION, INDEX, MUTUAL_FUND, CASH_EQUIVALENT, FIXED_INCOME, CURRENCY, COLLECTIVE_INVESTMENT</span>
+    }
+
+    enum class QuantityType {
+<span class="fc" id="L368">        ALL_SHARES, DOLLARS, SHARES</span>
+    }
+
+    enum class DivCapGains {
+<span class="fc" id="L372">        REINVEST, PAYOUT</span>
+    }
+}
+
+enum class PositionEffect {
+<span class="fc" id="L377">    OPENING, CLOSING, AUTOMATIC, UNKNOWN</span>
+}
+
+typealias SecuritiesAccount = SecuritiesAccountBase
+
+<span class="fc" id="L382">@Serializable</span>
+sealed class SecuritiesAccountBase {
+    abstract val accountNumber: String?
+    abstract val roundTrips: Long?
+    abstract val isDayTrader: Boolean?
+    abstract val isClosingOnlyRestricted: Boolean?
+    abstract val pfcbFlag: Boolean?
+    abstract val positions: List&lt;Position&gt;?
+
+<span class="nc" id="L391">    @Serializable</span>
+    enum class Type {
+<span class="nc" id="L393">        CASH, MARGIN</span>
+<span class="nc" id="L394">    }</span>
+<span class="fc" id="L395">}</span>
+
+<span class="pc bpc" id="L397" title="37 of 74 branches missed.">@Serializable</span>
+@SerialName(&quot;MARGIN&quot;)
+<span class="pc" id="L399">class MarginAccount(</span>
+<span class="pc" id="L400">    override val accountNumber: String? = null,</span>
+<span class="pc" id="L401">    override val roundTrips: Long? = null,</span>
+<span class="pc" id="L402">    override val isDayTrader: Boolean? = null,</span>
+<span class="pc" id="L403">    override val isClosingOnlyRestricted: Boolean? = null,</span>
+<span class="pc" id="L404">    override val pfcbFlag: Boolean? = null,</span>
+<span class="pc" id="L405">    override val positions: List&lt;Position&gt;? = null,</span>
+<span class="pc" id="L406">    val initialBalances: MarginInitialBalance? = null,</span>
+<span class="pc" id="L407">    val currentBalances: MarginBalance? = null,</span>
+<span class="pc" id="L408">    val projectedBalances: MarginBalance? = null,</span>
+<span class="nc" id="L409">) : SecuritiesAccountBase()</span>
+
+<span class="pc bpc" id="L411" title="168 of 270 branches missed.">@Serializable</span>
+<span class="pc bnc" id="L412" title="All 2 branches missed.">data class MarginInitialBalance(</span>
+<span class="pc" id="L413">    val accruedInterest: KBigDecimal? = null,</span>
+<span class="pc" id="L414">    val availableFundsNonMarginableTrade: KBigDecimal? = null,</span>
+<span class="pc" id="L415">    val bondValue: KBigDecimal? = null,</span>
+<span class="pc" id="L416">    val buyingPower: KBigDecimal? = null,</span>
+<span class="pc" id="L417">    val cashBalance: KBigDecimal? = null,</span>
+<span class="pc" id="L418">    val cashAvailableForTrading: KBigDecimal? = null,</span>
+<span class="pc" id="L419">    val cashReceipts: KBigDecimal? = null,</span>
+<span class="pc" id="L420">    val dayTradingBuyingPower: KBigDecimal? = null,</span>
+<span class="pc" id="L421">    val dayTradingBuyingPowerCall: KBigDecimal? = null,</span>
+<span class="pc" id="L422">    val dayTradingEquityCall: KBigDecimal? = null,</span>
+<span class="pc" id="L423">    val equity: KBigDecimal? = null,</span>
+<span class="pc" id="L424">    val equityPercentage: KBigDecimal? = null,</span>
+<span class="pc" id="L425">    val liquidationValue: KBigDecimal? = null,</span>
+<span class="pc" id="L426">    val longMarginValue: KBigDecimal? = null,</span>
+<span class="pc" id="L427">    val longOptionMarketValue: KBigDecimal? = null,</span>
+<span class="pc" id="L428">    val longStockValue: KBigDecimal? = null,</span>
+<span class="pc" id="L429">    val maintenanceCall: KBigDecimal? = null,</span>
+<span class="pc" id="L430">    val maintenanceRequirement: KBigDecimal? = null,</span>
+<span class="pc" id="L431">    val margin: KBigDecimal? = null,</span>
+<span class="pc" id="L432">    val marginEquity: KBigDecimal? = null,</span>
+<span class="pc" id="L433">    val moneyMarketFund: KBigDecimal? = null,</span>
+<span class="pc" id="L434">    val mutualFundValue: KBigDecimal? = null,</span>
+<span class="pc" id="L435">    val regTCall: KBigDecimal? = null,</span>
+<span class="pc" id="L436">    val shortMarginValue: KBigDecimal? = null,</span>
+<span class="pc" id="L437">    val shortOptionMarketValue: KBigDecimal? = null,</span>
+<span class="pc" id="L438">    val shortStockValue: KBigDecimal? = null,</span>
+<span class="pc" id="L439">    val totalCash: KBigDecimal? = null,</span>
+<span class="pc" id="L440">    val isInCall: Boolean? = null,</span>
+<span class="pc" id="L441">    val unsettledCash: KBigDecimal? = null,</span>
+<span class="pc" id="L442">    val pendingDeposits: KBigDecimal? = null,</span>
+<span class="pc" id="L443">    val marginBalance: KBigDecimal? = null,</span>
+<span class="pc" id="L444">    val shortBalance: KBigDecimal? = null,</span>
+<span class="pc" id="L445">    val accountValue: KBigDecimal? = null,</span>
+<span class="nc" id="L446">)</span>
+
+<span class="pc bpc" id="L448" title="96 of 154 branches missed.">@Serializable</span>
+<span class="pc" id="L449">data class MarginBalance(</span>
+<span class="pc" id="L450">    val availableFunds: KBigDecimal? = null,</span>
+<span class="pc" id="L451">    val availableFundsNonMarginableTrade: KBigDecimal? = null,</span>
+<span class="pc" id="L452">    val buyingPower: KBigDecimal? = null,</span>
+<span class="pc" id="L453">    val buyingPowerNonMarginableTrade: KBigDecimal? = null,</span>
+<span class="pc" id="L454">    val dayTradingBuyingPower: KBigDecimal? = null,</span>
+<span class="pc" id="L455">    val dayTradingBuyingPowerCall: KBigDecimal? = null,</span>
+<span class="pc" id="L456">    val equity: KBigDecimal? = null,</span>
+<span class="pc" id="L457">    val equityPercentage: KBigDecimal? = null,</span>
+<span class="pc" id="L458">    val longMarginValue: KBigDecimal? = null,</span>
+<span class="pc" id="L459">    val maintenanceCall: KBigDecimal? = null,</span>
+<span class="pc" id="L460">    val maintenanceRequirement: KBigDecimal? = null,</span>
+<span class="pc" id="L461">    val marginBalance: KBigDecimal? = null,</span>
+<span class="pc" id="L462">    val regTCall: KBigDecimal? = null,</span>
+<span class="pc" id="L463">    val shortBalance: KBigDecimal? = null,</span>
+<span class="pc" id="L464">    val shortMarginValue: KBigDecimal? = null,</span>
+<span class="pc" id="L465">    val sma: KBigDecimal? = null,</span>
+<span class="pc" id="L466">    val isInCall: Boolean? = null,</span>
+<span class="pc" id="L467">    val stockBuyingPower: KBigDecimal? = null,</span>
+<span class="pc" id="L468">    val optionBuyingPower: KBigDecimal? = null,</span>
+<span class="nc" id="L469">)</span>
+
+<span class="pc bpc" id="L471" title="37 of 74 branches missed.">@Serializable</span>
+@SerialName(&quot;CASH&quot;)
+<span class="pc" id="L473">class CashAccount(</span>
+<span class="pc" id="L474">    override val accountNumber: String? = null,</span>
+<span class="pc" id="L475">    override val roundTrips: Long? = null,</span>
+<span class="pc" id="L476">    override val isDayTrader: Boolean? = null,</span>
+<span class="pc" id="L477">    override val isClosingOnlyRestricted: Boolean? = null,</span>
+<span class="pc" id="L478">    override val pfcbFlag: Boolean? = null,</span>
+<span class="pc" id="L479">    override val positions: List&lt;Position&gt;? = null,</span>
+<span class="pc" id="L480">    val initialBalances: CashInitialBalance? = null,</span>
+<span class="pc" id="L481">    val currentBalances: CashBalance? = null,</span>
+<span class="pc" id="L482">    val projectedBalances: CashBalance? = null</span>
+<span class="nc" id="L483">) : SecuritiesAccountBase()</span>
+
+<span class="pc bpc" id="L485" title="91 of 146 branches missed.">@Serializable</span>
+<span class="pc" id="L486">data class CashInitialBalance(</span>
+<span class="pc" id="L487">    val accruedInterest: KBigDecimal? = null,</span>
+<span class="pc" id="L488">    val cashAvailableForTrading: KBigDecimal? = null,</span>
+<span class="pc" id="L489">    val cashAvailableForWithdrawal: KBigDecimal? = null,</span>
+<span class="pc" id="L490">    val cashBalance: KBigDecimal? = null,</span>
+<span class="pc" id="L491">    val bondValue: KBigDecimal? = null,</span>
+<span class="pc" id="L492">    val cashReceipts: KBigDecimal? = null,</span>
+<span class="pc" id="L493">    val liquidationValue: KBigDecimal? = null,</span>
+<span class="pc" id="L494">    val longOptionMarketValue: KBigDecimal? = null,</span>
+<span class="pc" id="L495">    val longStockValue: KBigDecimal? = null,</span>
+<span class="pc" id="L496">    val moneyMarketFund: KBigDecimal? = null,</span>
+<span class="pc" id="L497">    val mutualFundValue: KBigDecimal? = null,</span>
+<span class="pc" id="L498">    val shortOptionMarketValue: KBigDecimal? = null,</span>
+<span class="pc" id="L499">    val shortStockValue: KBigDecimal? = null,</span>
+<span class="pc" id="L500">    val isInCall: Boolean? = null,</span>
+<span class="pc" id="L501">    val unsettledCash: KBigDecimal? = null,</span>
+<span class="pc" id="L502">    val cashDebitCallValue: KBigDecimal? = null,</span>
+<span class="pc" id="L503">    val pendingDeposits: KBigDecimal? = null,</span>
+<span class="pc" id="L504">    val accountValue: KBigDecimal? = null,</span>
+<span class="nc" id="L505">)</span>
+
+<span class="pc bpc" id="L507" title="36 of 58 branches missed.">@Serializable</span>
+<span class="pc" id="L508">data class CashBalance(</span>
+<span class="pc" id="L509">    val cashAvailableForTrading: KBigDecimal? = null,</span>
+<span class="pc" id="L510">    val cashAvailableForWithdrawal: KBigDecimal? = null,</span>
+<span class="pc" id="L511">    val cashCall: KBigDecimal? = null,</span>
+<span class="pc" id="L512">    val longNonMarginableMarketValue: KBigDecimal? = null,</span>
+<span class="pc" id="L513">    val totalCash: KBigDecimal? = null,</span>
+<span class="pc" id="L514">    val cashDebitCallValue: KBigDecimal? = null,</span>
+<span class="pc" id="L515">    val unsettledCash: KBigDecimal? = null,</span>
+<span class="nc" id="L516">)</span>
+
+<span class="fc" id="L518">@OptIn(ExperimentalSerializationApi::class)</span>
+@Serializable
+<span class="fc" id="L520">@JsonClassDiscriminator(&quot;assetType&quot;)</span>
+sealed class TransactionBaseInstrument {
+    abstract val cusip: String?
+    abstract val symbol: String?
+    abstract val description: String?
+    abstract val instrumentId: Long?
+    abstract val netChange: KBigDecimal?
+<span class="fc" id="L527">}</span>
+
+<span class="nc" id="L529">@OptIn(ExperimentalSerializationApi::class)</span>
+@Serializable
+<span class="nc" id="L531">@JsonClassDiscriminator(&quot;assetType&quot;)</span>
+sealed class AccountsBaseInstrument() {
+    abstract val cusip: String?
+    abstract val symbol: String?
+    abstract val description: String?
+    abstract val instrumentId: Long?
+    abstract val netChange: KBigDecimal?
+<span class="nc" id="L538">}</span>
+
+typealias TransactionInstrument = TransactionBaseInstrument
+
+<span class="pc bpc" id="L542" title="25 of 50 branches missed.">@Serializable</span>
+@SerialName(&quot;CASH_EQUIVALENT&quot;)
+<span class="pc" id="L544">class TransactionCashEquivalent(</span>
+<span class="pc" id="L545">    override val cusip: String? = null,</span>
+<span class="pc" id="L546">    override val symbol: String? = null,</span>
+<span class="pc" id="L547">    override val description: String? = null,</span>
+<span class="pc" id="L548">    override val instrumentId: Long? = null,</span>
+<span class="pc" id="L549">    override val netChange: KBigDecimal? = null,</span>
+<span class="pc" id="L550">    val type: Type? = null,</span>
+<span class="nc" id="L551">) : TransactionBaseInstrument() {</span>
+    enum class Type {
+<span class="fc" id="L553">        SWEEP_VEHICLE, SAVINGS, MONEY_MARKET_FUND, UNKNOWN</span>
+    }
+}
+
+<span class="pc bpc" id="L557" title="25 of 50 branches missed.">@Serializable</span>
+@SerialName(&quot;COLLECTIVE_INVESTMENT&quot;)
+<span class="pc" id="L559">class CollectiveInvestment(</span>
+<span class="pc" id="L560">    override val cusip: String? = null,</span>
+<span class="pc" id="L561">    override val symbol: String? = null,</span>
+<span class="pc" id="L562">    override val description: String? = null,</span>
+<span class="pc" id="L563">    override val instrumentId: Long? = null,</span>
+<span class="pc" id="L564">    override val netChange: KBigDecimal? = null,</span>
+<span class="pc" id="L565">    val type: Type? = null,</span>
+<span class="nc" id="L566">) : TransactionBaseInstrument() {</span>
+    enum class Type {
+<span class="fc" id="L568">        UNIT_INVESTMENT_TRUST, EXCHANGE_TRADED_FUND, CLOSED_END_FUND, INDEX, UNITS</span>
+    }
+}
+
+enum class Instruction {
+<span class="fc" id="L573">    BUY, SELL, BUY_TO_COVER, SELL_SHORT, BUY_TO_OPEN, BUY_TO_CLOSE, SELL_TO_OPEN, SELL_TO_CLOSE, EXCHANGE, SELL_SHORT_EXEMPT</span>
+}
+
+<span class="fc" id="L576">@Serializable</span>
+enum class AssetType {
+<span class="fc" id="L578">    EQUITY, MUTUAL_FUND, OPTION, FUTURE, FOREX, INDEX, CASH_EQUIVALENT, FIXED_INCOME, PRODUCT, CURRENCY, COLLECTIVE_INVESTMENT</span>
+<span class="fc" id="L579">}</span>
+
+<span class="pc bpc" id="L581" title="21 of 42 branches missed.">@Serializable</span>
+@SerialName(&quot;CURRENCY&quot;)
+<span class="pc" id="L583">class Currency(</span>
+<span class="pc" id="L584">    override val cusip: String? = null,</span>
+<span class="pc" id="L585">    override val symbol: String? = null,</span>
+<span class="pc" id="L586">    override val description: String? = null,</span>
+<span class="pc" id="L587">    override val instrumentId: Long? = null,</span>
+<span class="pc" id="L588">    override val netChange: KBigDecimal? = null,</span>
+<span class="nc" id="L589">) : TransactionBaseInstrument()</span>
+
+<span class="pc bpc" id="L591" title="25 of 50 branches missed.">@Serializable</span>
+@SerialName(&quot;EQUITY&quot;)
+<span class="pc" id="L593">class TransactionEquity(</span>
+<span class="pc" id="L594">    override val cusip: String? = null,</span>
+<span class="pc" id="L595">    override val symbol: String? = null,</span>
+<span class="pc" id="L596">    override val description: String? = null,</span>
+<span class="pc" id="L597">    override val instrumentId: Long? = null,</span>
+<span class="pc" id="L598">    override val netChange: KBigDecimal? = null,</span>
+<span class="pc" id="L599">    val type: Type? = null,</span>
+<span class="nc" id="L600">) : TransactionBaseInstrument() {</span>
+    enum class Type {
+<span class="fc" id="L602">        COMMON_STOCK, PREFERRED_STOCK, DEPOSITORY_RECEIPT, PREFERRED_DEPOSITORY_RECEIPT, RESTRICTED_STOCK, COMPONENT_UNIT, RIGHT, WARRANT, CONVERTIBLE_PREFERRED_STOCK, CONVERTIBLE_STOCK, LIMITED_PARTNERSHIP, WHEN_ISSUED, UNKNOWN</span>
+    }
+}
+
+<span class="pc bpc" id="L606" title="41 of 82 branches missed.">@Serializable</span>
+@SerialName(&quot;FIXED_INCOME&quot;)
+<span class="pc" id="L608">class TransactionFixedIncome(</span>
+<span class="pc" id="L609">    override val cusip: String? = null,</span>
+<span class="pc" id="L610">    override val symbol: String? = null,</span>
+<span class="pc" id="L611">    override val description: String? = null,</span>
+<span class="pc" id="L612">    override val instrumentId: Long? = null,</span>
+<span class="pc" id="L613">    override val netChange: KBigDecimal? = null,</span>
+<span class="pc" id="L614">    val type: Type? = null,</span>
+<span class="pc" id="L615">    val maturityDate: String? = null,</span>
+<span class="pc" id="L616">    val factor: KBigDecimal? = null,</span>
+<span class="pc" id="L617">    val multiplier: KBigDecimal? = null,</span>
+<span class="pc" id="L618">    val variableRate: KBigDecimal? = null,</span>
+<span class="nc" id="L619">) : TransactionBaseInstrument() {</span>
+    enum class Type {
+<span class="fc" id="L621">        BOND_UNIT, CERTIFICATE_OF_DEPOSIT, CONVERTIBLE_BOND, COLLATERALIZED_MORTGAGE_OBLIGATION, CORPORATE_BOND, GOVERNMENT_MORTGAGE, GNMA_BONDS, MUNICIPAL_ASSESSMENT_DISTRICT, MUNICIPAL_BOND, OTHER_GOVERNMENT, SHORT_TERM_PAPER, US_TREASURY_BOND, US_TREASURY_BILL, US_TREASURY_NOTE, US_TREASURY_ZERO_COUPON, AGENCY_BOND, WHEN_AS_AND_IF_ISSUED_BOND, ASSET_BACKED_SECURITY, UNKNOWN</span>
+    }
+}
+
+<span class="pc bpc" id="L625" title="34 of 66 branches missed.">@Serializable</span>
+@SerialName(&quot;FOREX&quot;)
+<span class="pc" id="L627">class Forex(</span>
+<span class="pc" id="L628">    override val cusip: String? = null,</span>
+<span class="pc" id="L629">    override val symbol: String? = null,</span>
+<span class="pc" id="L630">    override val description: String? = null,</span>
+<span class="pc" id="L631">    override val instrumentId: Long? = null,</span>
+<span class="pc" id="L632">    override val netChange: KBigDecimal? = null,</span>
+<span class="pc" id="L633">    val type: Type? = null,</span>
+<span class="pc" id="L634">    val baseCurrency: Currency? = null,</span>
+<span class="pc" id="L635">    val counterCurrency: Currency? = null,</span>
+<span class="nc" id="L636">) : TransactionBaseInstrument() {</span>
+    enum class Type {
+<span class="fc" id="L638">        STANDARD, NBBO, UNKNOWN</span>
+    }
+}
+
+// TODO this is complicated
+//@Serializable
+//class Future(
+//    override val assetType: AssetType = AssetType.FUTURE,
+//    override val cusip: String? = null,
+//    override val symbol: String? = null,
+//    override val description: String? = null,
+//    override val instrumentId: Long? = null,
+//    override val netChange: KBigDecimal? = null,
+//) : TransactionBaseInstrument()
+//
+//@Serializable
+//class Index(
+//    override val assetType: AssetType = AssetType.INDEX,
+//    override val cusip: String? = null,
+//    override val symbol: String? = null,
+//    override val description: String? = null,
+//    override val instrumentId: Long? = null,
+//    override val netChange: KBigDecimal? = null,
+//) : TransactionBaseInstrument()
+
+<span class="pc bpc" id="L663" title="52 of 98 branches missed.">@Serializable</span>
+@SerialName(&quot;MUTUAL_FUND&quot;)
+<span class="pc" id="L665">class TransactionMutualFund(</span>
+<span class="pc" id="L666">    override val cusip: String? = null,</span>
+<span class="pc" id="L667">    override val symbol: String? = null,</span>
+<span class="pc" id="L668">    override val description: String? = null,</span>
+<span class="pc" id="L669">    override val instrumentId: Long? = null,</span>
+<span class="pc" id="L670">    override val netChange: KBigDecimal? = null,</span>
+<span class="pc" id="L671">    val fundFamilyName: String? = null,</span>
+<span class="pc" id="L672">    val fundFamilySymbol: String? = null,</span>
+<span class="pc" id="L673">    val fundGroup: String? = null,</span>
+<span class="pc" id="L674">    val type: Type? = null,</span>
+<span class="pc" id="L675">    val exchangeCutoffTime: KInstant? = null,</span>
+<span class="pc" id="L676">    val purchaseCutoffTime: KInstant? = null,</span>
+<span class="pc" id="L677">    val redemptionCutoffTime: KInstant? = null,</span>
+<span class="nc" id="L678">) : TransactionBaseInstrument() {</span>
+    enum class Type {
+<span class="fc" id="L680">        NOT_APPLICABLE, OPEN_END_NON_TAXABLE, OPEN_END_TAXABLE, NO_LOAD_NON_TAXABLE, NO_LOAD_TAXABLE, UNKNOWN</span>
+    }
+}
+
+<span class="pc bpc" id="L684" title="58 of 114 branches missed.">@Serializable</span>
+@SerialName(&quot;OPTION&quot;)
+<span class="pc" id="L686">class TransactionOption(</span>
+<span class="pc" id="L687">    override val cusip: String? = null,</span>
+<span class="pc" id="L688">    override val symbol: String? = null,</span>
+<span class="pc" id="L689">    override val description: String? = null,</span>
+<span class="pc" id="L690">    override val instrumentId: Long? = null,</span>
+<span class="pc" id="L691">    override val netChange: KBigDecimal? = null,</span>
+<span class="pc" id="L692">    val expirationDate: KInstant? = null,</span>
+<span class="pc" id="L693">    val optionDeliverables: TransactionAPIOptionDeliverable? = null,</span>
+<span class="pc" id="L694">    val optionPremiumMultiplier: Long? = null,</span>
+<span class="pc" id="L695">    val putCall: PutCall? = null,</span>
+<span class="pc" id="L696">    val strikePrice: KBigDecimal? = null,</span>
+<span class="pc" id="L697">    val type: Type? = null,</span>
+<span class="pc" id="L698">    val underlyingSymbol: String? = null,</span>
+<span class="pc" id="L699">    val underlyingCusip: String? = null,</span>
+<span class="pc" id="L700">    val deliverable: TransactionInstrument? = null,</span>
+<span class="nc" id="L701">) : TransactionBaseInstrument() {</span>
+    enum class PutCall {
+<span class="fc" id="L703">        PUT, CALL, UNKNOWN</span>
+    }
+
+    enum class Type {
+<span class="fc" id="L707">        VANILLA, BINARY, BARRIER, UNKNOWN</span>
+    }
+}
+
+<span class="pc bpc" id="L711" title="26 of 50 branches missed.">@Serializable</span>
+@SerialName(&quot;PRODUCT&quot;)
+<span class="pc" id="L713">class Product(</span>
+<span class="pc" id="L714">    override val cusip: String? = null,</span>
+<span class="pc" id="L715">    override val symbol: String? = null,</span>
+<span class="pc" id="L716">    override val description: String? = null,</span>
+<span class="pc" id="L717">    override val instrumentId: Long? = null,</span>
+<span class="pc" id="L718">    override val netChange: KBigDecimal? = null,</span>
+<span class="pc" id="L719">    val type: Type? = null,</span>
+<span class="nc" id="L720">) : TransactionBaseInstrument() {</span>
+    enum class Type {
+<span class="fc" id="L722">        TBD, UNKNOWN</span>
+    }
+}
+
+<span class="pc bpc" id="L726" title="17 of 34 branches missed.">@Serializable</span>
+<span class="pc" id="L727">data class AccountAPIOptionDeliverable(</span>
+<span class="pc" id="L728">    val symbol: String? = null,</span>
+<span class="pc" id="L729">    val deliverableUnits: KBigDecimal? = null,</span>
+<span class="pc" id="L730">    val apiCurrencyType: ApiCurrencyType? = null,</span>
+<span class="pc" id="L731">    val assetType: AssetType? = null</span>
+<span class="nc" id="L732">) {</span>
+    enum class ApiCurrencyType {
+<span class="fc" id="L734">        USD, CAD, EUR, JPY</span>
+    }
+}
+
+<span class="pc bpc" id="L738" title="25 of 50 branches missed.">@Serializable</span>
+<span class="pc" id="L739">data class TransactionAPIOptionDeliverable(</span>
+<span class="pc" id="L740">    val rootSymbol: String? = null,</span>
+<span class="pc" id="L741">    val strikePercent: Long? = null,</span>
+<span class="pc" id="L742">    val deliverableNumber: Long? = null,</span>
+<span class="pc" id="L743">    val deliverableUnits: KBigDecimal? = null,</span>
+<span class="pc" id="L744">    val deliverable: TransactionInstrument? = null,</span>
+<span class="pc" id="L745">    val assetType: AssetType? = null,</span>
+<span class="nc" id="L746">)</span>
+
+enum class ApiOrderStatus {
+<span class="fc" id="L749">    AWAITING_PARENT_ORDER, AWAITING_CONDITION, AWAITING_STOP_CONDITION, AWAITING_MANUAL_REVIEW, ACCEPTED, AWAITING_UR_OUT, PENDING_ACTIVATION, QUEUED, WORKING, REJECTED, PENDING_CANCEL, CANCELED, PENDING_REPLACE, REPLACED, FILLED, EXPIRED, NEW, AWAITING_RELEASE_TIME, PENDING_ACKNOWLEDGEMENT, PENDING_RECALL, UNKNOWN</span>
+}
+
+enum class TransactionType {
+<span class="fc" id="L753">    TRADE, RECEIVE_AND_DELIVER, DIVIDEND_OR_INTEREST, ACH_RECEIPT, ACH_DISBURSEMENT, CASH_RECEIPT, CASH_DISBURSEMENT, ELECTRONIC_FUND, WIRE_OUT, WIRE_IN, JOURNAL, MEMORANDUM, MARGIN_CALL, MONEY_MARKET, SMA_ADJUSTMENT</span>
+}
+
+<span class="pc bpc" id="L756" title="64 of 122 branches missed.">@Serializable</span>
+<span class="pc" id="L757">data class Transaction(</span>
+<span class="pc" id="L758">    val activityId: Long? = null,</span>
+<span class="pc" id="L759">    val time: KInstant? = null,</span>
+<span class="pc" id="L760">    val user: UserDetails? = null,</span>
+<span class="pc" id="L761">    val description: String? = null,</span>
+<span class="pc" id="L762">    val accountNumber: String? = null,</span>
+<span class="pc" id="L763">    val type: TransactionType? = null,</span>
+<span class="pc" id="L764">    val status: TransactionStatus? = null,</span>
+<span class="pc" id="L765">    val subAccount: SubAccountType? = null,</span>
+<span class="pc" id="L766">    val tradeDate: KInstant? = null,</span>
+<span class="pc" id="L767">    val settlementDate: KInstant? = null,</span>
+<span class="pc" id="L768">    val positionId: Long? = null,</span>
+<span class="pc" id="L769">    val orderId: Long? = null,</span>
+<span class="pc" id="L770">    val netAmount: KBigDecimal? = null,</span>
+<span class="pc" id="L771">    val activityType: ActivityType? = null,</span>
+<span class="pc" id="L772">    val transferItems: List&lt;TransferItem&gt;? = null,</span>
+<span class="nc" id="L773">) {</span>
+    enum class ActivityType {
+<span class="fc" id="L775">        ACTIVITY_CORRECTION, EXECUTION, ORDER_ACTION, TRANSFER, UNKNOWN</span>
+    }
+
+    enum class SubAccountType {
+<span class="fc" id="L779">        CASH, MARGIN, SHORT, DIV, INCOME, UNKNOWN</span>
+    }
+
+    enum class TransactionStatus {
+<span class="fc" id="L783">        VALID, INVALID, PENDING, UNKNOWN</span>
+    }
+}
+
+<span class="pc bpc" id="L787" title="33 of 66 branches missed.">@Serializable</span>
+<span class="pc" id="L788">data class UserDetails(</span>
+<span class="pc" id="L789">    val cdDomainId: String? = null,</span>
+<span class="pc" id="L790">    val login: String? = null,</span>
+<span class="pc" id="L791">    val type: UserType? = null,</span>
+<span class="pc" id="L792">    val userId: String? = null,</span>
+<span class="pc" id="L793">    val systemUserName: String? = null,</span>
+<span class="pc" id="L794">    val firstName: String? = null,</span>
+<span class="pc" id="L795">    val lastName: String? = null,</span>
+<span class="pc" id="L796">    val brokerRepCode: String? = null,</span>
+<span class="nc" id="L797">) {</span>
+    enum class UserType {
+<span class="fc" id="L799">        ADVISOR_USER, BROKER_USER, CLIENT_USER, SYSTEM_USER, UNKNOWN</span>
+    }
+}
+
+<span class="pc bpc" id="L803" title="25 of 50 branches missed.">@Serializable</span>
+<span class="pc" id="L804">data class TransferItem(</span>
+<span class="pc" id="L805">    val instrument: TransactionInstrument? = null,</span>
+<span class="pc" id="L806">    val amount: KBigDecimal? = null,</span>
+<span class="pc" id="L807">    val cost: KBigDecimal? = null,</span>
+<span class="pc" id="L808">    val price: KBigDecimal? = null,</span>
+<span class="pc" id="L809">    val feeType: FeeType? = null,</span>
+<span class="pc" id="L810">    val positionEffect: PositionEffect? = null,</span>
+<span class="nc" id="L811">)</span>
+
+<span class="pc bpc" id="L813" title="13 of 26 branches missed.">@Serializable</span>
+<span class="pc" id="L814">data class UserPreference(</span>
+<span class="pc" id="L815">    val accounts: List&lt;UserPreferenceAccount&gt;? = null,</span>
+<span class="pc" id="L816">    val streamerInfo: List&lt;StreamerInfo&gt;? = null,</span>
+<span class="pc" id="L817">    val offers: List&lt;Offer&gt;? = null,</span>
+<span class="nc" id="L818">)</span>
+
+<span class="pc bpc" id="L820" title="29 of 58 branches missed.">@Serializable</span>
+<span class="pc" id="L821">data class UserPreferenceAccount(</span>
+<span class="pc" id="L822">    val accountNumber: String? = null,</span>
+<span class="pc" id="L823">    val primaryAccount: Boolean? = null,</span>
+<span class="pc" id="L824">    val type: String? = null,</span>
+<span class="pc" id="L825">    val nickName: String? = null,</span>
+<span class="pc" id="L826">    val accountColor: String? = null,</span>
+<span class="pc" id="L827">    val displayAcctId: String? = null,</span>
+<span class="pc" id="L828">    val autoPositionEffect: Boolean? = null,</span>
+<span class="nc" id="L829">)</span>
+
+<span class="pc bpc" id="L831" title="21 of 42 branches missed.">@Serializable</span>
+<span class="pc" id="L832">data class StreamerInfo(</span>
+<span class="pc" id="L833">    val streamerSocketUrl: String? = null,</span>
+<span class="pc" id="L834">    val schwabClientCustomerId: String? = null,</span>
+<span class="pc" id="L835">    val schwabClientCorrelId: String? = null,</span>
+<span class="pc" id="L836">    val schwabClientChannel: String? = null,</span>
+<span class="pc" id="L837">    val schwabClientFunctionId: String? = null,</span>
+<span class="nc" id="L838">)</span>
+
+<span class="pc bpc" id="L840" title="9 of 18 branches missed.">@Serializable</span>
+<span class="pc" id="L841">data class Offer(</span>
+<span class="pc" id="L842">    val level2Permissions: Boolean? = null,</span>
+<span class="pc" id="L843">    val mktDataPermission: String? = null</span>
+<span class="nc" id="L844">)</span>
+
+// TODO actually map this model to the Schwab API
+<span class="nc bnc" id="L847" title="All 2 branches missed.">@Serializable</span>
+<span class="nc" id="L848">data class QuoteResponse(</span>
+<span class="nc" id="L849">    val quote: QuoteData</span>
+) {
+<span class="nc bnc" id="L851" title="All 10 branches missed.">    @Serializable</span>
+<span class="nc" id="L852">    data class QuoteData(</span>
+<span class="nc" id="L853">        val lastPrice: KBigDecimal? = null,</span>
+<span class="nc" id="L854">    )</span>
+}
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

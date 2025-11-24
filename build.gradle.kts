@@ -62,6 +62,7 @@ tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
         html.required.set(true)
+        html.outputLocation.set(File("./reports/jacocoHtml"))
 //        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
     }
     finalizedBy("jacocoTestCoverageVerification")

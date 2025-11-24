@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>TransactionService.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.transaction</a>
+    &gt; <span class="el_source">TransactionService.kt</span></div>
+<h1>TransactionService.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.transaction
+
+import com.droidkfx.st.account.Account
+import com.droidkfx.st.schwab.client.Transaction
+import com.droidkfx.st.schwab.client.TransactionType
+import com.droidkfx.st.schwab.client.TransactionsClient
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import java.time.LocalDate
+import java.time.ZoneId
+
+<span class="nc" id="L11">class TransactionService(private val transactionsClient: TransactionsClient) {</span>
+<span class="nc" id="L12">    private val logger = logger {}</span>
+
+    fun getTransactionsToday(account: Account): List&lt;Transaction&gt; {
+<span class="nc" id="L15">        logger.trace { &quot;getTransactions&quot; }</span>
+<span class="nc" id="L16">        return TransactionType.entries</span>
+<span class="nc" id="L17">            .parallelStream()</span>
+<span class="nc" id="L18">            .map {</span>
+<span class="nc" id="L19">                logger.info { &quot;Getting transactions for type: $it&quot; }</span>
+<span class="nc" id="L20">                val response = transactionsClient.getTransactions(</span>
+<span class="nc" id="L21">                    account.accountNumberHash,</span>
+<span class="nc" id="L22">                    LocalDate.now()</span>
+<span class="nc" id="L23">                        .atStartOfDay(ZoneId.systemDefault())</span>
+<span class="nc" id="L24">                        .toInstant(),</span>
+<span class="nc" id="L25">                    LocalDate.now()</span>
+<span class="nc" id="L26">                        .plusDays(1)</span>
+<span class="nc" id="L27">                        .atStartOfDay(ZoneId.systemDefault())</span>
+<span class="nc" id="L28">                        .toInstant()</span>
+<span class="nc" id="L29">                        .minusNanos(1),</span>
+<span class="nc" id="L30">                    symbol = null,</span>
+<span class="nc" id="L31">                    type = it</span>
+                )
+<span class="nc bnc" id="L33" title="All 2 branches missed.">                response.data ?: emptyList()</span>
+<span class="nc" id="L34">            }.toList()</span>
+<span class="nc" id="L35">            .flatten()</span>
+    }
+}
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

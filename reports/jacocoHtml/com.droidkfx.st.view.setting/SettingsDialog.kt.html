@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>SettingsDialog.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.view.setting</a>
+    &gt; <span class="el_source">SettingsDialog.kt</span></div>
+<h1>SettingsDialog.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.view.setting
+
+import com.droidkfx.st.config.ConfigEntity
+import com.droidkfx.st.util.databind.ValueDataBinding
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import java.awt.Frame
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
+import javax.swing.JDialog
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.JTextField
+import javax.swing.border.EmptyBorder
+
+<span class="nc" id="L17">@Suppress(&quot;USELESS_CAST&quot;) // Cast is required for overload ambiguity on Frame</span>
+<span class="nc" id="L18">abstract class SettingsDialog(</span>
+<span class="nc" id="L19">    private val applicationConfig: ValueDataBinding&lt;ConfigEntity&gt;,</span>
+) : JDialog(
+<span class="nc" id="L21">    null as? Frame,</span>
+<span class="nc" id="L22">    &quot;Application Settings&quot;,</span>
+<span class="nc" id="L23">    true,</span>
+) {
+<span class="nc" id="L25">    private val logger = logger {}</span>
+<span class="nc" id="L26">    private var newConfig: ConfigEntity = applicationConfig.value</span>
+<span class="nc" id="L27">    private val updateSettingsFunctions = mutableListOf&lt;() -&gt; ConfigEntity&gt;()</span>
+
+<span class="nc" id="L29">    init {</span>
+<span class="nc" id="L30">        logger.trace { &quot;Initializing&quot; }</span>
+<span class="nc" id="L31">        var rowsAdded = 0</span>
+<span class="nc" id="L32">        add(JPanel(GridBagLayout()).apply {</span>
+<span class="nc" id="L33">            border = EmptyBorder(10, 10, 10, 10)</span>
+<span class="nc" id="L34">            add(</span>
+<span class="nc" id="L35">                JLabel(&quot;Schwab Client Settings&quot;).apply {</span>
+<span class="nc" id="L36">                    border = EmptyBorder(2, 0, 2, 0)</span>
+<span class="nc" id="L37">                },</span>
+<span class="nc" id="L38">                GridBagConstraints().apply {</span>
+<span class="nc" id="L39">                    gridx = 0</span>
+<span class="nc" id="L40">                    gridy = 0</span>
+<span class="nc" id="L41">                    gridwidth = 2</span>
+<span class="nc" id="L42">                    anchor = GridBagConstraints.WEST</span>
+<span class="nc" id="L43">                })</span>
+<span class="nc" id="L44">            rowsAdded++</span>
+            fun addSettingsRow(label: String, value: String, setter: (String) -&gt; ConfigEntity) {
+<span class="nc" id="L46">                add(</span>
+<span class="nc" id="L47">                    JLabel(label).apply {</span>
+<span class="nc" id="L48">                        border = EmptyBorder(2, 0, 2, 10)</span>
+<span class="nc" id="L49">                    },</span>
+<span class="nc" id="L50">                    GridBagConstraints().apply {</span>
+<span class="nc" id="L51">                        gridx = 0</span>
+<span class="nc" id="L52">                        gridy = rowsAdded</span>
+<span class="nc" id="L53">                        gridwidth = 1</span>
+<span class="nc" id="L54">                        anchor = GridBagConstraints.WEST</span>
+<span class="nc" id="L55">                    })</span>
+<span class="nc" id="L56">                add(</span>
+<span class="nc" id="L57">                    JTextField(value).apply {</span>
+<span class="nc" id="L58">                        columns = 50</span>
+<span class="nc" id="L59">                        border = EmptyBorder(2, 0, 2, 0)</span>
+<span class="nc" id="L60">                        updateSettingsFunctions.add { setter(text) }</span>
+<span class="nc" id="L61">                    },</span>
+<span class="nc" id="L62">                    GridBagConstraints().apply {</span>
+<span class="nc" id="L63">                        gridx = 1</span>
+<span class="nc" id="L64">                        gridy = rowsAdded</span>
+<span class="nc" id="L65">                        gridwidth = 1</span>
+<span class="nc" id="L66">                        anchor = GridBagConstraints.WEST</span>
+<span class="nc" id="L67">                    }</span>
+                )
+<span class="nc" id="L69">                rowsAdded++</span>
+<span class="nc" id="L70">            }</span>
+
+<span class="nc" id="L72">            addSettingsRow(</span>
+<span class="nc" id="L73">                &quot;Key:&quot;,</span>
+<span class="nc" id="L74">                applicationConfig.value.schwabConfig.key</span>
+<span class="nc"
+      id="L75">            ) { v -&gt; newConfig.copy(schwabConfig = newConfig.schwabConfig.copy(key = v)) }</span>
+<span class="nc" id="L76">            addSettingsRow(</span>
+<span class="nc" id="L77">                &quot;Secret:&quot;,</span>
+<span class="nc" id="L78">                applicationConfig.value.schwabConfig.secret</span>
+<span class="nc" id="L79">            ) { v -&gt; newConfig.copy(schwabConfig = newConfig.schwabConfig.copy(secret = v)) }</span>
+<span class="nc" id="L80">            addSettingsRow(</span>
+<span class="nc" id="L81">                &quot;SSL Cert File:&quot;,</span>
+<span class="nc"
+      id="L82">                applicationConfig.value.schwabConfig.callbackServerConfig.sslCertLocation</span>
+            ) { v -&gt;
+<span class="nc" id="L84">                newConfig.copy(</span>
+<span class="nc" id="L85">                    schwabConfig = newConfig.schwabConfig.copy(</span>
+<span class="nc" id="L86">                        callbackServerConfig = newConfig.schwabConfig.callbackServerConfig.copy(</span>
+<span class="nc" id="L87">                            sslCertLocation = v</span>
+                        )
+                    )
+<span class="nc" id="L90">                )</span>
+            }
+<span class="nc" id="L92">            addSettingsRow(</span>
+<span class="nc" id="L93">                &quot;SSL Cert Password:&quot;,</span>
+<span class="nc"
+      id="L94">                applicationConfig.value.schwabConfig.callbackServerConfig.sslCertPassword</span>
+            ) { v -&gt;
+<span class="nc" id="L96">                newConfig.copy(</span>
+<span class="nc" id="L97">                    schwabConfig = newConfig.schwabConfig.copy(</span>
+<span class="nc" id="L98">                        callbackServerConfig = newConfig.schwabConfig.callbackServerConfig.copy(</span>
+<span class="nc" id="L99">                            sslCertPassword = v</span>
+                        )
+                    )
+<span class="nc" id="L102">                )</span>
+            }
+<span class="nc" id="L104">            addSettingsRow(</span>
+<span class="nc" id="L105">                &quot;SSL Cert Alias:&quot;,</span>
+<span class="nc" id="L106">                applicationConfig.value.schwabConfig.callbackServerConfig.sslCertAlias</span>
+            ) { v -&gt;
+<span class="nc" id="L108">                newConfig.copy(</span>
+<span class="nc" id="L109">                    schwabConfig = newConfig.schwabConfig.copy(</span>
+<span class="nc" id="L110">                        callbackServerConfig = newConfig.schwabConfig.callbackServerConfig.copy(</span>
+<span class="nc" id="L111">                            sslCertAlias = v</span>
+                        )
+                    )
+<span class="nc" id="L114">                )</span>
+            }
+<span class="nc" id="L116">            addSettingsRow(</span>
+<span class="nc" id="L117">                &quot;SSL Cert Type:&quot;,</span>
+<span class="nc" id="L118">                applicationConfig.value.schwabConfig.callbackServerConfig.sslCertType</span>
+            ) { v -&gt;
+<span class="nc" id="L120">                newConfig.copy(</span>
+<span class="nc" id="L121">                    schwabConfig = newConfig.schwabConfig.copy(</span>
+<span class="nc" id="L122">                        callbackServerConfig = newConfig.schwabConfig.callbackServerConfig.copy(</span>
+<span class="nc" id="L123">                            sslCertType = v</span>
+                        )
+                    )
+<span class="nc" id="L126">                )</span>
+            }
+<span class="nc" id="L128">            addSettingsRow(</span>
+<span class="nc" id="L129">                &quot;Callback server host:&quot;,</span>
+<span class="nc" id="L130">                applicationConfig.value.schwabConfig.callbackServerConfig.host</span>
+            ) { v -&gt;
+<span class="nc" id="L132">                newConfig.copy(</span>
+<span class="nc" id="L133">                    schwabConfig = newConfig.schwabConfig.copy(</span>
+<span class="nc" id="L134">                        callbackServerConfig = newConfig.schwabConfig.callbackServerConfig.copy(</span>
+<span class="nc" id="L135">                            host = v</span>
+                        )
+                    )
+<span class="nc" id="L138">                )</span>
+            }
+<span class="nc" id="L140">            addSettingsRow(</span>
+<span class="nc" id="L141">                &quot;Callback server port:&quot;,</span>
+<span class="nc"
+      id="L142">                applicationConfig.value.schwabConfig.callbackServerConfig.port.toString()</span>
+            ) { v -&gt;
+<span class="nc" id="L144">                newConfig.copy(</span>
+<span class="nc" id="L145">                    schwabConfig = newConfig.schwabConfig.copy(</span>
+<span class="nc" id="L146">                        callbackServerConfig = newConfig.schwabConfig.callbackServerConfig.copy(</span>
+<span class="nc" id="L147">                            port = Integer.parseInt(v)</span>
+                        )
+                    )
+<span class="nc" id="L150">                )</span>
+            }
+<span class="nc" id="L152">            addSettingsRow(</span>
+<span class="nc" id="L153">                &quot;Callback server path:&quot;,</span>
+<span class="nc" id="L154">                applicationConfig.value.schwabConfig.callbackServerConfig.callbackPath</span>
+            ) { v -&gt;
+<span class="nc" id="L156">                newConfig.copy(</span>
+<span class="nc" id="L157">                    schwabConfig = newConfig.schwabConfig.copy(</span>
+<span class="nc" id="L158">                        callbackServerConfig = newConfig.schwabConfig.callbackServerConfig.copy(</span>
+<span class="nc" id="L159">                            callbackPath = v</span>
+                        )
+                    )
+<span class="nc" id="L162">                )</span>
+            }
+<span class="nc" id="L164">            addSettingsRow(</span>
+<span class="nc" id="L165">                &quot;Repository Root:&quot;,</span>
+<span class="nc" id="L166">                applicationConfig.value.repositoryRoot</span>
+<span class="nc" id="L167">            ) { v -&gt; newConfig.copy(repositoryRoot = v) }</span>
+<span class="nc" id="L168">        })</span>
+
+<span class="nc" id="L170">        addWindowListener(object : WindowAdapter() {</span>
+            override fun windowClosing(e: WindowEvent?) {
+<span class="nc" id="L172">                logger.trace { &quot;Dialog is closing&quot; }</span>
+<span class="nc" id="L173">                updateSettingsFunctions.forEach { newConfig = it() }</span>
+<span class="nc" id="L174">                applicationConfig.value = newConfig</span>
+<span class="nc" id="L175">            }</span>
+        })
+<span class="nc" id="L177">        defaultCloseOperation = HIDE_ON_CLOSE</span>
+<span class="nc" id="L178">        pack()</span>
+<span class="nc" id="L179">    }</span>
+
+    fun showDialog() {
+<span class="nc" id="L182">        setLocationRelativeTo(null)</span>
+<span class="nc" id="L183">        isVisible = true</span>
+<span class="nc" id="L184">    }</span>
+}
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

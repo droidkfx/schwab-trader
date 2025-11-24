@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>ManageAccountsDialog.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.view.account</a>
+    &gt; <span class="el_source">ManageAccountsDialog.kt</span></div>
+<h1>ManageAccountsDialog.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.view.account
+
+import com.droidkfx.st.controller.account.AccountPositionDetail
+import com.droidkfx.st.position.AccountPosition
+import com.droidkfx.st.position.PositionTarget
+import com.droidkfx.st.util.databind.ReadOnlyListDataBinding
+import com.droidkfx.st.util.databind.ValueDataBinding
+import com.droidkfx.st.util.databind.mapped
+import com.droidkfx.st.view.addSwingListener
+import com.droidkfx.st.view.goldenRatioSize
+import io.github.oshai.kotlinlogging.KotlinLogging
+import java.awt.BorderLayout
+import java.awt.Frame
+import java.awt.GridBagConstraints
+import java.awt.GridBagLayout
+import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
+import javax.swing.JComponent
+import javax.swing.JDialog
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.border.BevelBorder
+import javax.swing.border.CompoundBorder
+import javax.swing.border.EmptyBorder
+
+<span class="nc" id="L26">@Suppress(&quot;USELESS_CAST&quot;) // Cast is required for overload ambiguity</span>
+<span class="nc" id="L27">abstract class ManageAccountsDialog(</span>
+    data: ReadOnlyListDataBinding&lt;AccountPosition&gt;,
+    selectedAccountName: ValueDataBinding&lt;String?&gt;,
+<span class="nc" id="L30">    private val manageAccountList: JComponent,</span>
+<span class="nc" id="L31">) : JDialog(null as? Frame, &quot;Manage Accounts&quot;, true) {</span>
+<span class="nc" id="L32">    private val logger = KotlinLogging.logger {}</span>
+
+<span class="nc" id="L34">    private val detailPane = JPanel(BorderLayout())</span>
+    private val detailPanelsByAccountName =
+<span class="nc" id="L36">        data.mapped { it.account.name to AccountPositionDetail(it, ::onPositionSave) }</span>
+
+<span class="nc" id="L38">    init {</span>
+<span class="nc" id="L39">        logger.trace { &quot;Initializing&quot; }</span>
+<span class="nc" id="L40">        minimumSize = goldenRatioSize(500)</span>
+
+<span class="nc" id="L42">        selectedAccountName.addSwingListener { setAccountByName(it) }</span>
+<span class="nc" id="L43">        data.addSwingListener { list -&gt;</span>
+            // TODO there is a bug where if we do this we end up in a refresh loop when we update positions
+            // However we want to do this in the case of going from no accounts to many in a refresh.
+//            selectedAccountName.value = list.firstOrNull()?.Account?.name
+<span class="nc" id="L47">        }</span>
+
+<span class="nc" id="L49">        add(JPanel(GridBagLayout()).apply {</span>
+<span class="nc" id="L50">            add(manageAccountList, GridBagConstraints().apply {</span>
+<span class="nc" id="L51">                gridx = 0</span>
+<span class="nc" id="L52">                gridy = 0</span>
+<span class="nc" id="L53">                weightx = 1.0</span>
+<span class="nc" id="L54">                weighty = 1.0</span>
+<span class="nc" id="L55">                fill = GridBagConstraints.BOTH</span>
+<span class="nc" id="L56">            })</span>
+
+<span class="nc" id="L58">            add(detailPane.apply {</span>
+<span class="nc" id="L59">                border = CompoundBorder(</span>
+<span class="nc" id="L60">                    EmptyBorder(0, 5, 5, 5),</span>
+<span class="nc" id="L61">                    BevelBorder(BevelBorder.LOWERED)</span>
+                )
+<span class="nc" id="L63">                add(JLabel(&quot;Get started by refreshing your accounts.&quot;), BorderLayout.NORTH)</span>
+<span class="nc" id="L64">            }, GridBagConstraints().apply {</span>
+<span class="nc" id="L65">                gridx = 1</span>
+<span class="nc" id="L66">                gridy = 0</span>
+<span class="nc" id="L67">                weightx = 3.0</span>
+<span class="nc" id="L68">                weighty = 1.0</span>
+<span class="nc" id="L69">                fill = GridBagConstraints.BOTH</span>
+<span class="nc" id="L70">            })</span>
+<span class="nc" id="L71">            setAccountByName(selectedAccountName.value)</span>
+
+<span class="nc" id="L73">            addWindowListener(object : WindowAdapter() {</span>
+                override fun windowClosing(e: WindowEvent?) {
+<span class="nc" id="L75">                    logger.trace { &quot;Dialog is closing&quot; }</span>
+<span class="nc" id="L76">                }</span>
+            })
+<span class="nc" id="L78">            defaultCloseOperation = HIDE_ON_CLOSE</span>
+<span class="nc" id="L79">        })</span>
+<span class="nc" id="L80">    }</span>
+
+    fun setAccountByName(name: String?) {
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (name == null) return</span>
+<span class="nc" id="L84">        logger.debug { &quot;Setting account to: $name&quot; }</span>
+<span class="nc" id="L85">        detailPane.removeAll()</span>
+<span class="nc" id="L86">        val pane = detailPanelsByAccountName.firstOrNull { it.first == name }</span>
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (pane != null) {</span>
+<span class="nc" id="L88">            detailPane.add(pane.second, BorderLayout.CENTER)</span>
+        } else {
+<span class="nc" id="L90">            detailPane.add(JPanel(), BorderLayout.CENTER)</span>
+        }
+<span class="nc" id="L92">        detailPane.revalidate()</span>
+<span class="nc" id="L93">        detailPane.repaint()</span>
+<span class="nc" id="L94">    }</span>
+
+    fun showDialog() {
+<span class="nc" id="L97">        setLocationRelativeTo(null)</span>
+<span class="nc" id="L98">        isVisible = true</span>
+<span class="nc" id="L99">    }</span>
+
+    abstract fun onPositionSave(accountId: String, newPositions: List&lt;PositionTarget&gt;)
+}
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

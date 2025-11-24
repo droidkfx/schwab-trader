@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>OauthClient.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.schwab.client</a>
+    &gt; <span class="el_source">OauthClient.kt</span></div>
+<h1>OauthClient.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.schwab.client
+
+import com.droidkfx.st.config.SchwabClientConfig
+import com.droidkfx.st.schwab.oauth.LocalServer
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.URLProtocol
+import io.ktor.http.encodedPath
+import io.ktor.http.isSuccess
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNames
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
+import java.awt.Desktop
+import java.net.URI
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
+import java.time.Instant
+import java.util.UUID
+import kotlin.io.encoding.Base64
+
+<span class="nc" id="L31">class OauthClient(</span>
+<span class="nc" id="L32">    val config: ReadOnlyValueDataBinding&lt;SchwabClientConfig&gt;,</span>
+<span class="nc" id="L33">    val client: HttpClient,</span>
+) {
+<span class="nc" id="L35">    private val logger = logger {}</span>
+
+<span class="nc" id="L37">    fun refreshOauth(refreshToken: String): OauthTokenResponse = exchangeOauthToken(refreshToken, &quot;refresh_token&quot;)</span>
+
+    fun exchangeOauthToken(result: LocalServer.Result): OauthTokenResponse {
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        if (result.code == null) {</span>
+<span class="nc" id="L41">            throw IllegalStateException(&quot;No code returned from server&quot;)</span>
+        }
+<span class="nc" id="L43">        return exchangeOauthToken(result.code, &quot;authorization_code&quot;)</span>
+    }
+
+    fun exchangeOauthToken(
+        token: String,
+        grantType: String,
+<span class="nc" id="L49">    ): OauthTokenResponse = runBlocking {</span>
+<span class="nc" id="L50">        client.post {</span>
+<span class="nc" id="L51">            url.apply {</span>
+<span class="nc" id="L52">                host = config.value.baseApiUrl</span>
+<span class="nc" id="L53">                protocol = URLProtocol.HTTPS</span>
+<span class="nc" id="L54">                encodedPath = &quot;/v1/oauth/token&quot;</span>
+<span class="nc" id="L55">            }</span>
+<span class="nc" id="L56">            val body = StringBuilder()</span>
+<span class="nc" id="L57">            body.append(&quot;grant_type=${grantType}&quot;)</span>
+<span class="nc" id="L58">            when (grantType) {</span>
+<span class="nc bnc" id="L59"
+      title="All 2 branches missed.">                &quot;authorization_code&quot; -&gt; {</span>
+<span class="nc" id="L60">                    body.append(&quot;&amp;code=${token}&amp;redirect_uri=${config.value.callbackServerConfig.url()}&quot;)</span>
+                }
+
+<span class="nc bnc" id="L63" title="All 2 branches missed.">                &quot;refresh_token&quot; -&gt; {</span>
+<span class="nc" id="L64">                    body.append(&quot;&amp;refresh_token=${token}&quot;)</span>
+                }
+
+                else -&gt; {
+<span class="nc" id="L68">                    throw IllegalArgumentException(&quot;Unsupported grant type: $grantType&quot;)</span>
+                }
+            }
+
+<span class="nc" id="L72">            setBody(body.toString())</span>
+<span class="nc" id="L73">            val authorization = Base64.encode(&quot;${config.value.key}:${config.value.secret}&quot;.toByteArray())</span>
+<span class="nc" id="L74">            headers.append(&quot;Authorization&quot;, &quot;Basic $authorization&quot;)</span>
+<span class="nc" id="L75">            headers.append(&quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;)</span>
+<span class="nc" id="L76">            headers.append(&quot;Accept&quot;, &quot;application/json&quot;)</span>
+<span class="nc" id="L77">        }.let {</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">            if (!it.status.isSuccess()) {</span>
+<span class="nc" id="L79">                throw IllegalStateException(&quot;Error while exchanging token: ${it.status}&quot;)</span>
+            }
+<span class="nc" id="L81">            Json.decodeFromString&lt;OauthTokenResponse&gt;(it.body())</span>
+<span class="nc" id="L82">        }</span>
+<span class="nc" id="L83">    }</span>
+
+    fun triggerOauthFlow(): String {
+<span class="nc" id="L86">        val state = UUID.randomUUID().toString()</span>
+<span class="nc" id="L87">        openBrowser(</span>
+<span class="nc" id="L88">            buildAuthorizeUrl(</span>
+<span class="nc" id="L89">                config.value.key,</span>
+<span class="nc" id="L90">                config.value.callbackServerConfig.url(),</span>
+<span class="nc" id="L91">                state</span>
+            )
+        )
+<span class="nc" id="L94">        return state</span>
+    }
+
+    private fun buildAuthorizeUrl(
+        clientId: String,
+        redirectUri: String,
+        state: String,
+    ): String {
+<span class="nc" id="L102">        val params = mutableListOf(</span>
+<span class="nc" id="L103">            &quot;client_id=${clientId.urlEncode()}&quot;,</span>
+<span class="nc" id="L104">            &quot;redirect_uri=${redirectUri.urlEncode()}&quot;,</span>
+<span class="nc" id="L105">            &quot;response_type=code&quot;,</span>
+<span class="nc" id="L106">            &quot;state=${state.urlEncode()}&quot;</span>
+        )
+<span class="nc" id="L108">        return &quot;https://${config.value.baseApiUrl}/v1/oauth/authorize?${params.joinToString(&quot;&amp;&quot;)}&quot;</span>
+    }
+
+    private fun openBrowser(url: String) {
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        if (Desktop.isDesktopSupported()) {</span>
+<span class="nc" id="L113">            Desktop.getDesktop().browse(URI(url))</span>
+        } else {
+<span class="nc" id="L115">            logger.info { &quot;Open this URL in your browser: $url&quot; }</span>
+        }
+<span class="nc" id="L117">    }</span>
+
+    private fun String.urlEncode(): String {
+<span class="nc" id="L120">        return URLEncoder.encode(this, StandardCharsets.UTF_8)</span>
+    }
+}
+
+
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">@Serializable</span>
+@OptIn(ExperimentalSerializationApi::class)
+<span class="fc" id="L127">data class OauthTokenResponse(</span>
+<span class="fc" id="L128">    @JsonNames(&quot;expires_in&quot;)</span>
+<span class="nc" id="L129">    val expiresIn: Long,</span>
+<span class="fc" id="L130">    @JsonNames(&quot;token_type&quot;)</span>
+<span class="nc" id="L131">    val tokenType: String,</span>
+<span class="fc" id="L132">    @JsonNames(&quot;scope&quot;)</span>
+<span class="nc" id="L133">    val scope: String,</span>
+<span class="fc" id="L134">    @JsonNames(&quot;refresh_token&quot;)</span>
+<span class="nc" id="L135">    val refreshToken: String,</span>
+<span class="fc" id="L136">    @JsonNames(&quot;access_token&quot;)</span>
+<span class="nc" id="L137">    val accessToken: String,</span>
+<span class="fc" id="L138">    @JsonNames(&quot;id_token&quot;)</span>
+<span class="nc" id="L139">    val idToken: String</span>
+) {
+
+    @Transient
+<span class="fc" id="L143">    private val idTokenClaims = idToken</span>
+<span class="fc" id="L144">        .split(&quot;.&quot;)</span>
+<span class="pc bpc" id="L145" title="4 of 8 branches missed.">        .getOrElse(1) { null }</span>
+<span class="pc bpc" id="L146" title="2 of 4 branches missed.">        ?.let { Base64.withPadding(Base64.PaddingOption.ABSENT_OPTIONAL).decode(it).decodeToString() }</span>
+<span class="pc bpc" id="L147" title="2 of 4 branches missed.">        ?.let { Json.decodeFromString&lt;JsonObject&gt;(it) }</span>
+
+    @Transient
+<span class="pc" id="L150">    val expiresAt = idTokenClaims</span>
+<span class="pc bpc" id="L151" title="6 of 12 branches missed.">        ?.let { it[&quot;exp&quot;]?.jsonPrimitive?.long }</span>
+<span class="pc bpc" id="L152" title="2 of 4 branches missed.">        ?.let { Instant.ofEpochSecond(it) }</span>
+}
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

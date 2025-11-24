@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>OrdersClient.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.schwab.client</a>
+    &gt; <span class="el_source">OrdersClient.kt</span></div>
+<h1>OrdersClient.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.schwab.client
+
+import com.droidkfx.st.account.Account
+import com.droidkfx.st.config.SchwabClientConfig
+import com.droidkfx.st.schwab.oauth.OauthStatus
+import com.droidkfx.st.strategy.PositionRecommendation
+import com.droidkfx.st.strategy.StrategyAction
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import com.droidkfx.st.util.databind.ValueDataBinding
+import com.droidkfx.st.util.serialization.KInstant
+import io.github.oshai.kotlinlogging.KLogger
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import io.ktor.client.HttpClient
+import io.ktor.client.request.setBody
+import java.math.RoundingMode
+
+<span class="nc" id="L17">class OrdersClient(</span>
+    config: ReadOnlyValueDataBinding&lt;SchwabClientConfig&gt;,
+    client: HttpClient,
+<span class="nc" id="L20">    oathToken: ValueDataBinding&lt;String?&gt; = ValueDataBinding(null),</span>
+    requestTokenRefresh: ValueDataBinding&lt;Boolean&gt;,
+    oauthTokenStatus: ReadOnlyValueDataBinding&lt;OauthStatus&gt;,
+<span class="nc" id="L23">) : BaseClient(config, client, requestTokenRefresh, oathToken, oauthTokenStatus, listOf(&quot;trader&quot;, &quot;v1&quot;)) {</span>
+<span class="nc" id="L24">    override val logger: KLogger = logger {}</span>
+
+<span class="nc" id="L26">    fun getAccountOrders(</span>
+        accountNumber: String,
+        fromEnteredTime: KInstant,
+        toEnteredTime: KInstant,
+<span class="nc" id="L30">        status: ApiOrderStatus? = null,</span>
+<span class="nc" id="L31">        maxResults: Int? = null</span>
+<span class="nc" id="L32">    ): ApiResponse&lt;List&lt;Order&gt;&gt; = getAt(&quot;accounts&quot;, accountNumber, &quot;orders&quot;) {</span>
+<span class="nc" id="L33">        url {</span>
+<span class="nc" id="L34">            parameters[&quot;fromEnteredTime&quot;] = fromEnteredTime.toString()</span>
+<span class="nc" id="L35">            parameters[&quot;toEnteredTime&quot;] = toEnteredTime.toString()</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">            status?.let { parameters[&quot;status&quot;] = it.toString() }</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">            maxResults?.let { parameters[&quot;maxResults&quot;] = it.toString() }</span>
+<span class="nc" id="L38">        }</span>
+<span class="nc" id="L39">    }</span>
+
+    fun order(account: Account, recommendation: PositionRecommendation): ApiResponse&lt;Unit&gt; =
+<span class="nc" id="L42">        postAt(&quot;accounts&quot;, account.accountNumberHash, &quot;orders&quot;) {</span>
+//            val quantity = recommendation.quantity.setScale(0, RoundingMode.FLOOR)
+<span class="nc" id="L44">            val quantity = recommendation.quantity</span>
+<span class="nc" id="L45">            val body = OrderRequest(</span>
+<span class="nc" id="L46">                orderType = OrderTypeRequest.LIMIT,</span>
+<span class="nc" id="L47">                price = recommendation.price.setScale(2, RoundingMode.FLOOR),</span>
+<span class="nc" id="L48">                session = Session.NORMAL,</span>
+<span class="nc" id="L49">                duration = Duration.DAY,</span>
+<span class="nc" id="L50">                orderStrategyType = OrderStrategyType.SINGLE,</span>
+<span class="nc" id="L51">                orderLegCollection = listOf(</span>
+<span class="nc" id="L52">                    OrderLegCollection(</span>
+<span class="nc" id="L53">                        instruction = recommendation.recommendation.toInstruction(),</span>
+<span class="nc" id="L54">                        quantity = quantity,</span>
+<span class="nc" id="L55">                        instrument = TransactionEquity(symbol = recommendation.symbol)</span>
+                    )
+                ),
+            )
+<span class="nc" id="L59">            setBody(body)</span>
+<span class="nc" id="L60">        }</span>
+
+    fun previewOrder(account: Account, recommendation: PositionRecommendation): ApiResponse&lt;PreviewOrder&gt; =
+<span class="nc"
+      id="L63">        postAt(&quot;accounts&quot;, account.accountNumberHash, &quot;previewOrder&quot;) {</span>
+//            val quantity = recommendation.quantity.setScale(0, RoundingMode.FLOOR)
+<span class="nc" id="L65">            val quantity = recommendation.quantity</span>
+<span class="nc" id="L66">            val body = OrderRequest(</span>
+<span class="nc" id="L67">                orderType = OrderTypeRequest.LIMIT,</span>
+<span class="nc" id="L68">                price = recommendation.price.setScale(2, RoundingMode.FLOOR),</span>
+<span class="nc" id="L69">                session = Session.NORMAL,</span>
+<span class="nc" id="L70">                duration = Duration.DAY,</span>
+<span class="nc" id="L71">                orderStrategyType = OrderStrategyType.SINGLE,</span>
+<span class="nc" id="L72">                orderLegCollection = listOf(</span>
+<span class="nc" id="L73">                    OrderLegCollection(</span>
+<span class="nc" id="L74">                        instruction = recommendation.recommendation.toInstruction(),</span>
+<span class="nc" id="L75">                        quantity = quantity,</span>
+<span class="nc" id="L76">                        instrument = TransactionEquity(symbol = recommendation.symbol)</span>
+                    )
+                ),
+            )
+<span class="nc" id="L80">            setBody(body)</span>
+<span class="nc" id="L81">        }</span>
+}
+
+<span class="nc bnc" id="L84" title="All 3 branches missed.">private fun StrategyAction.toInstruction(): Instruction = when (this) {</span>
+<span class="nc" id="L85">    StrategyAction.BUY -&gt; Instruction.BUY</span>
+<span class="nc"
+      id="L86">    StrategyAction.HOLD -&gt; throw Exception(&quot;hold is not a valid instruction&quot;)</span>
+<span class="nc" id="L87">    StrategyAction.SELL -&gt; Instruction.SELL</span>
+<span class="nc" id="L88">}</span>
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

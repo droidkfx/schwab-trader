@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>AllocationViewModel.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.view.model</a>
+    &gt; <span class="el_source">AllocationViewModel.kt</span></div>
+<h1>AllocationViewModel.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.view.model
+
+import com.droidkfx.st.position.AccountPosition
+import com.droidkfx.st.strategy.StrategyAction
+import java.math.BigDecimal
+
+<span class="nc" id="L7">@Suppress(&quot;unused&quot;)</span>
+<span class="nc" id="L8">data class AllocationRowViewModel(</span>
+<span class="nc" id="L9">    @field:Column(name = &quot;Symbol&quot;, position = 0)</span>
+<span class="nc" id="L10">    var symbol: String,</span>
+
+<span class="nc" id="L12">    @field:Column(name = &quot;Target Allocation&quot;, mapper = PercentReadTableValueMapper::class, position = 1)</span>
+<span class="nc" id="L13">    var allocationTarget: BigDecimal,</span>
+<span class="nc" id="L14">    @field:Column(name = &quot;Owned&quot;, mapper = BigDecimalReadTableValueMapper::class, position = 2, editable = false)</span>
+<span class="nc" id="L15">    var currentShares: BigDecimal,</span>
+<span class="nc" id="L16">    @field:Column(name = &quot;Price&quot;, mapper = DollarReadTableValueMapper::class, position = 3, editable = false)</span>
+<span class="nc" id="L17">    var currentPrice: BigDecimal,</span>
+<span class="nc" id="L18">    @field:Column(name = &quot;Allocation&quot;, mapper = PercentReadTableValueMapper::class, position = 5, editable = false)</span>
+<span class="nc" id="L19">    var currentAllocation: BigDecimal,</span>
+
+<span class="nc" id="L21">    @field:Column(name = &quot;Rec Action&quot;, position = 7, editable = false)</span>
+<span class="nc" id="L22">    var tradeAction: String,</span>
+<span class="nc" id="L23">    @field:Column(name = &quot;Rec Shares&quot;, mapper = BigDecimalReadTableValueMapper::class, position = 8, editable = false)</span>
+<span class="nc" id="L24">    var tradeShares: BigDecimal,</span>
+) {
+    val allocationDelta: BigDecimal
+        @Column(name = &quot;Delta&quot;, mapper = PercentReadTableValueMapper::class, position = 6)
+<span class="nc" id="L28">        get() = currentAllocation - allocationTarget</span>
+
+    val expectedCost: BigDecimal
+        @Column(name = &quot;Expected Cost&quot;, mapper = DollarReadTableValueMapper::class, position = 9)
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        get() = currentPrice * tradeShares * if (tradeAction == StrategyAction.SELL.name) BigDecimal(-1.0) else BigDecimal(</span>
+<span class="nc" id="L33">            1.0</span>
+<span class="nc" id="L34">        )</span>
+
+    val currentValue: BigDecimal
+        @Column(name = &quot;Value&quot;, mapper = DollarReadTableValueMapper::class, position = 4)
+<span class="nc" id="L38">        get() = currentPrice * currentShares</span>
+}
+
+fun AccountPosition.toAllocationRows(): MutableList&lt;AllocationRowViewModel&gt; {
+<span class="nc" id="L42">    val rows = mutableListOf&lt;AllocationRowViewModel&gt;()</span>
+<span class="nc" id="L43">    this.positionTargets.map { target -&gt;</span>
+<span class="nc"
+      id="L44">        val currentPosition = this.currentPositions.firstOrNull { it.symbol == target.symbol }</span>
+<span class="nc" id="L45">        val currentRecommendation = this.currentRecommendedChanges.firstOrNull { it.symbol == target.symbol }</span>
+<span class="nc" id="L46">        AllocationRowViewModel(</span>
+<span class="nc" id="L47">            symbol = target.symbol,</span>
+<span class="nc" id="L48">            allocationTarget = target.allocationTarget,</span>
+<span class="nc bnc" id="L49" title="All 4 branches missed.">            currentShares = currentPosition?.quantity ?: BigDecimal.ZERO,</span>
+<span class="nc bnc" id="L50" title="All 6 branches missed.">            currentPrice = currentPosition?.lastKnownPrice ?: currentRecommendation?.price ?: BigDecimal.ZERO,</span>
+<span class="nc" id="L51">            currentAllocation = BigDecimal.ZERO,</span>
+<span class="nc bnc" id="L52" title="All 6 branches missed.">            tradeAction = currentRecommendation?.recommendation?.name ?: &quot;TBD&quot;,</span>
+<span class="nc bnc" id="L53" title="All 4 branches missed.">            tradeShares = currentRecommendation?.quantity ?: BigDecimal.ZERO</span>
+<span class="nc" id="L54">        )</span>
+<span class="nc" id="L55">    }.toCollection(rows)</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">    val totalValue = rows.sumOf { it.currentValue }</span>
+<span class="nc" id="L57">    rows.forEach { row -&gt;</span>
+<span class="nc bnc" id="L58"
+      title="All 2 branches missed.">        if (totalValue.compareTo(BigDecimal.ZERO) == 0) {</span>
+<span class="nc" id="L59">            row.currentAllocation = BigDecimal.ZERO</span>
+        } else {
+<span class="nc" id="L61">            row.currentAllocation = (row.currentValue / totalValue) * BigDecimal(100)</span>
+        }
+<span class="nc" id="L63">    }</span>
+<span class="nc" id="L64">    return rows</span>
+}
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

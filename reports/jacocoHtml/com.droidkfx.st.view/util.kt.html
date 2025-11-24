@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>util.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.view</a>
+    &gt; <span class="el_source">util.kt</span></div>
+<h1>util.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.view
+
+import com.droidkfx.st.util.databind.DataBindChangeListener
+import com.droidkfx.st.util.databind.DataBindValueListener
+import com.droidkfx.st.util.databind.ListDataBinding
+import com.droidkfx.st.util.databind.ListDataBindingEvent
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import com.droidkfx.st.util.databind.asChangeListener
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.swing.JButton
+import javax.swing.JList
+import javax.swing.JMenuItem
+import javax.swing.SwingUtilities
+import javax.swing.event.ListSelectionEvent
+
+internal fun &lt;T&gt; ReadOnlyValueDataBinding&lt;T&gt;.addSwingListener(listener: DataBindChangeListener&lt;T&gt;) {
+<span class="nc" id="L19">    addListener { oldValue, newValue -&gt; SwingUtilities.invokeLater { listener(oldValue, newValue) } }</span>
+<span class="nc" id="L20">}</span>
+
+internal fun &lt;T&gt; ReadOnlyValueDataBinding&lt;T&gt;.addSwingListener(listener: DataBindValueListener&lt;T&gt;) {
+<span class="nc" id="L23">    this.addSwingListener(listener.asChangeListener())</span>
+<span class="nc" id="L24">}</span>
+
+internal fun &lt;T&gt; ListDataBinding&lt;T&gt;.addSwingListener(listener: (ListDataBindingEvent&lt;T&gt;) -&gt; Unit) {
+<span class="nc" id="L27">    addListener { SwingUtilities.invokeLater { listener(it) } }</span>
+<span class="nc" id="L28">}</span>
+
+internal fun JMenuItem.addCoActionListener(function: suspend () -&gt; Unit) {
+<span class="nc" id="L31">    addActionListener {</span>
+<span class="nc" id="L32">        CoroutineScope(Dispatchers.Default).launch {</span>
+<span class="nc" id="L33">            function()</span>
+<span class="nc" id="L34">        }</span>
+<span class="nc" id="L35">    }</span>
+<span class="nc" id="L36">}</span>
+
+internal fun JList&lt;*&gt;.addCoListChangeListener(function: suspend (ListSelectionEvent) -&gt; Unit) {
+<span class="nc" id="L39">    addListSelectionListener {</span>
+<span class="nc" id="L40">        CoroutineScope(Dispatchers.Default).launch {</span>
+<span class="nc" id="L41">            function(it)</span>
+<span class="nc" id="L42">        }</span>
+<span class="nc" id="L43">    }</span>
+<span class="nc" id="L44">}</span>
+
+internal fun JButton.addCoActionListener(function: suspend () -&gt; Unit) {
+<span class="nc" id="L47">    addActionListener {</span>
+<span class="nc" id="L48">        CoroutineScope(Dispatchers.Default).launch {</span>
+<span class="nc" id="L49">            function()</span>
+<span class="nc" id="L50">        }</span>
+<span class="nc" id="L51">    }</span>
+<span class="nc" id="L52">}</span>
+
+private const val goldenRatio = 1.618
+
+<span class="nc" id="L56">fun goldenRatioSize(size: Int) = java.awt.Dimension((size * goldenRatio).toInt(), size)</span>
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

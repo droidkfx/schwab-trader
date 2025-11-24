@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>MenuBar.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.view</a>
+    &gt; <span class="el_source">MenuBar.kt</span></div>
+<h1>MenuBar.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.view
+
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import javax.swing.JMenu
+import javax.swing.JMenuBar
+import javax.swing.JMenuItem
+
+<span class="nc" id="L9">abstract class MenuBar(</span>
+    updateOauthEnabled: ReadOnlyValueDataBinding&lt;Boolean&gt;,
+    invalidateOauthEnabled: ReadOnlyValueDataBinding&lt;Boolean&gt;
+) : JMenuBar() {
+<span class="nc" id="L13">    private val logger = logger {}</span>
+
+<span class="nc" id="L15">    init {</span>
+<span class="nc" id="L16">        logger.trace { &quot;Initializing&quot; }</span>
+<span class="nc" id="L17">        add(JMenu(&quot;File&quot;).apply {</span>
+<span class="nc" id="L18">            this.add(JMenuItem(&quot;Manage Accounts&quot;).apply {</span>
+<span class="nc" id="L19">                addCoActionListener { onManageAccounts() }</span>
+<span class="nc" id="L20">            })</span>
+<span class="nc" id="L21">            this.add(JMenuItem(&quot;Reset Data&quot;).apply {</span>
+<span class="nc" id="L22">                addCoActionListener { onClearAllData() }</span>
+<span class="nc" id="L23">            })</span>
+<span class="nc" id="L24">            this.add(JMenuItem(&quot;Settings&quot;).apply {</span>
+<span class="nc" id="L25">                addActionListener { onSettings() }</span>
+<span class="nc" id="L26">            })</span>
+<span class="nc" id="L27">        })</span>
+<span class="nc" id="L28">        add(JMenu(&quot;Auth&quot;).apply {</span>
+<span class="nc" id="L29">            this.add(JMenuItem(&quot;Update Oath&quot;).apply {</span>
+<span class="nc" id="L30">                addCoActionListener { onOauthUpdate() }</span>
+<span class="nc" id="L31">                this.isEnabled = updateOauthEnabled.value</span>
+<span class="nc" id="L32">                updateOauthEnabled.addSwingListener { this.isEnabled = it }</span>
+<span class="nc" id="L33">            })</span>
+<span class="nc" id="L34">            this.add(JMenuItem(&quot;Oauth Invalidate&quot;).apply {</span>
+<span class="nc" id="L35">                addCoActionListener { onOauthInvalidate() }</span>
+<span class="nc" id="L36">                this.isEnabled = invalidateOauthEnabled.value</span>
+<span class="nc" id="L37">                invalidateOauthEnabled.addSwingListener { this.isEnabled = it }</span>
+<span class="nc" id="L38">            })</span>
+<span class="nc" id="L39">        })</span>
+<span class="nc" id="L40">    }</span>
+
+    abstract suspend fun onOauthUpdate()
+    abstract suspend fun onOauthInvalidate()
+    abstract suspend fun onManageAccounts()
+    abstract suspend fun onClearAllData()
+    abstract fun onSettings()
+}
+
+
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>AccountTabs.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.controller</a>
+    &gt; <span class="el_source">AccountTabs.kt</span></div>
+<h1>AccountTabs.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.controller
+
+import com.droidkfx.st.account.AccountService
+import com.droidkfx.st.position.AccountPosition
+import com.droidkfx.st.position.AccountPositionService
+import com.droidkfx.st.schwab.oauth.OauthStatus
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import com.droidkfx.st.util.databind.ReadWriteListDataBinding
+import com.droidkfx.st.util.databind.mapped
+import com.droidkfx.st.util.databind.readOnlyMapped
+import com.droidkfx.st.view.AccountTabs
+import com.droidkfx.st.view.model.AccountTabViewModel
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
+
+<span class="nc" id="L15">class AccountTabs(</span>
+<span class="nc" id="L16">    private val accountPositionService: AccountPositionService,</span>
+<span class="nc" id="L17">    private val accountService: AccountService,</span>
+<span class="nc" id="L18">    private val accountData: ReadWriteListDataBinding&lt;AccountPosition&gt;,</span>
+    oauthData: ReadOnlyValueDataBinding&lt;OauthStatus&gt;,
+    accountTabProvider: (AccountTabViewModel) -&gt; AccountTab,
+) : AccountTabs(
+<span class="nc" id="L22">    accountData.mapped { ap -&gt;</span>
+<span class="nc" id="L23">        AccountTabViewModel(ap)</span>
+    },
+<span class="nc bnc" id="L25"
+      title="All 2 branches missed.">    oauthData.readOnlyMapped { it == OauthStatus.READY },</span>
+<span class="nc" id="L26">    accountTabProvider</span>
+) {
+<span class="nc" id="L28">    private val logger = logger {}</span>
+
+    override suspend fun refreshAllAccounts() {
+<span class="nc" id="L31">        logger.debug { &quot;refresh&quot; }</span>
+<span class="nc" id="L32">        val accountPositions = accountPositionService.mapAccountToAccountPosition(accountService.refreshAccounts())</span>
+<span class="nc" id="L33">        accountPositions.forEach {</span>
+<span class="nc bnc" id="L34" title="All 2 branches missed.">            if (!accountData.contains(it)) {</span>
+<span class="nc" id="L35">                accountData.add(it)</span>
+            }
+<span class="nc" id="L37">        }</span>
+<span class="nc" id="L38">        accountData.retainAll(accountPositions)</span>
+<span class="nc" id="L39">    }</span>
+}
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

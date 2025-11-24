@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>AccountTabs.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.view</a>
+    &gt; <span class="el_source">AccountTabs.kt</span></div>
+<h1>AccountTabs.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.view
+
+import com.droidkfx.st.controller.AccountTab
+import com.droidkfx.st.util.databind.ReadOnlyListDataBinding
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import com.droidkfx.st.view.model.AccountTabViewModel
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import javax.swing.Box
+import javax.swing.BoxLayout
+import javax.swing.JButton
+import javax.swing.JLabel
+import javax.swing.JPanel
+import javax.swing.JTabbedPane
+
+<span class="nc" id="L15">abstract class AccountTabs(</span>
+<span class="nc" id="L16">    private val accountTabs: ReadOnlyListDataBinding&lt;AccountTabViewModel&gt;,</span>
+<span class="nc" id="L17">    private val canRefresh: ReadOnlyValueDataBinding&lt;Boolean&gt;,</span>
+<span class="nc" id="L18">    private val accountTabProvider: (AccountTabViewModel) -&gt; AccountTab</span>
+) : JTabbedPane() {
+<span class="nc" id="L20">    private val logger = logger {}</span>
+
+<span class="nc" id="L22">    init {</span>
+<span class="nc" id="L23">        logger.trace { &quot;Initializing&quot; }</span>
+<span class="nc" id="L24">        buildTabs()</span>
+<span class="nc" id="L25">        accountTabs.addSwingListener {</span>
+<span class="nc" id="L26">            this.removeAll()</span>
+<span class="nc" id="L27">            buildTabs()</span>
+<span class="nc" id="L28">        }</span>
+<span class="nc" id="L29">    }</span>
+
+    private fun buildTabs() {
+<span class="nc" id="L32">        accountTabs.forEachIndexed { index, it -&gt;</span>
+<span class="nc" id="L33">            addTab(it.accountNameDataBinding.value, accountTabProvider(it))</span>
+<span class="nc" id="L34">            it.accountNameDataBinding.addSwingListener {</span>
+<span class="nc" id="L35">                setTitleAt(index, it)</span>
+<span class="nc" id="L36">            }</span>
+<span class="nc" id="L37">        }</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        if (accountTabs.isEmpty()) {</span>
+<span class="nc" id="L39">            addTab(&quot;Getting Started&quot;, JPanel().apply {</span>
+<span class="nc" id="L40">                layout = BoxLayout(this, BoxLayout.Y_AXIS)</span>
+<span class="nc" id="L41">                add(Box.createVerticalGlue())</span>
+<span class="nc" id="L42">                add(JLabel(&quot;It does not look like you have synced any accounts yet. Click below to get started&quot;).apply {</span>
+<span class="nc" id="L43">                    alignmentX = CENTER_ALIGNMENT</span>
+<span class="nc" id="L44">                })</span>
+<span class="nc" id="L45">                add(Box.createVerticalStrut(10))</span>
+<span class="nc" id="L46">                add(JLabel().apply {</span>
+<span class="nc" id="L47">                    alignmentX = CENTER_ALIGNMENT</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">                    if (!canRefresh.value) {</span>
+<span class="nc" id="L49">                        text = &quot;Please complete Oauth setup to get started Auth -&gt; Update Oauth&quot;</span>
+                    }
+<span class="nc" id="L51">                    canRefresh.addSwingListener {</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">                        text = if (!it) &quot;Please complete Oauth setup to get started Auth -&gt; Update Oauth&quot; else &quot;&quot;</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                        isVisible = !it</span>
+<span class="nc" id="L54">                    }</span>
+<span class="nc" id="L55">                })</span>
+<span class="nc" id="L56">                add(Box.createVerticalStrut(10))</span>
+<span class="nc" id="L57">                add(JButton(&quot;Refresh Accounts&quot;).apply {</span>
+<span class="nc" id="L58">                    this.alignmentX = CENTER_ALIGNMENT</span>
+<span class="nc" id="L59">                    addCoActionListener { refreshAllAccounts() }</span>
+<span class="nc" id="L60">                    this.isEnabled = canRefresh.value</span>
+<span class="nc" id="L61">                    canRefresh.addSwingListener { this.isEnabled = it }</span>
+<span class="nc" id="L62">                })</span>
+<span class="nc" id="L63">                add(Box.createVerticalGlue())</span>
+<span class="nc" id="L64">            })</span>
+        }
+<span class="nc" id="L66">    }</span>
+
+    abstract suspend fun refreshAllAccounts()
+}
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

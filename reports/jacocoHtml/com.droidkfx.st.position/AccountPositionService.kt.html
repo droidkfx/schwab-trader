@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+    <link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/>
+    <link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/>
+    <title>AccountPositionService.kt</title>
+    <link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/>
+    <script type="text/javascript" src="../jacoco-resources/prettify.js"></script>
+</head>
+<body onload="window['PR_TAB_WIDTH']=4;prettyPrint()">
+<div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html"
+                                                              class="el_session">Sessions</a></span><a
+        href="../index.html" class="el_report">schwab-trader</a> &gt; <a href="index.source.html" class="el_package">com.droidkfx.st.position</a>
+    &gt; <span class="el_source">AccountPositionService.kt</span></div>
+<h1>AccountPositionService.kt</h1>
+<pre class="source lang-java linenums">package com.droidkfx.st.position
+
+import com.droidkfx.st.account.Account
+import com.droidkfx.st.account.AccountService
+import com.droidkfx.st.strategy.StrategyEngine
+import io.github.oshai.kotlinlogging.KotlinLogging.logger
+
+<span class="nc" id="L8">class AccountPositionService internal constructor(</span>
+<span class="nc" id="L9">    private val accountService: AccountService,</span>
+<span class="nc" id="L10">    private val positionTargetService: PositionTargetService,</span>
+<span class="nc" id="L11">    private val positionService: PositionService,</span>
+<span class="nc" id="L12">    private val strategyEngine: StrategyEngine</span>
+) {
+<span class="nc" id="L14">    private val logger = logger {}</span>
+
+    fun getAccountPositions(): List&lt;AccountPosition&gt; {
+<span class="nc" id="L17">        logger.trace { &quot;getAccountPositions&quot; }</span>
+<span class="nc" id="L18">        return mapAccountToAccountPosition(accountService.listAccounts())</span>
+    }
+
+    fun mapAccountToAccountPosition(accounts: List&lt;Account&gt;): List&lt;AccountPosition&gt; {
+<span class="nc" id="L22">        logger.trace { &quot;mapAccountToAccountPosition&quot; }</span>
+<span class="nc" id="L23">        return accounts.map(::getAccountPosition)</span>
+    }
+
+    fun getAccountPosition(account: Account): AccountPosition {
+<span class="nc" id="L27">        logger.trace { &quot;getAccountPosition for account: $account&quot; }</span>
+<span class="nc" id="L28">        val currentPositions = positionService.getCachedPositions(account.id)</span>
+<span class="nc"
+      id="L29">        val positionTargets = positionTargetService.getAccountPositionTargets(account.id)</span>
+<span class="nc" id="L30">        val recommendations = strategyEngine.buildRecommendations(</span>
+<span class="nc" id="L31">            currentPositions.positions, positionTargets, currentPositions.accountCash</span>
+        )
+<span class="nc" id="L33">        return AccountPosition(</span>
+<span class="nc" id="L34">            account, positionTargets, currentPositions.positions, recommendations, currentPositions.accountCash</span>
+        )
+    }
+
+    fun refreshAccountPosition(ap: AccountPosition): AccountPosition {
+<span class="nc" id="L39">        logger.trace { &quot;refreshCurrentAccountPositions&quot; }</span>
+<span class="nc" id="L40">        val currentPositions = positionService.refreshAccountPositions(ap.account)</span>
+<span class="nc" id="L41">        val newRecommendations = strategyEngine.buildRecommendations(</span>
+<span class="nc" id="L42">            currentPositions.positions,</span>
+<span class="nc" id="L43">            ap.positionTargets,</span>
+<span class="nc" id="L44">            currentPositions.accountCash</span>
+        )
+<span class="nc" id="L46">        return ap.copy(</span>
+<span class="nc" id="L47">            currentPositions = currentPositions.positions,</span>
+<span class="nc" id="L48">            currentRecommendedChanges = newRecommendations,</span>
+<span class="nc" id="L49">            currentCash = currentPositions.accountCash</span>
+        )
+    }
+
+    fun updateAccountPositionTargets(accountId: String, newPositions: List&lt;PositionTarget&gt;): AccountPosition {
+<span class="nc" id="L54">        logger.trace { &quot;updateAccountPositions $accountId&quot; }</span>
+<span class="nc" id="L55">        positionTargetService.updateAccountPositionTargets(accountId, newPositions)</span>
+<span class="nc" id="L56">        return getAccountPosition(accountService.getAccount(accountId))</span>
+    }
+
+    fun clear() {
+<span class="nc" id="L60">        logger.trace { &quot;clear&quot; }</span>
+<span class="nc" id="L61">        positionTargetService.clear()</span>
+<span class="nc" id="L62">        positionService.clear()</span>
+<span class="nc" id="L63">    }</span>
+}
+</pre>
+<div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span>
+</div>
+</body>
+</html>

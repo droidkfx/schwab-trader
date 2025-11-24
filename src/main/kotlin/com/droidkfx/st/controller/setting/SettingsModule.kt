@@ -10,5 +10,5 @@ class SettingsModule(configModule: ConfigModule) {
         logger.trace { "Initializing" }
     }
 
-    val settingsDialog: SettingsDialog = SettingsDialog(configModule.configService.getConfig())
+    val settingsDialog: SettingsDialog = SettingsDialog(configModule.configService.configDataBind)
 }

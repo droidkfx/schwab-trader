@@ -13,7 +13,7 @@ class AccountModule(configModule: ConfigModule, schwabModule: SchwabModule) {
     }
 
     private val accountRepository =
-        AccountRepository(configModule.configService.getConfig().readOnlyMapped { it.repositoryRoot })
+        AccountRepository(configModule.configService.configDataBind.readOnlyMapped { it.repositoryRoot })
 
     val accountService = AccountService(accountRepository, schwabModule.clientModule.accountsClient)
 }

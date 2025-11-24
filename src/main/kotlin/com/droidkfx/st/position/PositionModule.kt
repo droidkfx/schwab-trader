@@ -23,7 +23,7 @@ class PositionModule(
         logger.trace { "Initializing" }
     }
 
-    val rootPath = configModule.configService.getConfig().readOnlyMapped { it.repositoryRoot }
+    val rootPath = configModule.configService.configDataBind.readOnlyMapped { it.repositoryRoot }
     private val targetPositionRepository = TargetPositionRepository(rootPath)
     private val targetPositionService = PositionTargetService(targetPositionRepository)
 

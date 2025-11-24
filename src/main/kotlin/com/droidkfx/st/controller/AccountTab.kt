@@ -5,11 +5,10 @@ import com.droidkfx.st.orders.OrderService
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.position.PositionTarget
 import com.droidkfx.st.strategy.StrategyAction
+import com.droidkfx.st.util.pmap
 import com.droidkfx.st.view.AccountTab
 import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 
 class AccountTab(
@@ -51,20 +50,15 @@ class AccountTab(
         logger.debug { "processOrders" }
         val orderPreviews = viewModel.recommendations
             .filter { it.recommendation != StrategyAction.HOLD }
-            .map {
-                async {
-                    orderService.previewOrder(viewModel.account, it)
-                }
+            .pmap {
+                orderService.previewOrder(viewModel.account, it)
             }
-            .awaitAll()
             .toList()
         if (orderPreviews.all { it != null }) {
             viewModel.recommendations
                 .filter { it.recommendation != StrategyAction.HOLD }
-                .map {
-                    async {
-                        orderService.order(viewModel.account, it)
-                    }
+                .pmap {
+                    orderService.order(viewModel.account, it)
                 }
         }
     }

@@ -23,7 +23,7 @@ class OrdersClient(
 ) : BaseClient(config, client, requestTokenRefresh, oathToken, oauthTokenStatus, listOf("trader", "v1")) {
     override val logger: KLogger = logger {}
 
-    fun getAccountOrders(
+    suspend fun getAccountOrders(
         accountNumber: String,
         fromEnteredTime: KInstant,
         toEnteredTime: KInstant,
@@ -38,7 +38,7 @@ class OrdersClient(
         }
     }
 
-    fun order(account: Account, recommendation: PositionRecommendation): ApiResponse<Unit> =
+    suspend fun order(account: Account, recommendation: PositionRecommendation): ApiResponse<Unit> =
         postAt("accounts", account.accountNumberHash, "orders") {
 //            val quantity = recommendation.quantity.setScale(0, RoundingMode.FLOOR)
             val quantity = recommendation.quantity
@@ -59,7 +59,7 @@ class OrdersClient(
             setBody(body)
         }
 
-    fun previewOrder(account: Account, recommendation: PositionRecommendation): ApiResponse<PreviewOrder> =
+    suspend fun previewOrder(account: Account, recommendation: PositionRecommendation): ApiResponse<PreviewOrder> =
         postAt("accounts", account.accountNumberHash, "previewOrder") {
 //            val quantity = recommendation.quantity.setScale(0, RoundingMode.FLOOR)
             val quantity = recommendation.quantity

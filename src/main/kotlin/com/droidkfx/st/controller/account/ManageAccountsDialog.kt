@@ -9,6 +9,7 @@ import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.readOnly
 import com.droidkfx.st.view.account.ManageAccountsDialog
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import kotlinx.coroutines.runBlocking
 
 class ManageAccountsDialog internal constructor(
     val data: ReadWriteListDataBinding<AccountPosition>,
@@ -21,7 +22,7 @@ class ManageAccountsDialog internal constructor(
     override fun onPositionSave(
         accountId: String,
         newPositions: List<PositionTarget>
-    ) {
+    ) = runBlocking {
         accountPositionService.updateAccountPositionTargets(accountId, newPositions)
 
         val accountIndex = data.indexOfFirst { it.account.id == accountId }

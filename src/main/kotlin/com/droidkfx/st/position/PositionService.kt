@@ -22,7 +22,7 @@ internal class PositionService(
         return positionRepository.loadPositions(id)
     }
 
-    fun refreshAccountPositions(account: Account): CurrentPositions {
+    suspend fun refreshAccountPositions(account: Account): CurrentPositions {
         logger.trace { "refreshAccountPositions for account: ${account.id}" }
         val securitiesAccount = accountClient.getLinkedAccount(account.accountNumberHash, true).data
             ?.securitiesAccount

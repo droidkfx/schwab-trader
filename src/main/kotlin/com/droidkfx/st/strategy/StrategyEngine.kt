@@ -18,7 +18,7 @@ enum class StrategyAction {
 }
 
 interface StrategyEngine {
-    fun buildRecommendations(
+    suspend fun buildRecommendations(
         positions: List<Position>,
         allocationTargets: List<PositionTarget>,
         accountCash: BigDecimal

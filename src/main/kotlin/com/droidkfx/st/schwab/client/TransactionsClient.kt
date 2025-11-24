@@ -18,7 +18,7 @@ class TransactionsClient(
 ) : BaseClient(config, client, requestTokenRefresh, oathToken, oauthTokenStatus, listOf("trader", "v1")) {
     override val logger: KLogger = logger {}
 
-    fun getTransactions(
+    suspend fun getTransactions(
         accountNumber: String,
         startDate: KInstant,
         endDate: KInstant,

@@ -11,7 +11,7 @@ class AccountService(private val accountRepository: AccountRepository, private v
         return accountRepository.loadAccounts().sortedBy { it.name }
     }
 
-    fun refreshAccounts(): List<Account> {
+    suspend fun refreshAccounts(): List<Account> {
         logger.trace { "refreshAccounts" }
 
         val knownAccounts = listAccounts()

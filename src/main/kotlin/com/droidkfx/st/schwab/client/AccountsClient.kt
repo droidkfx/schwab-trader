@@ -18,12 +18,12 @@ class AccountsClient(
 ) : BaseClient(config, client, requestTokenRefresh, oathToken, oauthTokenStatus, listOf("trader", "v1")) {
     override val logger: KLogger = logger {}
 
-    fun listAccountNumbers(): ApiResponse<List<AccountNumberHash>> {
+    suspend fun listAccountNumbers(): ApiResponse<List<AccountNumberHash>> {
         logger.trace { "listAccountNumbers" }
         return getAt("accounts", "accountNumbers")
     }
 
-    fun getLinkedAccounts(includePositions: Boolean = false): ApiResponse<List<LinkedAccountsResponse>> {
+    suspend fun getLinkedAccounts(includePositions: Boolean = false): ApiResponse<List<LinkedAccountsResponse>> {
         logger.trace { "getLinkedAccounts" }
         return getAt("accounts") {
             url {
@@ -34,7 +34,10 @@ class AccountsClient(
         }
     }
 
-    fun getLinkedAccount(accountId: String, includePositions: Boolean = false): ApiResponse<LinkedAccountsResponse> {
+    suspend fun getLinkedAccount(
+        accountId: String,
+        includePositions: Boolean = false
+    ): ApiResponse<LinkedAccountsResponse> {
         logger.trace { "getLinkedAccount $accountId" }
         return getAt("accounts", accountId) {
             url {

@@ -14,7 +14,7 @@ import java.time.ZoneId
 class OrderService(private val ordersClient: OrdersClient) {
     private val logger = logger {}
 
-    fun order(account: Account, recommendation: PositionRecommendation) {
+    suspend fun order(account: Account, recommendation: PositionRecommendation) {
         logger.trace { "order for account: $account recommendation: $recommendation" }
         if (recommendation.recommendation == StrategyAction.HOLD) {
             logger.debug { "No order requested" }
@@ -35,7 +35,7 @@ class OrderService(private val ordersClient: OrdersClient) {
         }
     }
 
-    fun previewOrder(account: Account, recommendation: PositionRecommendation): PreviewOrder? {
+    suspend fun previewOrder(account: Account, recommendation: PositionRecommendation): PreviewOrder? {
         logger.trace { "previewOrder for account: $account recommendation: $recommendation" }
         if (recommendation.recommendation == StrategyAction.HOLD) {
             logger.debug { "No order to preview, $recommendation" }
@@ -47,7 +47,7 @@ class OrderService(private val ordersClient: OrdersClient) {
         }
     }
 
-    fun getOpenOrders(account: Account): List<Order> {
+    suspend fun getOpenOrders(account: Account): List<Order> {
         val ordersResponse = ordersClient.getAccountOrders(
             account.accountNumberHash,
             LocalDate.now().plusDays(-7).atStartOfDay(ZoneId.systemDefault()).toInstant(),

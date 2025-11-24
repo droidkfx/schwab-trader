@@ -17,7 +17,7 @@ class QuotesClient(
 ) : BaseClient(config, client, requestTokenRefresh, oathToken, oauthTokenStatus, listOf("marketdata", "v1")) {
     override val logger: KLogger = logger {}
 
-    fun getQuotesForSymbols(
+    suspend fun getQuotesForSymbols(
         symbols: List<String>,
         indicative: Boolean = false
     ): ApiResponse<Map<String, QuoteResponse>> {

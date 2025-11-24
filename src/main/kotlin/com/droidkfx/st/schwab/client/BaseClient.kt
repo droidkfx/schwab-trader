@@ -15,7 +15,6 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.URLProtocol
 import io.ktor.http.contentType
 import io.ktor.http.path
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -38,19 +37,19 @@ abstract class BaseClient(
         coerceInputValues = true
     }
 
-    protected inline fun <reified T> request(
+    protected suspend inline fun <reified T> request(
         method: HttpMethod,
         crossinline block: HttpRequestBuilder.() -> Unit = {},
-    ) = runBlocking {
+    ): ApiResponse<T> {
         if (oauthTokenStatus.value == OauthStatus.EXPIRED) {
             logger.info { "Oauth token expired, attempting token refresh" }
             requestTokenRefresh.value = !requestTokenRefresh.value
         } else if (oauthTokenStatus.value != OauthStatus.READY) {
-            return@runBlocking ApiResponse(error = ErrorResponse(emptyList(), "Oauth token not ready"))
+            return ApiResponse(error = ErrorResponse(emptyList(), "Oauth token not ready"))
         }
 
         var respBody: String? = null
-        try {
+        return try {
             var resp = doRequestInternal(method, block)
 
             if (resp.status.value == 401) {
@@ -95,16 +94,16 @@ abstract class BaseClient(
         logger.trace { "Request: \n${this.method} ${url.buildString()}\n ${this.headers.entries()}\n ${this.body}" }
     }
 
-    protected inline fun <reified T> get(crossinline block: HttpRequestBuilder.() -> Unit = {}): ApiResponse<T> =
+    protected suspend inline fun <reified T> get(crossinline block: HttpRequestBuilder.() -> Unit = {}): ApiResponse<T> =
         request(HttpMethod.Get, block)
 
-    protected inline fun <reified T> post(crossinline block: HttpRequestBuilder.() -> Unit = {}): ApiResponse<T> =
+    protected suspend inline fun <reified T> post(crossinline block: HttpRequestBuilder.() -> Unit = {}): ApiResponse<T> =
         request(HttpMethod.Post) {
             contentType(ContentType.Application.Json)
             block()
         }
 
-    protected inline fun <reified T> getAt(
+    protected suspend inline fun <reified T> getAt(
         vararg segments: String = emptyArray(),
         crossinline block: HttpRequestBuilder.() -> Unit = {}
     ): ApiResponse<T> =
@@ -115,7 +114,7 @@ abstract class BaseClient(
             block()
         }
 
-    protected inline fun <reified T> postAt(
+    protected suspend inline fun <reified T> postAt(
         vararg segments: String = emptyArray(),
         crossinline block: HttpRequestBuilder.() -> Unit = {}
     ): ApiResponse<T> =

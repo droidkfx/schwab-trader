@@ -16,7 +16,7 @@ internal class BuyHoldStrategy(
         var delta: BigDecimal = BigDecimal.ZERO
     )
 
-    override fun buildRecommendations(
+    override suspend fun buildRecommendations(
         positions: List<Position>,
         allocationTargets: List<PositionTarget>,
         accountCash: BigDecimal

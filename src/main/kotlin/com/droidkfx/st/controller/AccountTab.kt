@@ -8,6 +8,9 @@ import com.droidkfx.st.strategy.StrategyAction
 import com.droidkfx.st.view.AccountTab
 import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 
 class AccountTab(
     private val accountPositionService: AccountPositionService,
@@ -44,21 +47,25 @@ class AccountTab(
         viewModel.rebuildAllocationRows()
     }
 
-    override suspend fun processOrders() {
+    override suspend fun processOrders() = coroutineScope {
         logger.debug { "processOrders" }
         val orderPreviews = viewModel.recommendations
             .filter { it.recommendation != StrategyAction.HOLD }
-            .parallelStream()
             .map {
-                orderService.previewOrder(viewModel.account, it)
-            }.toList()
+                async {
+                    orderService.previewOrder(viewModel.account, it)
+                }
+            }
+            .awaitAll()
+            .toList()
         if (orderPreviews.all { it != null }) {
             viewModel.recommendations
                 .filter { it.recommendation != StrategyAction.HOLD }
-                .parallelStream()
                 .map {
-                    orderService.order(viewModel.account, it)
-                }.toList()
+                    async {
+                        orderService.order(viewModel.account, it)
+                    }
+                }
         }
     }
 }

@@ -9,11 +9,13 @@ import com.droidkfx.st.schwab.SchwabModule
 import com.droidkfx.st.strategy.StrategyModule
 import com.droidkfx.st.transaction.TransactionModule
 import io.github.oshai.kotlinlogging.KotlinLogging
+import java.time.Instant
 
 val logger = KotlinLogging.logger {}
 
 fun main() {
     logger.info { "Starting Schwab Trader" }
+    val startTime = Instant.now()
     val configModule = ConfigModule()
 
     val schwabModule = SchwabModule(configModule)
@@ -38,4 +40,6 @@ fun main() {
     )
 
     controllerModule.mainController.showAndRun()
+    val initFinishTime = Instant.now()
+    logger.info { "Startup complete in ${initFinishTime.toEpochMilli() - startTime.toEpochMilli()}ms" }
 }

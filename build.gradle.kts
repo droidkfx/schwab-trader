@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm") version "2.2.0"
     kotlin("plugin.serialization") version "2.2.20"
     id("jacoco")
+    id("edu.sc.seis.launch4j") version "4.0.0"
 //    id("dev.msfjarvis.tracelog") version "0.1.3"
 }
 
@@ -68,17 +69,22 @@ tasks.jacocoTestReport {
     finalizedBy("jacocoTestCoverageVerification")
 }
 
-tasks.register<Copy>("releaseJarWin") {
+tasks.register<Copy>("releaseLocal") {
     val outputDir = ("${System.getenv("APPDATA")}\\..\\Local\\schwab-trader")
 
-    dependsOn("jar")
-    from(tasks.jar.get().archiveFile)
-    include("schwab-trader-${project.version}.jar")
+    dependsOn("createExe")
+    from(tasks.createExe.get().outputs.files)
     into(outputDir)
-    rename("schwab-trader-${project.version}.jar", "app.jar")
     doLast {
-        println("JAR Released to: $outputDir")
+        println("Released to: $outputDir")
     }
+}
+
+launch4j {
+    outfile = "schwab-trader.exe"
+    mainClassName = "com.droidkfx.st.MainKt"
+    productName = "Schwab Trader"
+    headerType = "console"
 }
 
 kotlin {

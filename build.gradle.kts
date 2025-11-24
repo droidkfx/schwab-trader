@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
-    implementation("ch.qos.logback:logback-classic:1.5.18")
+    implementation("ch.qos.logback:logback-classic:1.5.19")
 
     // Swing Libraries
     implementation("com.formdev:flatlaf:3.6.1")
@@ -63,8 +63,7 @@ tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
         html.required.set(true)
-        html.outputLocation.set(File("./reports/jacocoHtml"))
-//        html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+//        html.outputLocation.set(File("./reports/jacocoHtml"))
     }
     finalizedBy("jacocoTestCoverageVerification")
 }

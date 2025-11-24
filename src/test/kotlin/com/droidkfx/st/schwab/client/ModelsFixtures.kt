@@ -1,11 +1,7 @@
 package com.droidkfx.st.schwab.client
 
-import com.droidkfx.st.util.serialization.KBigDecimal
-
 // Minimal, nullable-friendly fixtures for Schwab client models.
 // Intentionally keep KInstant fields null to avoid formatter differences.
-
-private fun bd(n: String): KBigDecimal = n.toBigDecimal()
 
 fun sampleAccountNumberHash() = AccountNumberHash(
     accountNumber = "123456789",
@@ -13,12 +9,12 @@ fun sampleAccountNumberHash() = AccountNumberHash(
 )
 
 fun sampleOrderLeg() = OrderLeg(
-    askPrice = bd("1.23"),
-    bidPrice = bd("1.20"),
-    lastPrice = bd("1.22"),
-    markPrice = bd("1.215"),
-    projectedCommission = bd("0.01"),
-    quantity = bd("10"),
+    askPrice = "1.23".toBigDecimal(),
+    bidPrice = "1.20".toBigDecimal(),
+    lastPrice = "1.22".toBigDecimal(),
+    markPrice = "1.215".toBigDecimal(),
+    projectedCommission = "0.01".toBigDecimal(),
+    quantity = "10".toBigDecimal(),
     finalSymbol = "XYZ",
     legId = 1,
     assetType = AssetType.EQUITY,
@@ -26,10 +22,10 @@ fun sampleOrderLeg() = OrderLeg(
 )
 
 fun sampleOrderBalance() = OrderBalance(
-    orderValue = bd("12.34"),
-    projectedAvailableFund = bd("1000"),
-    projectedBuyingPower = bd("2000"),
-    projectedCommission = bd("0.01")
+    orderValue = "12.34".toBigDecimal(),
+    projectedAvailableFund = "1000".toBigDecimal(),
+    projectedBuyingPower = "2000".toBigDecimal(),
+    projectedCommission = "0.01".toBigDecimal()
 )
 
 fun sampleOrderStrategy() = OrderStrategy(
@@ -44,12 +40,12 @@ fun sampleOrderStrategy() = OrderStrategy(
     allOrNone = false,
     discretionary = false,
     duration = Duration.DAY,
-    filledQuantity = bd("0"),
+    filledQuantity = "0".toBigDecimal(),
     orderType = OrderType.MARKET,
-    orderValue = bd("12.34"),
-    price = bd("12.34"),
-    quantity = bd("10"),
-    remainingQuantity = bd("10"),
+    orderValue = "12.34".toBigDecimal(),
+    price = "12.34".toBigDecimal(),
+    quantity = "10".toBigDecimal(),
+    remainingQuantity = "10".toBigDecimal(),
     sellNonMarginableFirst = false,
     settlementInstruction = SettlementInstruction.REGULAR,
     strategy = ComplexOrderStrategyType.NONE,
@@ -74,11 +70,11 @@ fun sampleOrderValidationResult() = OrderValidationResult(
     warns = listOf(sampleOrderValidationDetail()),
 )
 
-fun sampleCommissionValue() = FeeValue(value = bd("0.01"), type = FeeType.COMMISSION)
+fun sampleCommissionValue() = FeeValue(value = "0.01".toBigDecimal(), type = FeeType.COMMISSION)
 fun sampleCommissionLeg() = CommissionLeg(commissionValues = listOf(sampleCommissionValue()))
 fun sampleCommission() = Commission(commissionLegs = listOf(sampleCommissionLeg()))
 
-fun sampleFeeValue() = FeeValue(value = bd("0.01"), type = FeeType.SEC_FEE)
+fun sampleFeeValue() = FeeValue(value = "0.01".toBigDecimal(), type = FeeType.SEC_FEE)
 fun sampleFeeLeg() = FeeLeg(feeValues = listOf(sampleFeeValue()))
 fun sampleFees() = Fees(feeLegs = listOf(sampleFeeLeg()))
 
@@ -90,17 +86,17 @@ fun sampleCommissionAndFee() = CommissionAndFee(
 
 fun sampleExecutionLeg() = ExecutionLeg(
     legId = 1,
-    price = bd("12.34"),
-    quantity = bd("10"),
-    mismarkedQuantity = bd("0"),
+    price = "12.34".toBigDecimal(),
+    quantity = "10".toBigDecimal(),
+    mismarkedQuantity = "0".toBigDecimal(),
     instrumentId = 111
 )
 
 fun sampleOrderActivity() = OrderActivity(
     activityType = OrderActivity.Activity.EXECUTION,
     executionType = "TRADE",
-    quantity = bd("10"),
-    orderRemainingQuantity = bd("0"),
+    quantity = "10".toBigDecimal(),
+    orderRemainingQuantity = "0".toBigDecimal(),
     executionLegs = listOf(sampleExecutionLeg())
 )
 
@@ -110,9 +106,9 @@ fun sampleOrder() = Order(
     orderType = OrderType.MARKET,
     // cancelTime, releaseTime, enteredTime, closeTime null
     complexOrderStrategyType = ComplexOrderStrategyType.NONE,
-    quantity = bd("10"),
-    filledQuantity = bd("0"),
-    remainingQuantity = bd("10"),
+    quantity = "10".toBigDecimal(),
+    filledQuantity = "0".toBigDecimal(),
+    remainingQuantity = "10".toBigDecimal(),
     requestedDestination = RequestedDestination.AUTO,
     destinationLinkName = "AUTO",
     stopPrice = null,
@@ -122,7 +118,7 @@ fun sampleOrder() = Order(
     stopType = StopType.STANDARD,
     priceLinkBasis = PriceLinkBasis.LAST,
     priceLinkType = PriceLinkType.VALUE,
-    price = bd("12.34"),
+    price = "12.34".toBigDecimal(),
     taxLotMethod = TaxLotMethod.FIFO,
     orderLegCollection = listOf(sampleOrderLegCollection()),
     activationPrice = null,
@@ -147,9 +143,9 @@ fun sampleOrderRequest() = OrderRequest(
     orderType = OrderTypeRequest.MARKET,
     // times null
     complexOrderStrategyType = ComplexOrderStrategyType.NONE,
-    quantity = bd("10"),
-    filledQuantity = bd("0"),
-    remainingQuantity = bd("10"),
+    quantity = "10".toBigDecimal(),
+    filledQuantity = "0".toBigDecimal(),
+    remainingQuantity = "10".toBigDecimal(),
     destinationLinkName = "AUTO",
     stopPrice = null,
     stopPriceLinkBasis = StopPriceLinkBasis.MARK,
@@ -158,7 +154,7 @@ fun sampleOrderRequest() = OrderRequest(
     stopType = StopType.STANDARD,
     priceLinkBasis = PriceLinkBasis.LAST,
     priceLinkType = PriceLinkType.VALUE,
-    price = bd("12.34"),
+    price = "12.34".toBigDecimal(),
     taxLotMethod = TaxLotMethod.FIFO,
     orderLegCollection = listOf(sampleOrderLegCollection()),
     activationPrice = null,
@@ -188,120 +184,120 @@ fun sampleTransactionEquity() = TransactionEquity(
     symbol = "XYZ",
     description = "Equity",
     instrumentId = 1,
-    netChange = bd("0.1"),
+    netChange = "0.1".toBigDecimal(),
     type = TransactionEquity.Type.COMMON_STOCK
 )
 
 fun samplePosition() = Position(
-    shortQuantity = bd("0"),
-    averagePrice = bd("12.34"),
-    currentDayProfitLoss = bd("0"),
-    currentDayProfitLossPercentage = bd("0"),
-    longQuantity = bd("10"),
-    settledLongQuantity = bd("10"),
-    settledShortQuantity = bd("0"),
-    agedQuantity = bd("0"),
+    shortQuantity = "0".toBigDecimal(),
+    averagePrice = "12.34".toBigDecimal(),
+    currentDayProfitLoss = "0".toBigDecimal(),
+    currentDayProfitLossPercentage = "0".toBigDecimal(),
+    longQuantity = "10".toBigDecimal(),
+    settledLongQuantity = "10".toBigDecimal(),
+    settledShortQuantity = "0".toBigDecimal(),
+    agedQuantity = "0".toBigDecimal(),
     instrument = sampleTransactionEquity(),
-    marketValue = bd("123.4"),
-    maintenanceRequirement = bd("50"),
-    averageLongPrice = bd("12.34"),
+    marketValue = "123.4".toBigDecimal(),
+    maintenanceRequirement = "50".toBigDecimal(),
+    averageLongPrice = "12.34".toBigDecimal(),
     averageShortPrice = null,
-    taxLotAverageLongPrice = bd("12.34"),
+    taxLotAverageLongPrice = "12.34".toBigDecimal(),
     taxLotAverageShortPrice = null,
-    longOpenProfitLoss = bd("0"),
+    longOpenProfitLoss = "0".toBigDecimal(),
     shortOpenProfitLoss = null,
-    previousSessionLongQuantity = bd("10"),
-    previousSessionShortQuantity = bd("0"),
-    currentDayCost = bd("0")
+    previousSessionLongQuantity = "10".toBigDecimal(),
+    previousSessionShortQuantity = "0".toBigDecimal(),
+    currentDayCost = "0".toBigDecimal()
 )
 
 fun sampleMarginInitialBalance() = MarginInitialBalance(
-    accruedInterest = bd("0"),
-    availableFundsNonMarginableTrade = bd("0"),
-    bondValue = bd("0"),
-    buyingPower = bd("0"),
-    cashBalance = bd("0"),
-    cashAvailableForTrading = bd("0"),
-    cashReceipts = bd("0"),
-    dayTradingBuyingPower = bd("0"),
-    dayTradingBuyingPowerCall = bd("0"),
-    dayTradingEquityCall = bd("0"),
-    equity = bd("0"),
-    equityPercentage = bd("0"),
-    liquidationValue = bd("0"),
-    longMarginValue = bd("0"),
-    longOptionMarketValue = bd("0"),
-    longStockValue = bd("0"),
-    maintenanceCall = bd("0"),
-    maintenanceRequirement = bd("0"),
-    margin = bd("0"),
-    marginEquity = bd("0"),
-    moneyMarketFund = bd("0"),
-    mutualFundValue = bd("0"),
-    regTCall = bd("0"),
-    shortMarginValue = bd("0"),
-    shortOptionMarketValue = bd("0"),
-    shortStockValue = bd("0"),
-    totalCash = bd("0"),
+    accruedInterest = "0".toBigDecimal(),
+    availableFundsNonMarginableTrade = "0".toBigDecimal(),
+    bondValue = "0".toBigDecimal(),
+    buyingPower = "0".toBigDecimal(),
+    cashBalance = "0".toBigDecimal(),
+    cashAvailableForTrading = "0".toBigDecimal(),
+    cashReceipts = "0".toBigDecimal(),
+    dayTradingBuyingPower = "0".toBigDecimal(),
+    dayTradingBuyingPowerCall = "0".toBigDecimal(),
+    dayTradingEquityCall = "0".toBigDecimal(),
+    equity = "0".toBigDecimal(),
+    equityPercentage = "0".toBigDecimal(),
+    liquidationValue = "0".toBigDecimal(),
+    longMarginValue = "0".toBigDecimal(),
+    longOptionMarketValue = "0".toBigDecimal(),
+    longStockValue = "0".toBigDecimal(),
+    maintenanceCall = "0".toBigDecimal(),
+    maintenanceRequirement = "0".toBigDecimal(),
+    margin = "0".toBigDecimal(),
+    marginEquity = "0".toBigDecimal(),
+    moneyMarketFund = "0".toBigDecimal(),
+    mutualFundValue = "0".toBigDecimal(),
+    regTCall = "0".toBigDecimal(),
+    shortMarginValue = "0".toBigDecimal(),
+    shortOptionMarketValue = "0".toBigDecimal(),
+    shortStockValue = "0".toBigDecimal(),
+    totalCash = "0".toBigDecimal(),
     isInCall = false,
-    unsettledCash = bd("0"),
-    pendingDeposits = bd("0"),
-    marginBalance = bd("0"),
-    shortBalance = bd("0"),
-    accountValue = bd("0")
+    unsettledCash = "0".toBigDecimal(),
+    pendingDeposits = "0".toBigDecimal(),
+    marginBalance = "0".toBigDecimal(),
+    shortBalance = "0".toBigDecimal(),
+    accountValue = "0".toBigDecimal()
 )
 
 fun sampleMarginBalance() = MarginBalance(
-    availableFunds = bd("0"),
-    availableFundsNonMarginableTrade = bd("0"),
-    buyingPower = bd("0"),
-    buyingPowerNonMarginableTrade = bd("0"),
-    dayTradingBuyingPower = bd("0"),
-    dayTradingBuyingPowerCall = bd("0"),
-    equity = bd("0"),
-    equityPercentage = bd("0"),
-    longMarginValue = bd("0"),
-    maintenanceCall = bd("0"),
-    maintenanceRequirement = bd("0"),
-    marginBalance = bd("0"),
-    regTCall = bd("0"),
-    shortBalance = bd("0"),
-    shortMarginValue = bd("0"),
-    sma = bd("0"),
+    availableFunds = "0".toBigDecimal(),
+    availableFundsNonMarginableTrade = "0".toBigDecimal(),
+    buyingPower = "0".toBigDecimal(),
+    buyingPowerNonMarginableTrade = "0".toBigDecimal(),
+    dayTradingBuyingPower = "0".toBigDecimal(),
+    dayTradingBuyingPowerCall = "0".toBigDecimal(),
+    equity = "0".toBigDecimal(),
+    equityPercentage = "0".toBigDecimal(),
+    longMarginValue = "0".toBigDecimal(),
+    maintenanceCall = "0".toBigDecimal(),
+    maintenanceRequirement = "0".toBigDecimal(),
+    marginBalance = "0".toBigDecimal(),
+    regTCall = "0".toBigDecimal(),
+    shortBalance = "0".toBigDecimal(),
+    shortMarginValue = "0".toBigDecimal(),
+    sma = "0".toBigDecimal(),
     isInCall = false,
-    stockBuyingPower = bd("0"),
-    optionBuyingPower = bd("0")
+    stockBuyingPower = "0".toBigDecimal(),
+    optionBuyingPower = "0".toBigDecimal()
 )
 
 fun sampleCashInitialBalance() = CashInitialBalance(
-    accruedInterest = bd("0"),
-    cashAvailableForTrading = bd("0"),
-    cashAvailableForWithdrawal = bd("0"),
-    cashBalance = bd("0"),
-    bondValue = bd("0"),
-    cashReceipts = bd("0"),
-    liquidationValue = bd("0"),
-    longOptionMarketValue = bd("0"),
-    longStockValue = bd("0"),
-    moneyMarketFund = bd("0"),
-    mutualFundValue = bd("0"),
-    shortOptionMarketValue = bd("0"),
-    shortStockValue = bd("0"),
-    isInCall = bd("0"),
-    unsettledCash = bd("0"),
-    cashDebitCallValue = bd("0"),
-    pendingDeposits = bd("0"),
-    accountValue = bd("0")
+    accruedInterest = "0".toBigDecimal(),
+    cashAvailableForTrading = "0".toBigDecimal(),
+    cashAvailableForWithdrawal = "0".toBigDecimal(),
+    cashBalance = "0".toBigDecimal(),
+    bondValue = "0".toBigDecimal(),
+    cashReceipts = "0".toBigDecimal(),
+    liquidationValue = "0".toBigDecimal(),
+    longOptionMarketValue = "0".toBigDecimal(),
+    longStockValue = "0".toBigDecimal(),
+    moneyMarketFund = "0".toBigDecimal(),
+    mutualFundValue = "0".toBigDecimal(),
+    shortOptionMarketValue = "0".toBigDecimal(),
+    shortStockValue = "0".toBigDecimal(),
+    isInCall = false,
+    unsettledCash = "0".toBigDecimal(),
+    cashDebitCallValue = "0".toBigDecimal(),
+    pendingDeposits = "0".toBigDecimal(),
+    accountValue = "0".toBigDecimal()
 )
 
 fun sampleCashBalance() = CashBalance(
-    cashAvailableForTrading = bd("0"),
-    cashAvailableForWithdrawal = bd("0"),
-    cashCall = bd("0"),
-    longNonMarginableMarketValue = bd("0"),
-    totalCash = bd("0"),
-    cashDebitCallValue = bd("0"),
-    unsettledCash = bd("0")
+    cashAvailableForTrading = "0".toBigDecimal(),
+    cashAvailableForWithdrawal = "0".toBigDecimal(),
+    cashCall = "0".toBigDecimal(),
+    longNonMarginableMarketValue = "0".toBigDecimal(),
+    totalCash = "0".toBigDecimal(),
+    cashDebitCallValue = "0".toBigDecimal(),
+    unsettledCash = "0".toBigDecimal()
 )
 
 fun sampleMarginAccount() = MarginAccount(
@@ -336,7 +332,7 @@ fun sampleOrderLegCollection() = OrderLegCollection(
     instrument = sampleTransactionEquity(),
     instruction = Instruction.BUY,
     positionEffect = PositionEffect.OPENING,
-    quantity = bd("10"),
+    quantity = "10".toBigDecimal(),
     quantityType = OrderLegCollection.QuantityType.SHARES,
     divCapGains = OrderLegCollection.DivCapGains.REINVEST,
     toSymbol = null
@@ -349,12 +345,12 @@ fun sampleTransactionFixedIncome() = TransactionFixedIncome(
     symbol = "BND",
     description = "Bond",
     instrumentId = 2,
-    netChange = bd("0.0"),
+    netChange = "0.0".toBigDecimal(),
     type = TransactionFixedIncome.Type.CORPORATE_BOND,
     maturityDate = "2030-01-01",
-    factor = bd("1.0"),
-    multiplier = bd("1.0"),
-    variableRate = bd("0.0")
+    factor = "1.0".toBigDecimal(),
+    multiplier = "1.0".toBigDecimal(),
+    variableRate = "0.0".toBigDecimal()
 )
 
 fun sampleTransactionCashEquivalent() = TransactionCashEquivalent(
@@ -362,7 +358,7 @@ fun sampleTransactionCashEquivalent() = TransactionCashEquivalent(
     symbol = "SWVXX",
     description = "CashEq",
     instrumentId = 6,
-    netChange = bd("0.0"),
+    netChange = "0.0".toBigDecimal(),
     type = TransactionCashEquivalent.Type.SWEEP_VEHICLE
 )
 
@@ -371,7 +367,7 @@ fun sampleCollectiveInvestment() = CollectiveInvestment(
     symbol = "SPY",
     description = "ETF",
     instrumentId = 7,
-    netChange = bd("0.0"),
+    netChange = "0.0".toBigDecimal(),
     type = CollectiveInvestment.Type.EXCHANGE_TRADED_FUND
 )
 
@@ -380,7 +376,7 @@ fun sampleCurrency() = Currency(
     symbol = "USD",
     description = "US Dollar",
     instrumentId = 840,
-    netChange = bd("0.0")
+    netChange = "0.0".toBigDecimal()
 )
 
 fun sampleForex() = Forex(
@@ -388,7 +384,7 @@ fun sampleForex() = Forex(
     symbol = "EUR/USD",
     description = "Forex",
     instrumentId = 999,
-    netChange = bd("0.0"),
+    netChange = "0.0".toBigDecimal(),
     type = Forex.Type.STANDARD,
     baseCurrency = sampleCurrency(),
     counterCurrency = sampleCurrency()
@@ -399,7 +395,7 @@ fun sampleTransactionMutualFund() = TransactionMutualFund(
     symbol = "MFX",
     description = "Mutual Fund",
     instrumentId = 3,
-    netChange = bd("0.0"),
+    netChange = "0.0".toBigDecimal(),
     fundFamilyName = "Family",
     fundFamilySymbol = "FF",
     fundGroup = "Group",
@@ -414,19 +410,19 @@ fun sampleTransactionOption() = TransactionOption(
     symbol = "XYZ  240118C00100000",
     description = "Option",
     instrumentId = 4,
-    netChange = bd("0.0"),
+    netChange = "0.0".toBigDecimal(),
     expirationDate = null,
     optionDeliverables = TransactionAPIOptionDeliverable(
         rootSymbol = "XYZ",
         strikePercent = 100,
         deliverableNumber = 1,
-        deliverableUnits = bd("100"),
+        deliverableUnits = "100".toBigDecimal(),
         deliverable = sampleTransactionEquity(),
         assetType = AssetType.EQUITY
     ),
     optionPremiumMultiplier = 100,
     putCall = TransactionOption.PutCall.CALL,
-    strikePrice = bd("10.0"),
+    strikePrice = "10.0".toBigDecimal(),
     type = TransactionOption.Type.VANILLA,
     underlyingSymbol = "XYZ",
     underlyingCusip = "123456",
@@ -438,13 +434,13 @@ fun sampleProduct() = Product(
     symbol = "PRD",
     description = "Product",
     instrumentId = 5,
-    netChange = bd("0.0"),
+    netChange = "0.0".toBigDecimal(),
     type = Product.Type.TBD
 )
 
 fun sampleAccountAPIOptionDeliverable() = AccountAPIOptionDeliverable(
     symbol = "XYZ",
-    deliverableUnits = bd("100"),
+    deliverableUnits = "100".toBigDecimal(),
     apiCurrencyType = AccountAPIOptionDeliverable.ApiCurrencyType.USD,
     assetType = AssetType.EQUITY
 )
@@ -453,7 +449,7 @@ fun sampleTransactionAPIOptionDeliverable() = TransactionAPIOptionDeliverable(
     rootSymbol = "XYZ",
     strikePercent = 100,
     deliverableNumber = 1,
-    deliverableUnits = bd("100"),
+    deliverableUnits = "100".toBigDecimal(),
     deliverable = sampleTransactionEquity(),
     assetType = AssetType.EQUITY
 )
@@ -471,9 +467,9 @@ fun sampleUserDetails() = UserDetails(
 
 fun sampleTransferItem() = TransferItem(
     instrument = sampleTransactionEquity(),
-    amount = bd("10"),
-    cost = bd("12.34"),
-    price = bd("12.34"),
+    amount = "10".toBigDecimal(),
+    cost = "12.34".toBigDecimal(),
+    price = "12.34".toBigDecimal(),
     feeType = FeeType.COMMISSION,
     positionEffect = PositionEffect.OPENING
 )
@@ -491,7 +487,7 @@ fun sampleTransaction() = Transaction(
     settlementDate = null,
     positionId = 1,
     orderId = 123,
-    netAmount = bd("12.34"),
+    netAmount = "12.34".toBigDecimal(),
     activityType = Transaction.ActivityType.EXECUTION,
     transferItems = listOf(sampleTransferItem())
 )

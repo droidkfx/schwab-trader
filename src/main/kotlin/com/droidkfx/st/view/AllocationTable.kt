@@ -7,10 +7,10 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.swing.Swing
 import java.math.BigDecimal
 import javax.swing.JScrollPane
 import javax.swing.JTable
-import javax.swing.SwingUtilities
 import javax.swing.event.TableModelListener
 
 abstract class AllocationTable(data: ReadOnlyListDataBinding<AllocationRowViewModel>) : JScrollPane() {
@@ -75,7 +75,7 @@ private class AllocationTableModel(
             if (valueSetup(newRow)) {
                 CoroutineScope(Dispatchers.Default).launch {
                     addNewRow(newRow)
-                    SwingUtilities.invokeLater {
+                    CoroutineScope(Dispatchers.Swing).launch {
                         super.fireTableRowsInserted(super.rowCount, super.rowCount)
                     }
                     newRow = defaultValue()

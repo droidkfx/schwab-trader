@@ -5,6 +5,10 @@ import com.droidkfx.st.strategy.StrategyAction
 import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.swing.Swing
 import java.awt.BorderLayout
 import java.awt.FlowLayout
 import java.awt.event.FocusListener
@@ -12,7 +16,6 @@ import javax.swing.JButton
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
-import javax.swing.SwingUtilities
 
 abstract class AccountTab(
     viewModel: AccountTabViewModel,
@@ -25,7 +28,7 @@ abstract class AccountTab(
             isEnabled = false
             addCoActionListener {
                 saveAccountPositions()
-                SwingUtilities.invokeLater { isEnabled = false }
+                CoroutineScope(Dispatchers.Swing).launch { isEnabled = false }
             }
             viewModel.data.mapped { it.symbol to it.allocationTarget }.addSwingListener {
                 isEnabled = true
@@ -68,7 +71,7 @@ abstract class AccountTab(
                 add(JButton("Refresh Data").apply {
                     addCoActionListener {
                         refreshData()
-                        SwingUtilities.invokeLater {
+                        CoroutineScope(Dispatchers.Swing).launch {
                             processOrdersButton.isEnabled = viewModel.data.any {
                                 it.tradeAction == StrategyAction.BUY.name || it.tradeAction == StrategyAction.SELL.name
                             }

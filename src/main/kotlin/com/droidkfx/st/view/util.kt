@@ -9,14 +9,18 @@ import com.droidkfx.st.util.databind.asChangeListener
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.swing.Swing
 import javax.swing.JButton
 import javax.swing.JList
 import javax.swing.JMenuItem
-import javax.swing.SwingUtilities
 import javax.swing.event.ListSelectionEvent
 
 internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(listener: DataBindChangeListener<T>) {
-    addListener { oldValue, newValue -> SwingUtilities.invokeLater { listener(oldValue, newValue) } }
+    addListener { oldValue, newValue ->
+        CoroutineScope(Dispatchers.Swing).launch {
+            listener(oldValue, newValue)
+        }
+    }
 }
 
 internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(listener: DataBindValueListener<T>) {
@@ -24,12 +28,20 @@ internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(listener: DataBind
 }
 
 internal fun <T> ListDataBinding<T>.addSwingListener(listener: (ListDataBindingEvent<T>) -> Unit) {
-    addListener { SwingUtilities.invokeLater { listener(it) } }
+    addListener { CoroutineScope(Dispatchers.Swing).launch { listener(it) } }
 }
 
 internal fun JMenuItem.addCoActionListener(function: suspend () -> Unit) {
     addActionListener {
         CoroutineScope(Dispatchers.Default).launch {
+            function()
+        }
+    }
+}
+
+internal fun JMenuItem.addSwingListener(function: suspend () -> Unit) {
+    addActionListener {
+        CoroutineScope(Dispatchers.Swing).launch {
             function()
         }
     }

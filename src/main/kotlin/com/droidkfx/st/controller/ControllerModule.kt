@@ -49,7 +49,7 @@ class ControllerModule(
         accountControllerModule.manageAccountDialog,
         accountData,
     )
-    private val statusBarController = StatusBar(oauthService)
+    val statusBarController = StatusBar(oauthService)
 
     private val accountTabs = AccountTabs(
         positionModule.accountPositionService,

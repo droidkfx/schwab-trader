@@ -14,6 +14,7 @@ class ViewModule(
         FlatDarkLaf.setup().also { logger.info { "Dark LaF setup complete" } }
 
         MenuBar(controllerModule.menuBarController)
+        StatusBar(controllerModule.statusBarController)
 
     }
 }

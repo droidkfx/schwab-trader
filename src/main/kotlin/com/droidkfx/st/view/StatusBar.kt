@@ -6,15 +6,19 @@ import java.awt.FlowLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-abstract class StatusBar(oauthStatus: ReadOnlyValueDataBinding<String>) : JPanel() {
+interface StatusBarController {
+    val oauthStatus: ReadOnlyValueDataBinding<String>
+}
+
+class StatusBar(c: StatusBarController) : JPanel() {
     private val logger = logger {}
 
     init {
         logger.trace { "Initializing" }
         layout = FlowLayout(FlowLayout.RIGHT)
 
-        add(JLabel("Oauth Status: ${oauthStatus.value}").apply {
-            oauthStatus.addSwingListener { text = "Oauth Status: $it" }
+        add(JLabel("Oauth Status: ${c.oauthStatus.value}").apply {
+            c.oauthStatus.addSwingListener { text = "Oauth Status: $it" }
         })
     }
 }

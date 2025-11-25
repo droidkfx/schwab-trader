@@ -6,9 +6,19 @@ import javax.swing.JMenu
 import javax.swing.JMenuBar
 import javax.swing.JMenuItem
 
-abstract class MenuBar(
-    updateOauthEnabled: ReadOnlyValueDataBinding<Boolean>,
-    invalidateOauthEnabled: ReadOnlyValueDataBinding<Boolean>
+interface MenuBarController {
+    val updateOauthEnabled: ReadOnlyValueDataBinding<Boolean>
+    val invalidateOauthEnabled: ReadOnlyValueDataBinding<Boolean>
+
+    suspend fun onOauthUpdate()
+    suspend fun onOauthInvalidate()
+    suspend fun onManageAccounts()
+    suspend fun onClearAllData()
+    suspend fun onSettings()
+}
+
+class MenuBar(
+    c: MenuBarController
 ) : JMenuBar() {
     private val logger = logger {}
 
@@ -16,34 +26,28 @@ abstract class MenuBar(
         logger.trace { "Initializing" }
         add(JMenu("File").apply {
             this.add(JMenuItem("Manage Accounts").apply {
-                addCoActionListener { onManageAccounts() }
+                addCoActionListener { c.onManageAccounts() }
             })
             this.add(JMenuItem("Reset Data").apply {
-                addCoActionListener { onClearAllData() }
+                addCoActionListener { c.onClearAllData() }
             })
             this.add(JMenuItem("Settings").apply {
-                addActionListener { onSettings() }
+                addSwingListener { c.onSettings() }
             })
         })
         add(JMenu("Auth").apply {
             this.add(JMenuItem("Update Oath").apply {
-                addCoActionListener { onOauthUpdate() }
-                this.isEnabled = updateOauthEnabled.value
-                updateOauthEnabled.addSwingListener { this.isEnabled = it }
+                addCoActionListener { c.onOauthUpdate() }
+                this.isEnabled = c.updateOauthEnabled.value
+                c.updateOauthEnabled.addSwingListener { this.isEnabled = it }
             })
             this.add(JMenuItem("Oauth Invalidate").apply {
-                addCoActionListener { onOauthInvalidate() }
-                this.isEnabled = invalidateOauthEnabled.value
-                invalidateOauthEnabled.addSwingListener { this.isEnabled = it }
+                addCoActionListener { c.onOauthInvalidate() }
+                this.isEnabled = c.invalidateOauthEnabled.value
+                c.invalidateOauthEnabled.addSwingListener { this.isEnabled = it }
             })
         })
     }
-
-    abstract suspend fun onOauthUpdate()
-    abstract suspend fun onOauthInvalidate()
-    abstract suspend fun onManageAccounts()
-    abstract suspend fun onClearAllData()
-    abstract fun onSettings()
 }
 
 

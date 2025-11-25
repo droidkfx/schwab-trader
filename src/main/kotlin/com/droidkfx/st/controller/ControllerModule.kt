@@ -41,7 +41,7 @@ class ControllerModule(
     private val settingsModule = SettingsModule(configModule)
 
     private val oauthService = schwabModule.oauthModule.oauthService
-    private val menuBarController = MenuBar(
+    val menuBarController = MenuBar(
         settingsModule.settingsDialog,
         positionModule.accountPositionService,
         accountModule.accountService,

@@ -8,6 +8,7 @@ import com.droidkfx.st.position.PositionModule
 import com.droidkfx.st.schwab.SchwabModule
 import com.droidkfx.st.strategy.StrategyModule
 import com.droidkfx.st.transaction.TransactionModule
+import com.droidkfx.st.view.ViewModule
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.Instant
 
@@ -38,6 +39,8 @@ fun main() {
         positionModule,
         orderModule
     )
+
+    ViewModule(controllerModule)
 
     controllerModule.mainController.showAndRun()
     val initFinishTime = Instant.now()

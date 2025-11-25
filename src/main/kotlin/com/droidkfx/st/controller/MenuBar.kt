@@ -7,9 +7,10 @@ import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.schwab.oauth.OauthService
 import com.droidkfx.st.schwab.oauth.OauthStatus
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.readOnlyMapped
-import com.droidkfx.st.view.MenuBar
+import com.droidkfx.st.view.MenuBarController
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class MenuBar(
@@ -19,11 +20,14 @@ class MenuBar(
     private val oauthService: OauthService,
     private val manageAccountsDialog: ManageAccountsDialog,
     private val accountData: ReadWriteListDataBinding<AccountPosition>
-) : MenuBar(
-    oauthService.getTokenStatusBinding().readOnlyMapped(::oauthEnabled),
-    oauthService.getTokenStatusBinding().readOnlyMapped(::invalidateEnabled)
-) {
+) : MenuBarController {
     private val logger = logger {}
+
+    override val updateOauthEnabled: ReadOnlyValueDataBinding<Boolean> =
+        oauthService.getTokenStatusBinding().readOnlyMapped(::oauthEnabled)
+
+    override val invalidateOauthEnabled: ReadOnlyValueDataBinding<Boolean> =
+        oauthService.getTokenStatusBinding().readOnlyMapped(::invalidateEnabled)
 
     override suspend fun onOauthUpdate() {
         logger.trace { "onOauthUpdate" }
@@ -49,18 +53,18 @@ class MenuBar(
         // TODO reset internal data bindings after clear
     }
 
-    override fun onSettings() {
+    override suspend fun onSettings() {
         logger.trace { "onSettings" }
         settingsDialog.showDialog()
     }
 
     companion object {
-        fun oauthEnabled(status: OauthStatus): Boolean = when (status) {
+        private fun oauthEnabled(status: OauthStatus): Boolean = when (status) {
             OauthStatus.READY, OauthStatus.INITIALIZING -> false
             OauthStatus.EXPIRED, OauthStatus.NOT_INITIALIZED -> true
         }
 
-        fun invalidateEnabled(status: OauthStatus): Boolean = when (status) {
+        private fun invalidateEnabled(status: OauthStatus): Boolean = when (status) {
             OauthStatus.READY, OauthStatus.EXPIRED -> true
             OauthStatus.INITIALIZING, OauthStatus.NOT_INITIALIZED -> false
         }

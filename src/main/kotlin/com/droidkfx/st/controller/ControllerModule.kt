@@ -51,7 +51,7 @@ class ControllerModule(
     )
     val statusBarController = StatusBar(oauthService)
 
-    private val accountTabs = AccountTabs(
+    val accountTabs = AccountTabs(
         positionModule.accountPositionService,
         accountModule.accountService,
         accountData,

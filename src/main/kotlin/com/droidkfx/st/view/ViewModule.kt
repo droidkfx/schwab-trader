@@ -15,6 +15,7 @@ class ViewModule(
 
         MenuBar(controllerModule.menuBarController)
         StatusBar(controllerModule.statusBarController)
+        AccountTabs(controllerModule.accountTabs)
 
     }
 }

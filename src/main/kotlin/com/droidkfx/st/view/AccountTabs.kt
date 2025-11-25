@@ -12,30 +12,36 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTabbedPane
 
-abstract class AccountTabs(
-    private val accountTabs: ReadOnlyListDataBinding<AccountTabViewModel>,
-    private val canRefresh: ReadOnlyValueDataBinding<Boolean>,
-    private val accountTabProvider: (AccountTabViewModel) -> AccountTab
+interface AccountTabsController {
+    val accountTabs: ReadOnlyListDataBinding<AccountTabViewModel>
+    val canRefresh: ReadOnlyValueDataBinding<Boolean>
+    val accountTabProvider: (AccountTabViewModel) -> AccountTab
+
+    suspend fun refreshAllAccounts()
+}
+
+class AccountTabs(
+    private val c: AccountTabsController,
 ) : JTabbedPane() {
     private val logger = logger {}
 
     init {
         logger.trace { "Initializing" }
         buildTabs()
-        accountTabs.addSwingListener {
+        c.accountTabs.addSwingListener {
             this.removeAll()
             buildTabs()
         }
     }
 
     private fun buildTabs() {
-        accountTabs.forEachIndexed { index, it ->
-            addTab(it.accountNameDataBinding.value, accountTabProvider(it))
+        c.accountTabs.forEachIndexed { index, it ->
+            addTab(it.accountNameDataBinding.value, c.accountTabProvider(it))
             it.accountNameDataBinding.addSwingListener {
                 setTitleAt(index, it)
             }
         }
-        if (accountTabs.isEmpty()) {
+        if (c.accountTabs.isEmpty()) {
             addTab("Getting Started", JPanel().apply {
                 layout = BoxLayout(this, BoxLayout.Y_AXIS)
                 add(Box.createVerticalGlue())
@@ -45,10 +51,10 @@ abstract class AccountTabs(
                 add(Box.createVerticalStrut(10))
                 add(JLabel().apply {
                     alignmentX = CENTER_ALIGNMENT
-                    if (!canRefresh.value) {
+                    if (!c.canRefresh.value) {
                         text = "Please complete Oauth setup to get started Auth -> Update Oauth"
                     }
-                    canRefresh.addSwingListener {
+                    c.canRefresh.addSwingListener {
                         text = if (!it) "Please complete Oauth setup to get started Auth -> Update Oauth" else ""
                         isVisible = !it
                     }
@@ -56,14 +62,12 @@ abstract class AccountTabs(
                 add(Box.createVerticalStrut(10))
                 add(JButton("Refresh Accounts").apply {
                     this.alignmentX = CENTER_ALIGNMENT
-                    addCoActionListener { refreshAllAccounts() }
-                    this.isEnabled = canRefresh.value
-                    canRefresh.addSwingListener { this.isEnabled = it }
+                    addCoActionListener { c.refreshAllAccounts() }
+                    this.isEnabled = c.canRefresh.value
+                    c.canRefresh.addSwingListener { this.isEnabled = it }
                 })
                 add(Box.createVerticalGlue())
             })
         }
     }
-
-    abstract suspend fun refreshAllAccounts()
 }

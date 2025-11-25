@@ -5,7 +5,6 @@ import com.droidkfx.st.orders.OrderModule
 import com.droidkfx.st.position.PositionModule
 import com.droidkfx.st.schwab.SchwabModule
 import com.droidkfx.st.util.databind.toDataBinding
-import com.formdev.flatlaf.FlatDarkLaf
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import kotlinx.coroutines.runBlocking
 
@@ -19,7 +18,6 @@ class ControllerModule(
 
     init {
         logger.trace { "Initializing" }
-        FlatDarkLaf.setup().also { logger.info { "Dark LaF setup complete" } }
     }
 
     private val accountData = runBlocking {

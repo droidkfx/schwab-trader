@@ -13,7 +13,6 @@ interface MenuBarController {
 
     suspend fun onOauthUpdate()
     suspend fun onOauthInvalidate()
-    suspend fun onManageAccounts()
     suspend fun onClearAllData()
 }
 
@@ -26,9 +25,6 @@ class MenuBar(
     init {
         logger.trace { "Initializing" }
         add(JMenu("File").apply {
-            this.add(JMenuItem("Manage Accounts").apply {
-                addCoActionListener { c.onManageAccounts() }
-            })
             this.add(JMenuItem("Reset Data").apply {
                 addCoActionListener { c.onClearAllData() }
             })

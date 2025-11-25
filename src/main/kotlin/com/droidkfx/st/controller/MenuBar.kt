@@ -1,7 +1,6 @@
 package com.droidkfx.st.controller
 
 import com.droidkfx.st.account.AccountService
-import com.droidkfx.st.controller.account.ManageAccountsDialog
 import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.schwab.oauth.OauthService
@@ -16,7 +15,6 @@ class MenuBar(
     private val accountPositionService: AccountPositionService,
     private val accountService: AccountService,
     private val oauthService: OauthService,
-    private val manageAccountsDialog: ManageAccountsDialog,
     private val accountData: ReadWriteListDataBinding<AccountPosition>
 ) : MenuBarController {
     private val logger = logger {}
@@ -35,11 +33,6 @@ class MenuBar(
     override suspend fun onOauthInvalidate() {
         logger.trace { "onOauthInvalidate" }
         oauthService.invalidateOauth()
-    }
-
-    override suspend fun onManageAccounts() {
-        logger.trace { "onManageAccounts" }
-        manageAccountsDialog.showDialog()
     }
 
     override suspend fun onClearAllData() {

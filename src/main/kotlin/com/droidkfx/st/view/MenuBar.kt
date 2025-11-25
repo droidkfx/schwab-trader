@@ -6,6 +6,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import javax.swing.JMenu
 import javax.swing.JMenuBar
 import javax.swing.JMenuItem
+import javax.swing.JOptionPane
 
 interface MenuBarController {
     val updateOauthEnabled: ReadOnlyValueDataBinding<Boolean>
@@ -26,7 +27,17 @@ class MenuBar(
         logger.trace { "Initializing" }
         add(JMenu("File").apply {
             this.add(JMenuItem("Reset Data").apply {
-                addCoActionListener { c.onClearAllData() }
+                addSwingListener {
+                    val result = JOptionPane.showConfirmDialog(
+                        null,
+                        "Are you sure you want to clear all data?",
+                        "Clear All Data",
+                        JOptionPane.YES_NO_OPTION
+                    )
+                    when (result) {
+                        JOptionPane.YES_OPTION -> c.onClearAllData()
+                    }
+                }
             })
             this.add(JMenuItem("Settings").apply {
                 addSwingListener {

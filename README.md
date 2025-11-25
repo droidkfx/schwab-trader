@@ -38,8 +38,10 @@ paper-trade first.
 
 ### Clone
 
-git clone https://github.com/your-org/schwab-trader.git
+```
+git clone https://github.com/droidkfx/schwab-trader.git
 cd schwab-trader
+```
 
 ### Build
 

@@ -1,9 +1,7 @@
 package com.droidkfx.st.controller
 
 import com.droidkfx.st.account.AccountModule
-import com.droidkfx.st.config.ConfigModule
 import com.droidkfx.st.controller.account.AccountControllerModule
-import com.droidkfx.st.controller.setting.SettingsModule
 import com.droidkfx.st.orders.OrderModule
 import com.droidkfx.st.position.PositionModule
 import com.droidkfx.st.schwab.SchwabModule
@@ -13,7 +11,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import kotlinx.coroutines.runBlocking
 
 class ControllerModule(
-    configModule: ConfigModule,
     schwabModule: SchwabModule,
     accountModule: AccountModule,
     positionModule: PositionModule,
@@ -38,11 +35,8 @@ class ControllerModule(
         accountData,
     )
 
-    private val settingsModule = SettingsModule(configModule)
-
     private val oauthService = schwabModule.oauthModule.oauthService
     val menuBarController = MenuBar(
-        settingsModule.settingsDialog,
         positionModule.accountPositionService,
         accountModule.accountService,
         oauthService,

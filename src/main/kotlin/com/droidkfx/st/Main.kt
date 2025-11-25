@@ -33,14 +33,13 @@ fun main() {
         transactionModule
     )
     val controllerModule = ControllerModule(
-        configModule,
         schwabModule,
         accountModule,
         positionModule,
         orderModule
     )
 
-    ViewModule(controllerModule).main.showAndRun()
+    ViewModule(configModule, controllerModule).main.showAndRun()
 
     val initFinishTime = Instant.now()
     logger.info { "Startup complete in ${initFinishTime.toEpochMilli() - startTime.toEpochMilli()}ms" }

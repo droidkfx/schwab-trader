@@ -1,6 +1,7 @@
 package com.droidkfx.st.view
 
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import com.droidkfx.st.view.setting.SettingsDialog
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import javax.swing.JMenu
 import javax.swing.JMenuBar
@@ -14,11 +15,11 @@ interface MenuBarController {
     suspend fun onOauthInvalidate()
     suspend fun onManageAccounts()
     suspend fun onClearAllData()
-    suspend fun onSettings()
 }
 
 class MenuBar(
-    c: MenuBarController
+    c: MenuBarController,
+    private val settingsDialog: SettingsDialog
 ) : JMenuBar() {
     private val logger = logger {}
 
@@ -32,7 +33,10 @@ class MenuBar(
                 addCoActionListener { c.onClearAllData() }
             })
             this.add(JMenuItem("Settings").apply {
-                addSwingListener { c.onSettings() }
+                addSwingListener {
+                    logger.trace { "onSettings" }
+                    settingsDialog.showDialog()
+                }
             })
         })
         add(JMenu("Auth").apply {

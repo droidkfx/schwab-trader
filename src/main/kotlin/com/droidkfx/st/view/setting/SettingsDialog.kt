@@ -15,7 +15,7 @@ import javax.swing.JTextField
 import javax.swing.border.EmptyBorder
 
 @Suppress("USELESS_CAST") // Cast is required for overload ambiguity on Frame
-abstract class SettingsDialog(
+class SettingsDialog(
     private val applicationConfig: ValueDataBinding<ConfigEntity>,
 ) : JDialog(
     null as? Frame,

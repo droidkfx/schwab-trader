@@ -16,8 +16,15 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
 
-abstract class AccountTab(
-    viewModel: AccountTabViewModel,
+interface AccountTabController {
+    val viewModel: AccountTabViewModel
+    suspend fun saveAccountPositions()
+    suspend fun refreshData()
+    suspend fun processOrders()
+}
+
+class AccountTab(
+    c: AccountTabController
 ) : JPanel(BorderLayout()) {
     private val logger = logger {}
 
@@ -26,14 +33,14 @@ abstract class AccountTab(
         val saveAllocationsButton = JButton("Save Allocations").apply {
             isEnabled = false
             addCoActionListener {
-                saveAccountPositions()
+                c.saveAccountPositions()
                 CoroutineScope(Dispatchers.Swing).launch { isEnabled = false }
             }
-            viewModel.data.mapped { it.symbol to it.allocationTarget }.addSwingListener {
+            c.viewModel.data.mapped { it.symbol to it.allocationTarget }.addSwingListener {
                 isEnabled = true
             }
         }
-        val allocationTable = AllocationTable(com.droidkfx.st.controller.AllocationTable(viewModel.data)).apply {
+        val allocationTable = AllocationTable(com.droidkfx.st.controller.AllocationTable(c.viewModel.data)).apply {
             addTableModelListener {
                 saveAllocationsButton.isEnabled = true
             }
@@ -42,17 +49,17 @@ abstract class AccountTab(
         add(
             JPanel(
                 FlowLayout().apply { alignment = FlowLayout.LEFT }).apply {
-                add(JTextField(viewModel.accountNameDataBinding.value).apply {
+                add(JTextField(c.viewModel.accountNameDataBinding.value).apply {
                     // enter key
                     addActionListener {
                         logger.debug { "Account name changed to $text" }
-                        viewModel.setAccountName(text)
+                        c.viewModel.setAccountName(text)
                     }
                     addFocusListener(
                         object : FocusListener {
                             override fun focusLost(e: java.awt.event.FocusEvent?) {
                                 logger.debug { "Account name changed to $text" }
-                                viewModel.setAccountName(text)
+                                c.viewModel.setAccountName(text)
                             }
 
                             override fun focusGained(e: java.awt.event.FocusEvent?) {}
@@ -63,15 +70,15 @@ abstract class AccountTab(
                 val processOrdersButton = JButton("Process Orders").apply {
                     isEnabled = false
                     addCoActionListener {
-                        processOrders()
+                        c.processOrders()
                     }
                     addActionListener { isEnabled = false }
                 }
                 add(JButton("Refresh Data").apply {
                     addCoActionListener {
-                        refreshData()
+                        c.refreshData()
                         CoroutineScope(Dispatchers.Swing).launch {
-                            processOrdersButton.isEnabled = viewModel.data.any {
+                            processOrdersButton.isEnabled = c.viewModel.data.any {
                                 it.tradeAction == StrategyAction.BUY.name || it.tradeAction == StrategyAction.SELL.name
                             }
 //                            allocationTable.notifyDataChanged()
@@ -79,15 +86,11 @@ abstract class AccountTab(
                     }
                 })
                 add(processOrdersButton)
-                add(JLabel("Account Cash: $ ${"%.2f".format(viewModel.accountCash.value)}").apply {
-                    viewModel.accountCash.addSwingListener { text = "Account Cash: $ ${"%.2f".format(it)}" }
+                add(JLabel("Account Cash: $ ${"%.2f".format(c.viewModel.accountCash.value)}").apply {
+                    c.viewModel.accountCash.addSwingListener { text = "Account Cash: $ ${"%.2f".format(it)}" }
                 })
             }, BorderLayout.NORTH
         )
         add(allocationTable, BorderLayout.CENTER)
     }
-
-    abstract suspend fun saveAccountPositions()
-    abstract suspend fun refreshData()
-    abstract suspend fun processOrders()
 }

@@ -6,7 +6,7 @@ import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.position.PositionTarget
 import com.droidkfx.st.strategy.StrategyAction
 import com.droidkfx.st.util.pmap
-import com.droidkfx.st.view.AccountTab
+import com.droidkfx.st.view.AccountTabController
 import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import kotlinx.coroutines.coroutineScope
@@ -15,8 +15,8 @@ class AccountTab(
     private val accountPositionService: AccountPositionService,
     private val accountService: AccountService,
     private val orderService: OrderService,
-    private val viewModel: AccountTabViewModel,
-) : AccountTab(viewModel) {
+    override val viewModel: AccountTabViewModel,
+) : AccountTabController {
     private val logger = logger {}
 
     init {

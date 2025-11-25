@@ -1,6 +1,5 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.controller.AccountTab
 import com.droidkfx.st.util.databind.ReadOnlyListDataBinding
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.view.model.AccountTabViewModel
@@ -15,7 +14,7 @@ import javax.swing.JTabbedPane
 interface AccountTabsController {
     val accountTabs: ReadOnlyListDataBinding<AccountTabViewModel>
     val canRefresh: ReadOnlyValueDataBinding<Boolean>
-    val accountTabProvider: (AccountTabViewModel) -> AccountTab
+    val accountTabProvider: (AccountTabViewModel) -> AccountTabController
 
     suspend fun refreshAllAccounts()
 }
@@ -36,7 +35,7 @@ class AccountTabs(
 
     private fun buildTabs() {
         c.accountTabs.forEachIndexed { index, it ->
-            addTab(it.accountNameDataBinding.value, c.accountTabProvider(it))
+            addTab(it.accountNameDataBinding.value, AccountTab(c.accountTabProvider(it)))
             it.accountNameDataBinding.addSwingListener {
                 setTitleAt(index, it)
             }

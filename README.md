@@ -66,8 +66,8 @@ Since the jar manifest specifies the main class, you can run:
 
 ### On Windows, a convenience task copies the jar to a fixed app directory:
 
-- gradlew.bat releaseJarWin
-    - Copies the built jar to %LOCALAPPDATA%\schwab-trader\app.jar and prints the destination
+- gradlew.bat releaseLocal
+    - Copies the built exe to %LOCALAPPDATA%\schwab-trader\schwab-trader.exe and prints the destination
 
 ## Configuration
 

@@ -1,6 +1,5 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.controller.AllocationTable
 import com.droidkfx.st.strategy.StrategyAction
 import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.view.model.AccountTabViewModel
@@ -34,7 +33,7 @@ abstract class AccountTab(
                 isEnabled = true
             }
         }
-        val allocationTable = AllocationTable(viewModel.data).apply {
+        val allocationTable = AllocationTable(com.droidkfx.st.controller.AllocationTable(viewModel.data)).apply {
             addTableModelListener {
                 saveAllocationsButton.isEnabled = true
             }

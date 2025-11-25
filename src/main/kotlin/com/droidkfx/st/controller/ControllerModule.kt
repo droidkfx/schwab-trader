@@ -64,10 +64,4 @@ class ControllerModule(
             it
         )
     }
-
-    val mainController = Main(
-        statusBarController = statusBarController,
-        menuBarController = menuBarController,
-        accountTabs = accountTabs,
-    )
 }

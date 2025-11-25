@@ -13,10 +13,15 @@ import javax.swing.JScrollPane
 import javax.swing.JTable
 import javax.swing.event.TableModelListener
 
-abstract class AllocationTable(data: ReadOnlyListDataBinding<AllocationRowViewModel>) : JScrollPane() {
+interface AllocationTableController {
+    val data: ReadOnlyListDataBinding<AllocationRowViewModel>
+    suspend fun addNewRow(newRow: AllocationRowViewModel)
+}
+
+class AllocationTable(c: AllocationTableController) : JScrollPane() {
     private val logger = KotlinLogging.logger {}
 
-    private val allocationTableModel: AllocationTableModel = AllocationTableModel(data, ::addNewRow)
+    private val allocationTableModel: AllocationTableModel = AllocationTableModel(c.data, c::addNewRow)
 
     init {
         logger.trace { "Initializing" }
@@ -24,7 +29,7 @@ abstract class AllocationTable(data: ReadOnlyListDataBinding<AllocationRowViewMo
             JTable(allocationTableModel).apply {
                 autoCreateRowSorter = true
             })
-        data.addSwingListener {
+        c.data.addSwingListener {
             notifyDataChanged()
         }
     }
@@ -32,8 +37,6 @@ abstract class AllocationTable(data: ReadOnlyListDataBinding<AllocationRowViewMo
     fun addTableModelListener(l: TableModelListener) {
         allocationTableModel.addTableModelListener(l)
     }
-
-    abstract suspend fun addNewRow(newRow: AllocationRowViewModel)
 
     fun notifyDataChanged() {
         allocationTableModel.fireTableDataChanged()

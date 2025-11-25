@@ -40,9 +40,8 @@ fun main() {
         orderModule
     )
 
-    ViewModule(controllerModule)
+    ViewModule(controllerModule).main.showAndRun()
 
-    controllerModule.mainController.showAndRun()
     val initFinishTime = Instant.now()
     logger.info { "Startup complete in ${initFinishTime.toEpochMilli() - startTime.toEpochMilli()}ms" }
 }

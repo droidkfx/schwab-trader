@@ -12,10 +12,11 @@ class ViewModule(
     init {
         logger.trace { "Initializing" }
         FlatDarkLaf.setup().also { logger.info { "Dark LaF setup complete" } }
-
-        MenuBar(controllerModule.menuBarController)
-        StatusBar(controllerModule.statusBarController)
-        AccountTabs(controllerModule.accountTabs)
-
     }
+
+    val main = Main(
+        StatusBar(controllerModule.statusBarController),
+        MenuBar(controllerModule.menuBarController),
+        AccountTabs(controllerModule.accountTabs)
+    )
 }

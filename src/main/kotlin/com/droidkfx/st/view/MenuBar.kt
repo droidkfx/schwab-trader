@@ -25,7 +25,7 @@ class MenuBar(
 
     init {
         logger.trace { "Initializing" }
-        add(JMenu("File").apply {
+        add(JMenu("Menu").apply {
             this.add(JMenuItem("Reset Data").apply {
                 addSwingListener {
                     val result = JOptionPane.showConfirmDialog(
@@ -45,8 +45,7 @@ class MenuBar(
                     settingsDialog.showDialog()
                 }
             })
-        })
-        add(JMenu("Auth").apply {
+            this.addSeparator()
             this.add(JMenuItem("Update Oath").apply {
                 addCoActionListener { c.onOauthUpdate() }
                 this.isEnabled = c.updateOauthEnabled.value

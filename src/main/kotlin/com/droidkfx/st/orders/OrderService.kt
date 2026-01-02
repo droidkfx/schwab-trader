@@ -58,8 +58,7 @@ class OrderService(private val ordersClient: OrdersClient) {
                 return@filter false
             }
             return@filter when (it.status) {
-                (Status.CANCELED) -> false
-                (Status.FILLED) -> false
+                Status.CANCELED, Status.FILLED, Status.EXPIRED -> false
                 else -> true
             }
         } ?: emptyList()

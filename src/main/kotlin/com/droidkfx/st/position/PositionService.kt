@@ -54,7 +54,7 @@ internal class PositionService(
 
         val openOrders = orderService.getOpenOrders(account)
         openOrders.forEach { order ->
-            logger.warn { "outstanding order: ${order}" }
+            logger.warn { "outstanding order: $order" }
             order.orderLegCollection?.forEach { legCollection ->
                 legCollection.instrument?.let { instrument ->
                     positions?.firstOrNull { it.symbol == instrument.symbol }?.let { position ->

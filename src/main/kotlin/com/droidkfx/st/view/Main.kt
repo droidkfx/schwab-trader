@@ -4,7 +4,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import java.awt.BorderLayout
 import javax.swing.ImageIcon
 import javax.swing.JFrame
-import javax.swing.JPanel
 
 class Main(
     statusBar: StatusBar,
@@ -12,12 +11,9 @@ class Main(
     accountTabs: AccountTabs
 ) : JFrame("Schwab Trader") {
     private val logger = logger {}
-    val rootNode = JPanel()
 
     init {
         logger.trace { "Initializing" }
-        // Setup Panel
-        rootNode.setLayout(BorderLayout(0, 0))
 
         // Setup frame
         Main::class.java.getResource("AppIcon.png")?.let {

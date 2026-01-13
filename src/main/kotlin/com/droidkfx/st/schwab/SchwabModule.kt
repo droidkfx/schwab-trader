@@ -1,32 +1,35 @@
 package com.droidkfx.st.schwab
 
-import com.droidkfx.st.config.ConfigModule
+import com.droidkfx.st.config.ConfigService
 import com.droidkfx.st.schwab.client.SchwabClientModule
 import com.droidkfx.st.schwab.oauth.OauthModule
 import com.droidkfx.st.schwab.oauth.OauthStatus
 import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.toDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import org.koin.core.context.GlobalContext
 
-class SchwabModule(configModule: ConfigModule) {
+class SchwabModule() {
     private val logger = logger {}
 
     init {
         logger.trace { "Initializing" }
     }
 
+    private val configService: ConfigService by GlobalContext.get().inject()
+
     val oauthTokenBinding = ValueDataBinding<String?>(null)
     val oauthTokenStatus = OauthStatus.NOT_INITIALIZED.toDataBinding()
     val tokenRefreshSignal = false.toDataBinding()
 
     val clientModule = SchwabClientModule(
-        configModule.configService.configDataBind,
+        configService.configDataBind,
         oauthTokenBinding,
         oauthTokenStatus,
         tokenRefreshSignal,
     )
     val oauthModule = OauthModule(
-        configModule.configService.configDataBind,
+        configService.configDataBind,
         clientModule.oathClient,
         oauthTokenStatus,
         oauthTokenBinding,

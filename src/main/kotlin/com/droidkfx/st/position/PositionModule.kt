@@ -1,16 +1,16 @@
 package com.droidkfx.st.position
 
 import com.droidkfx.st.account.AccountModule
-import com.droidkfx.st.config.ConfigModule
+import com.droidkfx.st.config.ConfigService
 import com.droidkfx.st.orders.OrderModule
 import com.droidkfx.st.schwab.client.SchwabClientModule
 import com.droidkfx.st.strategy.StrategyModule
 import com.droidkfx.st.transaction.TransactionModule
 import com.droidkfx.st.util.databind.readOnlyMapped
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import org.koin.core.context.GlobalContext
 
 class PositionModule(
-    configModule: ConfigModule,
     accountModule: AccountModule,
     clientModule: SchwabClientModule,
     strategyModule: StrategyModule,
@@ -23,7 +23,9 @@ class PositionModule(
         logger.trace { "Initializing" }
     }
 
-    val rootPath = configModule.configService.configDataBind.readOnlyMapped { it.repositoryRoot }
+    private val configService: ConfigService by GlobalContext.get().inject()
+
+    val rootPath = configService.configDataBind.readOnlyMapped { it.repositoryRoot }
     private val targetPositionRepository = TargetPositionRepository(rootPath)
     private val targetPositionService = PositionTargetService(targetPositionRepository)
 

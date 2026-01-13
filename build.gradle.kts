@@ -17,6 +17,9 @@ dependencies {
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
     implementation("ch.qos.logback:logback-classic:1.5.19")
 
+    // Koin DI
+    implementation("io.insert-koin:koin-core:4.1.1")
+
     // Swing Libraries
     implementation("com.formdev:flatlaf:3.6.1")
 

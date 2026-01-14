@@ -1,36 +1,21 @@
 package com.droidkfx.st.position
 
-import com.droidkfx.st.config.ConfigService
+import com.droidkfx.st.config.CONFIG_ENTITY
+import com.droidkfx.st.config.ConfigEntity
+import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.readOnlyMapped
-import io.github.oshai.kotlinlogging.KotlinLogging.logger
-import org.koin.core.context.GlobalContext
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 
-class PositionModule(
-) {
-    private val logger = logger {}
+private val internalPositionModule = module {
+    single { TargetPositionRepository(get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).readOnlyMapped { it.repositoryRoot }) }
+    singleOf(::PositionTargetService)
+    single { PositionRepository(get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).readOnlyMapped { it.repositoryRoot }) }
+    singleOf(::PositionService)
+}
 
-    init {
-        logger.trace { "Initializing" }
-    }
-
-    private val configService: ConfigService by GlobalContext.get().inject()
-
-    val rootPath = configService.configDataBind.readOnlyMapped { it.repositoryRoot }
-    private val targetPositionRepository = TargetPositionRepository(rootPath)
-    private val targetPositionService = PositionTargetService(targetPositionRepository)
-
-    private val positionRepository = PositionRepository(rootPath)
-    private val positionService: PositionService = PositionService(
-        positionRepository,
-        GlobalContext.get().get(),
-        GlobalContext.get().get(),
-        GlobalContext.get().get(),
-    )
-
-    val accountPositionService = AccountPositionService(
-        GlobalContext.get().get(),
-        targetPositionService,
-        positionService,
-        GlobalContext.get().get(),
-    )
+val positionModule = module {
+    includes(internalPositionModule)
+    singleOf(::AccountPositionService)
 }

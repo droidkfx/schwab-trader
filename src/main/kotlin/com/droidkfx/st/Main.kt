@@ -4,7 +4,7 @@ import com.droidkfx.st.account.accountModule
 import com.droidkfx.st.config.configModule
 import com.droidkfx.st.controller.ControllerModule
 import com.droidkfx.st.orders.orderModule
-import com.droidkfx.st.position.PositionModule
+import com.droidkfx.st.position.positionModule
 import com.droidkfx.st.schwab.schwabModule
 import com.droidkfx.st.strategy.strategyModule
 import com.droidkfx.st.transaction.transactionModule
@@ -27,11 +27,12 @@ fun main() {
             accountModule,
             strategyModule,
             orderModule,
-            transactionModule
+            transactionModule,
+            positionModule,
         )
     }
 
-    val controllerModule = ControllerModule(PositionModule())
+    val controllerModule = ControllerModule()
 
     ViewModule(controllerModule).main.showAndRun()
 

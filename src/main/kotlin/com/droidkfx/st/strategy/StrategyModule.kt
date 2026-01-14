@@ -1,9 +1,9 @@
 package com.droidkfx.st.strategy
 
-import com.droidkfx.st.schwab.client.SchwabClientModule
+import org.koin.core.context.GlobalContext
 
-class StrategyModule(clientModule: SchwabClientModule) {
+class StrategyModule() {
     val defaultStrategy: StrategyEngine = BuyHoldStrategy(
-        clientModule.quotesClient
+        GlobalContext.get().get()
     )
 }

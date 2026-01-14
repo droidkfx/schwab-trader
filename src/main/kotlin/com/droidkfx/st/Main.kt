@@ -5,7 +5,7 @@ import com.droidkfx.st.config.configModule
 import com.droidkfx.st.controller.ControllerModule
 import com.droidkfx.st.orders.OrderModule
 import com.droidkfx.st.position.PositionModule
-import com.droidkfx.st.schwab.SchwabModule
+import com.droidkfx.st.schwab.schwabModule
 import com.droidkfx.st.strategy.StrategyModule
 import com.droidkfx.st.transaction.TransactionModule
 import com.droidkfx.st.util.KoinLogger
@@ -23,23 +23,21 @@ fun main() {
         logger(KoinLogger())
         modules(
             configModule,
+            schwabModule,
         )
     }
 
-    val schwabModule = SchwabModule()
-    val accountModule = AccountModule(schwabModule)
-    val strategyModule = StrategyModule(schwabModule.clientModule)
-    val orderModule = OrderModule(schwabModule.clientModule)
-    val transactionModule = TransactionModule(schwabModule.clientModule)
+    val accountModule = AccountModule()
+    val strategyModule = StrategyModule()
+    val orderModule = OrderModule()
+    val transactionModule = TransactionModule()
     val positionModule = PositionModule(
         accountModule,
-        schwabModule.clientModule,
         strategyModule,
         orderModule,
         transactionModule
     )
     val controllerModule = ControllerModule(
-        schwabModule,
         accountModule,
         positionModule,
         orderModule

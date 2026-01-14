@@ -1,7 +1,7 @@
 package com.droidkfx.st.orders
 
-import com.droidkfx.st.schwab.client.SchwabClientModule
+import org.koin.core.context.GlobalContext
 
-class OrderModule(clientModule: SchwabClientModule) {
-    val orderService: OrderService = OrderService(clientModule.ordersClient)
+class OrderModule() {
+    val orderService: OrderService = OrderService(GlobalContext.get().get())
 }

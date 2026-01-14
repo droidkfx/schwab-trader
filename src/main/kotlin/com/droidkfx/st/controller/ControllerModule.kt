@@ -3,13 +3,13 @@ package com.droidkfx.st.controller
 import com.droidkfx.st.account.AccountModule
 import com.droidkfx.st.orders.OrderModule
 import com.droidkfx.st.position.PositionModule
-import com.droidkfx.st.schwab.SchwabModule
+import com.droidkfx.st.schwab.oauth.OauthService
 import com.droidkfx.st.util.databind.toDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import kotlinx.coroutines.runBlocking
+import org.koin.core.context.GlobalContext
 
 class ControllerModule(
-    schwabModule: SchwabModule,
     accountModule: AccountModule,
     positionModule: PositionModule,
     orderModule: OrderModule
@@ -26,20 +26,19 @@ class ControllerModule(
             .toDataBinding()
     }
 
-    private val oauthService = schwabModule.oauthModule.oauthService
     val menuBarController = MenuBar(
         positionModule.accountPositionService,
         accountModule.accountService,
-        oauthService,
+        GlobalContext.get().get(),
         accountData,
     )
-    val statusBarController = StatusBar(oauthService)
+    val statusBarController = StatusBar(GlobalContext.get().get())
 
     val accountTabs = AccountTabs(
         positionModule.accountPositionService,
         accountModule.accountService,
         accountData,
-        oauthService.getTokenStatusBinding()
+        GlobalContext.get().get<OauthService>().getTokenStatusBinding()
     ) {
         AccountTab(
             positionModule.accountPositionService,

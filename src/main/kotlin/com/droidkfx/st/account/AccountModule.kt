@@ -1,12 +1,11 @@
 package com.droidkfx.st.account
 
 import com.droidkfx.st.config.ConfigService
-import com.droidkfx.st.schwab.SchwabModule
 import com.droidkfx.st.util.databind.readOnlyMapped
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import org.koin.core.context.GlobalContext
 
-class AccountModule(schwabModule: SchwabModule) {
+class AccountModule() {
     private val logger = logger {}
 
     init {
@@ -18,5 +17,5 @@ class AccountModule(schwabModule: SchwabModule) {
     private val accountRepository =
         AccountRepository(configService.configDataBind.readOnlyMapped { it.repositoryRoot })
 
-    val accountService = AccountService(accountRepository, schwabModule.clientModule.accountsClient)
+    val accountService = AccountService(accountRepository, GlobalContext.get().get())
 }

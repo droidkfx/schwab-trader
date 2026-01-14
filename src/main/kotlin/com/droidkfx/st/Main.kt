@@ -2,7 +2,7 @@ package com.droidkfx.st
 
 import com.droidkfx.st.account.accountModule
 import com.droidkfx.st.config.configModule
-import com.droidkfx.st.controller.ControllerModule
+import com.droidkfx.st.controller.controllerModule
 import com.droidkfx.st.orders.orderModule
 import com.droidkfx.st.position.positionModule
 import com.droidkfx.st.schwab.schwabModule
@@ -29,12 +29,11 @@ fun main() {
             orderModule,
             transactionModule,
             positionModule,
+            controllerModule,
         )
     }
 
-    val controllerModule = ControllerModule()
-
-    ViewModule(controllerModule).main.showAndRun()
+    ViewModule().main.showAndRun()
 
     val initFinishTime = Instant.now()
     logger.info { "Startup complete in ${initFinishTime.toEpochMilli() - startTime.toEpochMilli()}ms" }

@@ -1,12 +1,11 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.controller.ControllerModule
 import com.droidkfx.st.view.setting.SettingsModule
 import com.formdev.flatlaf.FlatDarkLaf
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import org.koin.core.context.GlobalContext
 
 class ViewModule(
-    controllerModule: ControllerModule
 ) {
     private val logger = logger {}
 
@@ -18,8 +17,8 @@ class ViewModule(
     private val settingsModule = SettingsModule()
 
     val main = Main(
-        StatusBar(controllerModule.statusBarController),
-        MenuBar(controllerModule.menuBarController, settingsModule.settingsDialog),
-        AccountTabs(controllerModule.accountTabs)
+        StatusBar(GlobalContext.get().get()),
+        MenuBar(GlobalContext.get().get(), settingsModule.settingsDialog),
+        AccountTabs(GlobalContext.get().get())
     )
 }

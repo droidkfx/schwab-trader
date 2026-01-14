@@ -3,43 +3,52 @@ package com.droidkfx.st.controller
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.schwab.oauth.OauthService
 import com.droidkfx.st.util.databind.toDataBinding
-import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import com.droidkfx.st.view.AccountTabsController
+import com.droidkfx.st.view.MenuBarController
+import com.droidkfx.st.view.StatusBarController
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.GlobalContext
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 
-class ControllerModule(
-) {
-    private val logger = logger {}
+const val accountPositionsBinding = "accountPositionsDataBind"
 
-    init {
-        logger.trace { "Initializing" }
+private val internalControllerModule = module {
+    single(named(accountPositionsBinding)) {
+        runBlocking {
+            get<AccountPositionService>().getAccountPositions()
+                .toMutableList()
+                .toDataBinding()
+        }
     }
+}
 
-    private val accountData = runBlocking {
-        GlobalContext.get().get<AccountPositionService>().getAccountPositions()
-            .toMutableList()
-            .toDataBinding()
+val controllerModule = module {
+    includes(internalControllerModule)
+    single {
+        MenuBar(
+            get(),
+            get(),
+            get(),
+            get(named(accountPositionsBinding))
+        ) as MenuBarController
     }
-
-    val menuBarController = MenuBar(
-        GlobalContext.get().get(),
-        GlobalContext.get().get(),
-        GlobalContext.get().get(),
-        accountData,
-    )
-    val statusBarController = StatusBar(GlobalContext.get().get())
-
-    val accountTabs = AccountTabs(
-        GlobalContext.get().get(),
-        GlobalContext.get().get(),
-        accountData,
-        GlobalContext.get().get<OauthService>().getTokenStatusBinding()
-    ) {
-        AccountTab(
-            GlobalContext.get().get(),
-            GlobalContext.get().get(),
-            GlobalContext.get().get(),
-            it
-        )
+    singleOf(::StatusBar) { bind<StatusBarController>() }
+    single {
+        AccountTabs(
+            get(),
+            get(),
+            get(named(accountPositionsBinding)),
+            GlobalContext.get().get<OauthService>().getTokenStatusBinding()
+        ) {
+            AccountTab(
+                get(),
+                get(),
+                get(),
+                it
+            )
+        } as AccountTabsController
     }
 }

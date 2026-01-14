@@ -1,6 +1,5 @@
 package com.droidkfx.st.controller
 
-import com.droidkfx.st.account.AccountModule
 import com.droidkfx.st.orders.OrderModule
 import com.droidkfx.st.position.PositionModule
 import com.droidkfx.st.schwab.oauth.OauthService
@@ -10,7 +9,6 @@ import kotlinx.coroutines.runBlocking
 import org.koin.core.context.GlobalContext
 
 class ControllerModule(
-    accountModule: AccountModule,
     positionModule: PositionModule,
     orderModule: OrderModule
 ) {
@@ -28,7 +26,7 @@ class ControllerModule(
 
     val menuBarController = MenuBar(
         positionModule.accountPositionService,
-        accountModule.accountService,
+        GlobalContext.get().get(),
         GlobalContext.get().get(),
         accountData,
     )
@@ -36,13 +34,13 @@ class ControllerModule(
 
     val accountTabs = AccountTabs(
         positionModule.accountPositionService,
-        accountModule.accountService,
+        GlobalContext.get().get(),
         accountData,
         GlobalContext.get().get<OauthService>().getTokenStatusBinding()
     ) {
         AccountTab(
             positionModule.accountPositionService,
-            accountModule.accountService,
+            GlobalContext.get().get(),
             orderModule.orderService,
             it
         )

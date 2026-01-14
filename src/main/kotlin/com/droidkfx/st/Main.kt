@@ -9,7 +9,8 @@ import com.droidkfx.st.schwab.schwabModule
 import com.droidkfx.st.strategy.strategyModule
 import com.droidkfx.st.transaction.transactionModule
 import com.droidkfx.st.util.KoinLogger
-import com.droidkfx.st.view.ViewModule
+import com.droidkfx.st.view.Main
+import com.droidkfx.st.view.viewModule
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.koin.core.context.startKoin
 import java.time.Instant
@@ -19,7 +20,7 @@ val logger = KotlinLogging.logger {}
 fun main() {
     logger.info { "Starting Schwab Trader" }
     val startTime = Instant.now()
-    startKoin {
+    val app = startKoin {
         logger(KoinLogger())
         modules(
             configModule,
@@ -30,10 +31,10 @@ fun main() {
             transactionModule,
             positionModule,
             controllerModule,
+            viewModule
         )
     }
-
-    ViewModule().main.showAndRun()
+    app.koin.get<Main>().showAndRun()
 
     val initFinishTime = Instant.now()
     logger.info { "Startup complete in ${initFinishTime.toEpochMilli() - startTime.toEpochMilli()}ms" }

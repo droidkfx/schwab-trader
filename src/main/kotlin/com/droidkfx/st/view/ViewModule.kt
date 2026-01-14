@@ -1,24 +1,19 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.view.setting.SettingsModule
+import com.droidkfx.st.view.setting.settingsModule
 import com.formdev.flatlaf.FlatDarkLaf
-import io.github.oshai.kotlinlogging.KotlinLogging.logger
-import org.koin.core.context.GlobalContext
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 
-class ViewModule(
-) {
-    private val logger = logger {}
+private val viewInternalModule = module {
+    FlatDarkLaf.setup()
+    includes(settingsModule)
+    singleOf(::StatusBar)
+    singleOf(::MenuBar)
+    singleOf(::AccountTabs)
+}
 
-    init {
-        logger.trace { "Initializing" }
-        FlatDarkLaf.setup().also { logger.info { "Dark LaF setup complete" } }
-    }
-
-    private val settingsModule = SettingsModule()
-
-    val main = Main(
-        StatusBar(GlobalContext.get().get()),
-        MenuBar(GlobalContext.get().get(), settingsModule.settingsDialog),
-        AccountTabs(GlobalContext.get().get())
-    )
+val viewModule = module {
+    includes(viewInternalModule)
+    singleOf(::Main)
 }

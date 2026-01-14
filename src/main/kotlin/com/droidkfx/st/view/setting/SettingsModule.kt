@@ -1,12 +1,11 @@
 package com.droidkfx.st.view.setting
 
-import com.droidkfx.st.config.ConfigService
-import org.koin.core.context.GlobalContext
+import com.droidkfx.st.config.CONFIG_ENTITY
+import com.droidkfx.st.config.ConfigEntity
+import com.droidkfx.st.util.databind.ValueDataBinding
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 
-class SettingsModule() {
-    private val configService: ConfigService by GlobalContext.get().inject()
-
-    val settingsDialog = SettingsDialog(
-        configService.configDataBind
-    )
+val settingsModule = module {
+    single { SettingsDialog(get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY))) }
 }

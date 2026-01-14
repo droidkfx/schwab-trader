@@ -1,9 +1,9 @@
 package com.droidkfx.st.strategy
 
-import org.koin.core.context.GlobalContext
+import org.koin.core.module.dsl.bind
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 
-class StrategyModule() {
-    val defaultStrategy: StrategyEngine = BuyHoldStrategy(
-        GlobalContext.get().get()
-    )
+val strategyModule = module {
+    singleOf(::BuyHoldStrategy) { bind<StrategyEngine>() }
 }

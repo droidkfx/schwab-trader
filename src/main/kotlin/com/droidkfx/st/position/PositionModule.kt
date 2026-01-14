@@ -2,14 +2,12 @@ package com.droidkfx.st.position
 
 import com.droidkfx.st.config.ConfigService
 import com.droidkfx.st.orders.OrderModule
-import com.droidkfx.st.strategy.StrategyModule
 import com.droidkfx.st.transaction.TransactionModule
 import com.droidkfx.st.util.databind.readOnlyMapped
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import org.koin.core.context.GlobalContext
 
 class PositionModule(
-    strategyModule: StrategyModule,
     orderModule: OrderModule,
     transactionModule: TransactionModule
 ) {
@@ -37,6 +35,6 @@ class PositionModule(
         GlobalContext.get().get(),
         targetPositionService,
         positionService,
-        strategyModule.defaultStrategy,
+        GlobalContext.get().get(),
     )
 }

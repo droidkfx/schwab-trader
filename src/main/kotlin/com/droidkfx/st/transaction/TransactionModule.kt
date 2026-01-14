@@ -1,14 +1,8 @@
 package com.droidkfx.st.transaction
 
-import io.github.oshai.kotlinlogging.KotlinLogging.logger
-import org.koin.core.context.GlobalContext
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 
-class TransactionModule() {
-    private val logger = logger {}
-
-    init {
-        logger.trace { "Initializing" }
-    }
-
-    val transactionService = TransactionService(GlobalContext.get().get())
+val transactionModule = module {
+    singleOf(::TransactionService)
 }

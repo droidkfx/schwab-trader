@@ -7,7 +7,7 @@ import com.droidkfx.st.orders.orderModule
 import com.droidkfx.st.position.PositionModule
 import com.droidkfx.st.schwab.schwabModule
 import com.droidkfx.st.strategy.strategyModule
-import com.droidkfx.st.transaction.TransactionModule
+import com.droidkfx.st.transaction.transactionModule
 import com.droidkfx.st.util.KoinLogger
 import com.droidkfx.st.view.ViewModule
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -26,17 +26,12 @@ fun main() {
             schwabModule,
             accountModule,
             strategyModule,
-            orderModule
+            orderModule,
+            transactionModule
         )
     }
 
-    val transactionModule = TransactionModule()
-    val positionModule = PositionModule(
-        transactionModule
-    )
-    val controllerModule = ControllerModule(
-        positionModule,
-    )
+    val controllerModule = ControllerModule(PositionModule())
 
     ViewModule(controllerModule).main.showAndRun()
 

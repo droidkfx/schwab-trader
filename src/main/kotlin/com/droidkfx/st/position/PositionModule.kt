@@ -1,13 +1,11 @@
 package com.droidkfx.st.position
 
 import com.droidkfx.st.config.ConfigService
-import com.droidkfx.st.transaction.TransactionModule
 import com.droidkfx.st.util.databind.readOnlyMapped
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import org.koin.core.context.GlobalContext
 
 class PositionModule(
-    transactionModule: TransactionModule
 ) {
     private val logger = logger {}
 
@@ -25,7 +23,7 @@ class PositionModule(
     private val positionService: PositionService = PositionService(
         positionRepository,
         GlobalContext.get().get(),
-        transactionModule.transactionService,
+        GlobalContext.get().get(),
         GlobalContext.get().get(),
     )
 

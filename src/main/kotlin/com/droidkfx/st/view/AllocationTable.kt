@@ -60,12 +60,14 @@ private class AllocationTableModel(
     }
 
     override fun getRowCount(): Int {
-        return super.rowCount + 1
+        return super.rowCount + 2
     }
 
     override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
-        return if (rowIndex >= super.rowCount) {
+        return if (rowIndex == super.rowCount) {
             super.isColumnEditable(columnIndex)
+        } else if (rowIndex > super.rowCount) {
+            false
         } else {
             super.isCellEditable(rowIndex, columnIndex)
         }
@@ -90,11 +92,29 @@ private class AllocationTableModel(
     }
 
     override fun getValueAt(rowIndex: Int, columnIndex: Int): String {
-
-        return if (rowIndex >= super.rowCount) {
+        return if (rowIndex == super.rowCount) {
             val column = columns[columnIndex]
             val dataValue = column.getter?.invoke(newRow)
             column.mapper.mapOut(dataValue ?: "")
+        } else if (rowIndex > super.rowCount) {
+            if (columnIndex == 0) "TOTAL"
+            else {
+                when (columnIndex) {
+                    1, 4, 5, 6, 9 -> {
+                        var acc = BigDecimal.ZERO
+                        for (i in 0 until super.rowCount) {
+                            val rawValueAt = super.getRawValueAt<BigDecimal>(i, columnIndex)
+                            acc = acc.plus(rawValueAt ?: BigDecimal.ZERO)
+                        }
+                        val column = columns[columnIndex]
+                        column.mapper.mapOut(acc)
+                    }
+
+                    else -> {
+                        ""
+                    }
+                }
+            }
         } else {
             super.getValueAt(rowIndex, columnIndex)
         }

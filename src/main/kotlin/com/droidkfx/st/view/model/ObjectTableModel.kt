@@ -172,6 +172,13 @@ open class ObjectTableModel<T>(
         } ?: ""
     }
 
+    protected fun <T> getRawValueAt(rowIndex: Int, columnIndex: Int): T? {
+        val getter = columns.getOrNull(columnIndex)?.getter
+        val data = getter?.invoke(data[rowIndex])
+        @Suppress("UNCHECKED_CAST")
+        return data as? T
+    }
+
     class ColumnInfo(
         val name: String,
         val getter: Method?,

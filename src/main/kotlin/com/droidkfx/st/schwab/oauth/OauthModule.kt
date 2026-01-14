@@ -10,13 +10,10 @@ import com.droidkfx.st.util.databind.readOnlyMapped
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-private val oauthInternalModule = module {
+val oauthModule = module {
     single { LocalServer(get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).value.schwabConfig.callbackServerConfig) }
     single { OauthRepository(get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).readOnlyMapped { it.repositoryRoot }) }
-}
 
-val oauthModule = module {
-    includes(oauthInternalModule)
     single {
         OauthService(
             get(),

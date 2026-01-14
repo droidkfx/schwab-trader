@@ -15,7 +15,7 @@ import org.koin.dsl.module
 
 const val accountPositionsBinding = "accountPositionsDataBind"
 
-private val internalControllerModule = module {
+val controllerModule = module {
     single(named(accountPositionsBinding)) {
         runBlocking {
             get<AccountPositionService>().getAccountPositions()
@@ -23,10 +23,6 @@ private val internalControllerModule = module {
                 .toDataBinding()
         }
     }
-}
-
-val controllerModule = module {
-    includes(internalControllerModule)
     single {
         MenuBar(
             get(),

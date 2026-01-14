@@ -16,7 +16,7 @@ import kotlinx.serialization.json.Json
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-private val internalClientModule = module {
+val schwabClientModule = module {
     single {
         HttpClient(Java) {
             install(ContentNegotiation) {
@@ -28,10 +28,7 @@ private val internalClientModule = module {
             }
         }
     }
-}
 
-val schwabClientModule = module {
-    includes(internalClientModule)
     val schwabConfig = "schwabConfig"
     single(named(schwabConfig)) {
         get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).readOnlyMapped { it.schwabConfig }

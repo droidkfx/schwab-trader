@@ -1,7 +1,8 @@
 package com.droidkfx.st.orders
 
-import org.koin.core.context.GlobalContext
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 
-class OrderModule() {
-    val orderService: OrderService = OrderService(GlobalContext.get().get())
+val orderModule = module {
+    singleOf(::OrderService)
 }

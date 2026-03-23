@@ -1,4 +1,4 @@
-package com.droidkfx.st.controller
+package com.droidkfx.st.view.model
 
 import com.droidkfx.st.account.AccountService
 import com.droidkfx.st.position.AccountPosition
@@ -8,34 +8,33 @@ import com.droidkfx.st.schwab.oauth.OauthStatus
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.readOnlyMapped
-import com.droidkfx.st.view.MenuBarController
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class MenuBar(
+class MenuBarViewModel(
     private val accountPositionService: AccountPositionService,
     private val accountService: AccountService,
     private val oauthService: OauthService,
-    private val accountData: ReadWriteListDataBinding<AccountPosition>
-) : MenuBarController {
+    private val accountData: ReadWriteListDataBinding<AccountPosition>,
+) {
     private val logger = logger {}
 
-    override val updateOauthEnabled: ReadOnlyValueDataBinding<Boolean> =
+    val updateOauthEnabled: ReadOnlyValueDataBinding<Boolean> =
         oauthService.getTokenStatusBinding().readOnlyMapped(::oauthEnabled)
 
-    override val invalidateOauthEnabled: ReadOnlyValueDataBinding<Boolean> =
+    val invalidateOauthEnabled: ReadOnlyValueDataBinding<Boolean> =
         oauthService.getTokenStatusBinding().readOnlyMapped(::invalidateEnabled)
 
-    override suspend fun onOauthUpdate() {
+    suspend fun onOauthUpdate() {
         logger.trace { "onOauthUpdate" }
         oauthService.obtainAuth()
     }
 
-    override suspend fun onOauthInvalidate() {
+    suspend fun onOauthInvalidate() {
         logger.trace { "onOauthInvalidate" }
         oauthService.invalidateOauth()
     }
 
-    override suspend fun onClearAllData() {
+    suspend fun onClearAllData() {
         logger.trace { "onClearAllData" }
         accountPositionService.clear()
         accountService.clear()

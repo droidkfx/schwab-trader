@@ -1,24 +1,19 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import com.droidkfx.st.view.model.StatusBarViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import java.awt.FlowLayout
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-interface StatusBarController {
-    val oauthStatus: ReadOnlyValueDataBinding<String>
-}
-
-class StatusBar(c: StatusBarController) : JPanel() {
+class StatusBar(vm: StatusBarViewModel) : JPanel() {
     private val logger = logger {}
 
     init {
         logger.trace { "Initializing" }
         layout = FlowLayout(FlowLayout.RIGHT)
-
-        add(JLabel("Oauth Status: ${c.oauthStatus.value}").apply {
-            c.oauthStatus.addSwingListener { text = "Oauth Status: $it" }
+        add(JLabel("Oauth Status: ${vm.oauthStatus.value}").apply {
+            vm.oauthStatus.addSwingListener { text = "Oauth Status: $it" }
         })
     }
 }

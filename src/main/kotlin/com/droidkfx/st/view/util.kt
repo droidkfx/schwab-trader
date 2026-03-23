@@ -15,33 +15,48 @@ import javax.swing.JList
 import javax.swing.JMenuItem
 import javax.swing.event.ListSelectionEvent
 
-internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(listener: DataBindChangeListener<T>) {
+internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Swing),
+    listener: DataBindChangeListener<T>
+) {
     addListener { oldValue, newValue ->
-        CoroutineScope(Dispatchers.Swing).launch {
+        scope.launch {
             listener(oldValue, newValue)
         }
     }
 }
 
-internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(listener: DataBindValueListener<T>) {
-    this.addSwingListener(listener.asChangeListener())
+internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Swing),
+    listener: DataBindValueListener<T>
+) {
+    this.addSwingListener(scope, listener.asChangeListener())
 }
 
-internal fun <T> ListDataBinding<T>.addSwingListener(listener: (ListDataBindingEvent<T>) -> Unit) {
-    addListener { CoroutineScope(Dispatchers.Swing).launch { listener(it) } }
+internal fun <T> ListDataBinding<T>.addSwingListener(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Swing),
+    listener: (ListDataBindingEvent<T>) -> Unit
+) {
+    addListener { scope.launch { listener(it) } }
 }
 
-internal fun JMenuItem.addCoActionListener(function: suspend () -> Unit) {
+internal fun JMenuItem.addCoActionListener(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Default),
+    function: suspend () -> Unit
+) {
     addActionListener {
-        CoroutineScope(Dispatchers.Default).launch {
+        scope.launch {
             function()
         }
     }
 }
 
-internal fun JMenuItem.addSwingListener(function: suspend () -> Unit) {
+internal fun JMenuItem.addSwingListener(
+    scope: CoroutineScope = CoroutineScope(Dispatchers.Default),
+    function: suspend () -> Unit
+) {
     addActionListener {
-        CoroutineScope(Dispatchers.Swing).launch {
+        scope.launch {
             function()
         }
     }

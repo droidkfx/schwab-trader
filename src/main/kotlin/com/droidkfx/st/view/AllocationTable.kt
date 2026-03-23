@@ -1,6 +1,6 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.util.databind.ReadOnlyListDataBinding
+import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.view.model.AllocationRowViewModel
 import com.droidkfx.st.view.model.ObjectTableModel
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -13,15 +13,10 @@ import javax.swing.JScrollPane
 import javax.swing.JTable
 import javax.swing.event.TableModelListener
 
-interface AllocationTableController {
-    val data: ReadOnlyListDataBinding<AllocationRowViewModel>
-    suspend fun addNewRow(newRow: AllocationRowViewModel)
-}
-
-class AllocationTable(c: AllocationTableController) : JScrollPane() {
+class AllocationTable(data: ReadWriteListDataBinding<AllocationRowViewModel>) : JScrollPane() {
     private val logger = KotlinLogging.logger {}
 
-    private val allocationTableModel: AllocationTableModel = AllocationTableModel(c.data, c::addNewRow)
+    private val allocationTableModel: AllocationTableModel = AllocationTableModel(data) { data.add(it) }
 
     init {
         logger.trace { "Initializing" }
@@ -29,7 +24,7 @@ class AllocationTable(c: AllocationTableController) : JScrollPane() {
             JTable(allocationTableModel).apply {
                 autoCreateRowSorter = true
             })
-        c.data.addSwingListener {
+        data.addSwingListener {
             notifyDataChanged()
         }
     }
@@ -45,9 +40,8 @@ class AllocationTable(c: AllocationTableController) : JScrollPane() {
 
 private class AllocationTableModel(
     data: List<AllocationRowViewModel>,
-    private val addNewRow: suspend (AllocationRowViewModel) -> Unit
-) :
-    ObjectTableModel<AllocationRowViewModel>(data, AllocationRowViewModel::class.java) {
+    private val addNewRow: suspend (AllocationRowViewModel) -> Unit,
+) : ObjectTableModel<AllocationRowViewModel>(data, AllocationRowViewModel::class.java) {
     private var newRow: AllocationRowViewModel = defaultValue()
 
     fun defaultValue(): AllocationRowViewModel = AllocationRowViewModel(

@@ -1,6 +1,6 @@
 package com.droidkfx.st.view
 
-import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
+import com.droidkfx.st.view.model.MenuBarViewModel
 import com.droidkfx.st.view.setting.SettingsDialog
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import javax.swing.JMenu
@@ -8,18 +8,9 @@ import javax.swing.JMenuBar
 import javax.swing.JMenuItem
 import javax.swing.JOptionPane
 
-interface MenuBarController {
-    val updateOauthEnabled: ReadOnlyValueDataBinding<Boolean>
-    val invalidateOauthEnabled: ReadOnlyValueDataBinding<Boolean>
-
-    suspend fun onOauthUpdate()
-    suspend fun onOauthInvalidate()
-    suspend fun onClearAllData()
-}
-
 class MenuBar(
-    c: MenuBarController,
-    private val settingsDialog: SettingsDialog
+    vm: MenuBarViewModel,
+    private val settingsDialog: SettingsDialog,
 ) : JMenuBar() {
     private val logger = logger {}
 
@@ -35,7 +26,7 @@ class MenuBar(
                         JOptionPane.YES_NO_OPTION
                     )
                     when (result) {
-                        JOptionPane.YES_OPTION -> c.onClearAllData()
+                        JOptionPane.YES_OPTION -> vm.onClearAllData()
                     }
                 }
             })
@@ -47,17 +38,15 @@ class MenuBar(
             })
             this.addSeparator()
             this.add(JMenuItem("Update Oath").apply {
-                addCoActionListener { c.onOauthUpdate() }
-                this.isEnabled = c.updateOauthEnabled.value
-                c.updateOauthEnabled.addSwingListener { this.isEnabled = it }
+                addCoActionListener { vm.onOauthUpdate() }
+                this.isEnabled = vm.updateOauthEnabled.value
+                vm.updateOauthEnabled.addSwingListener { this.isEnabled = it }
             })
             this.add(JMenuItem("Oauth Invalidate").apply {
-                addCoActionListener { c.onOauthInvalidate() }
-                this.isEnabled = c.invalidateOauthEnabled.value
-                c.invalidateOauthEnabled.addSwingListener { this.isEnabled = it }
+                addCoActionListener { vm.onOauthInvalidate() }
+                this.isEnabled = vm.invalidateOauthEnabled.value
+                vm.invalidateOauthEnabled.addSwingListener { this.isEnabled = it }
             })
         })
     }
 }
-
-

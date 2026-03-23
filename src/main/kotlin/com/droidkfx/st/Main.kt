@@ -2,7 +2,6 @@ package com.droidkfx.st
 
 import com.droidkfx.st.account.accountModule
 import com.droidkfx.st.config.configModule
-import com.droidkfx.st.controller.controllerModule
 import com.droidkfx.st.orders.orderModule
 import com.droidkfx.st.position.positionModule
 import com.droidkfx.st.schwab.schwabModule
@@ -30,7 +29,6 @@ fun main() {
             orderModule,
             transactionModule,
             positionModule,
-            controllerModule,
             viewModule
         )
     }

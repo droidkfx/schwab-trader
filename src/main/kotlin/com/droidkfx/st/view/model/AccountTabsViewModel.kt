@@ -1,4 +1,4 @@
-package com.droidkfx.st.controller
+package com.droidkfx.st.view.model
 
 import com.droidkfx.st.account.AccountService
 import com.droidkfx.st.position.AccountPosition
@@ -9,24 +9,23 @@ import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.util.databind.readOnlyMapped
-import com.droidkfx.st.view.AccountTabsController
-import com.droidkfx.st.view.model.AccountTabViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class AccountTabs(
+class AccountTabsViewModel(
     private val accountPositionService: AccountPositionService,
     private val accountService: AccountService,
+    private val factory: AccountTabViewModelFactory,
     private val accountData: ReadWriteListDataBinding<AccountPosition>,
-    oauthData: ReadOnlyValueDataBinding<OauthStatus>,
-    override val accountTabProvider: (AccountTabViewModel) -> AccountTab,
-) : AccountTabsController {
+    oauthStatus: ReadOnlyValueDataBinding<OauthStatus>,
+) {
     private val logger = logger {}
-    override val accountTabs: ReadOnlyListDataBinding<AccountTabViewModel> = accountData.mapped { ap ->
-        AccountTabViewModel(ap)
-    }
-    override val canRefresh: ReadOnlyValueDataBinding<Boolean> = oauthData.readOnlyMapped { it == OauthStatus.READY }
 
-    override suspend fun refreshAllAccounts() {
+    val accountTabs: ReadOnlyListDataBinding<AccountTabViewModel> = accountData.mapped { ap ->
+        factory.create(ap)
+    }
+    val canRefresh: ReadOnlyValueDataBinding<Boolean> = oauthStatus.readOnlyMapped { it == OauthStatus.READY }
+
+    suspend fun refreshAllAccounts() {
         logger.debug { "refresh" }
         val accountPositions = accountPositionService.mapAccountToAccountPosition(accountService.refreshAccounts())
         accountPositions.forEach {

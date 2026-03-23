@@ -41,6 +41,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:${properties["junit_version"]}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter:${properties["junit_version"]}")
+    testImplementation("io.mockk:mockk:1.14.0")
 }
 
 tasks.jar {

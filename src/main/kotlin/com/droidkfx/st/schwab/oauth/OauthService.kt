@@ -29,6 +29,10 @@ class OauthService(
     init {
         tokenRefreshSignal.addListener {
             refreshToken()
+            if (tokenStatus.value == OauthStatus.NOT_INITIALIZED) {
+                logger.info { "Token refresh failed, initiating full OAuth flow" }
+                obtainAuth(doInit = true, allowRefresh = false)
+            }
         }
     }
 

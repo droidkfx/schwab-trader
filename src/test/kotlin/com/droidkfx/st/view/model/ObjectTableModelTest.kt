@@ -37,13 +37,13 @@ class ObjectTableModelTest {
 
     @Test
     fun `getColumnCount returns number of annotated fields`() {
-        val model = ObjectTableModel(emptyList<AnnotatedRow>(), AnnotatedRow::class.java)
+        val model = ObjectTableModel(emptyList(), AnnotatedRow::class.java)
         assertEquals(3, model.columnCount)
     }
 
     @Test
     fun `getColumnName returns annotation name`() {
-        val model = ObjectTableModel(emptyList<AnnotatedRow>(), AnnotatedRow::class.java)
+        val model = ObjectTableModel(emptyList(), AnnotatedRow::class.java)
         assertEquals("Name", model.getColumnName(0))
         assertEquals("Amount", model.getColumnName(1))
         assertEquals("ReadOnly", model.getColumnName(2))
@@ -51,7 +51,7 @@ class ObjectTableModelTest {
 
     @Test
     fun `columns are ordered by position annotation`() {
-        val model = ObjectTableModel(emptyList<OrderedRow>(), OrderedRow::class.java)
+        val model = ObjectTableModel(emptyList(), OrderedRow::class.java)
         assertEquals("First", model.getColumnName(0))
         assertEquals("Second", model.getColumnName(1))
         assertEquals("Third", model.getColumnName(2))
@@ -59,7 +59,7 @@ class ObjectTableModelTest {
 
     @Test
     fun `getColumnName returns Unknown Column for out-of-range index`() {
-        val model = ObjectTableModel(emptyList<AnnotatedRow>(), AnnotatedRow::class.java)
+        val model = ObjectTableModel(emptyList(), AnnotatedRow::class.java)
         assertEquals("Unknown Column", model.getColumnName(99))
     }
 
@@ -67,7 +67,7 @@ class ObjectTableModelTest {
 
     @Test
     fun `getRowCount returns zero for empty data`() {
-        val model = ObjectTableModel(emptyList<AnnotatedRow>(), AnnotatedRow::class.java)
+        val model = ObjectTableModel(emptyList(), AnnotatedRow::class.java)
         assertEquals(0, model.rowCount)
     }
 
@@ -133,7 +133,7 @@ class ObjectTableModelTest {
 
     @Test
     fun `isCellEditable is false for out-of-bounds row`() {
-        val model = ObjectTableModel(emptyList<AnnotatedRow>(), AnnotatedRow::class.java)
+        val model = ObjectTableModel(emptyList(), AnnotatedRow::class.java)
         assertFalse(model.isCellEditable(0, 0))
     }
 

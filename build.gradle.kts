@@ -13,9 +13,17 @@ repositories {
     mavenCentral()
 }
 
+configurations.all {
+    resolutionStrategy {
+        // Transitive dependency vulnerability from io.ktor:ktor-server-netty once that library
+        // declares a newer version without the vulnerability, we can remove this.
+        force("io.netty:netty-codec-http2:4.2.11.Final")
+    }
+}
+
 dependencies {
     implementation("io.github.oshai:kotlin-logging-jvm:7.0.13")
-    implementation("ch.qos.logback:logback-classic:1.5.19")
+    implementation("ch.qos.logback:logback-classic:1.5.25")
 
     // Koin DI
     implementation("io.insert-koin:koin-core:4.1.1")
@@ -36,7 +44,6 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:${properties["ktor_version"]}")
     implementation("io.ktor:ktor-serialization-kotlinx-json:${properties["ktor_version"]}")
     implementation("io.ktor:ktor-client-content-negotiation:${properties["ktor_version"]}")
-    implementation("io.ktor:ktor-serialization-jackson:${properties["ktor_version"]}")
 
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:${properties["junit_version"]}")

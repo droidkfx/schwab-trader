@@ -3,167 +3,264 @@
 A desktop Swing application written in Kotlin for viewing brokerage accounts and positions, experimenting with
 strategies, and placing orders using the Charles Schwab Trader API.
 
-This project bundles a simple local HTTPS callback server to complete the Schwab OAuth flow, persists lightweight
-configuration and data to a user directory, and provides a modular architecture around accounts, positions, orders,
+The app bundles a local HTTPS callback server to complete the Schwab OAuth 2.0 flow, persists lightweight configuration
+and data to a per-user directory, and provides a modular architecture built around accounts, positions, orders,
 transactions, and strategies.
 
-Note: This project is not affiliated with Charles Schwab. Use at your own risk. Review the Schwab API terms of use and
-paper-trade first.
+> **Disclaimer:** This project is not affiliated with Charles Schwab. Use at your own risk. Review the Schwab API terms
+> of use and paper-trade before placing real orders.
+
+---
 
 ## Features
 
-- OAuth authentication against Schwab Trader API (with local HTTPS callback)
-- Account discovery and caching
-- Positions, allocations, and account tabs UI (Swing + FlatLaf)
-- Basic strategy framework (e.g., Buy & Hold) and order submission plumbing
-- Simple file-based repositories for configuration and cached data
-- Modular design with clear separation of concerns
+- **OAuth 2.0 authentication** against the Schwab Trader API, using a local Ktor/Netty HTTPS callback server
+- **Account discovery and caching** — linked brokerage accounts are fetched, hashed, and stored locally
+- **Positions and allocation targets** — view current holdings alongside your desired allocation percentages
+- **Buy & Hold rebalancing strategy** — calculates buy/hold recommendations to bring positions in line with targets
+  using available cash; distributes whole shares proportionally, with leftover cash allocated to cheapest underweight
+  positions
+- **Order placement and preview** — submit or preview orders against the Schwab API
+- **Transaction history** — retrieve recent activity for reconciliation
+- **File-based persistence** — configuration, accounts, positions, and tokens are stored as JSON in a per-user directory
+- **Reactive Swing UI** — custom observable data-binding drives UI updates without a heavy framework
+- **Modular Koin DI architecture** with clear separation between domain, service, repository, and UI layers
 
-## Tech stack
+---
 
-- Kotlin 2.x (JVM, Java 21 toolchain)
-- Swing UI with FlatLaf
-- Ktor (HTTP client, lightweight Netty-based callback server)
-- kotlinx.serialization (JSON)
-- Kotlin Logging + Logback
-- Gradle (Kotlin DSL), JUnit 5, JaCoCo
+## Tech Stack
 
-## Getting started
+| Layer                      | Library / Tool                          |
+|----------------------------|-----------------------------------------|
+| Language                   | Kotlin 2.2.0 (JVM, Java 21 toolchain)   |
+| UI                         | Swing + FlatLaf 3.6.1                   |
+| HTTP client / OAuth server | Ktor 3.4.0 (Java client + Netty server) |
+| Serialization              | kotlinx.serialization 1.9.0             |
+| Coroutines                 | kotlinx.coroutines-swing 1.10.2         |
+| Dependency Injection       | Koin 4.1.1                              |
+| Logging                    | kotlin-logging-jvm + Logback 1.5.25     |
+| Build                      | Gradle 8+ (Kotlin DSL), Launch4j 4.0.0  |
+| Testing                    | JUnit 5, MockK 1.14.0, JaCoCo           |
+
+---
+
+## Getting Started
 
 ### Prerequisites
 
-- Java 21 (JDK) installed and on PATH
+- Java 21 JDK installed and on `PATH`
 - Git
-- Charles Schwab Trader API application credentials (client key and secret)
+- A [Charles Schwab Trader API](https://developer.schwab.com) application with a client key, secret, and redirect URI
+  configured
 
 ### Clone
 
-```
+```bash
 git clone https://github.com/droidkfx/schwab-trader.git
 cd schwab-trader
 ```
 
 ### Build
 
-Use the Gradle wrapper (recommended):
+```bash
+# Run unit tests
+./gradlew test              # macOS/Linux
+gradlew.bat test            # Windows
 
-- Run unit tests
-    - macOS/Linux: ./gradlew test
-    - Windows: gradlew.bat test
-- Build fat jar (includes dependencies)
-    - macOS/Linux: ./gradlew jar
-    - Windows: gradlew.bat jar
+# Build fat JAR (all dependencies bundled)
+./gradlew jar
 
-The resulting executable jar will be at:
+# Full build — runs tests and generates JaCoCo coverage report
+./gradlew build
+```
 
-- build/libs/schwab-trader-1.0-SNAPSHOT.jar (the version may vary)
+The fat JAR is written to:
+
+```
+build/libs/schwab-trader-1.0-SNAPSHOT.jar
+```
 
 ### Run
 
-Since the jar manifest specifies the main class, you can run:
+```bash
+java -jar build/libs/schwab-trader-1.0-SNAPSHOT.jar
+```
 
-- java -jar build/libs/schwab-trader-1.0-SNAPSHOT.jar
+### Windows — release to local app directory
 
-### On Windows, a convenience task copies the jar to a fixed app directory:
+```bash
+gradlew.bat releaseLocal
+```
 
-- gradlew.bat releaseLocal
-    - Copies the built exe to %LOCALAPPDATA%\schwab-trader\schwab-trader.exe and prints the destination
+Builds a native Windows executable (via Launch4j) and copies it to:
+
+```
+%LOCALAPPDATA%\schwab-trader\schwab-trader.exe
+```
+
+---
 
 ## Configuration
 
-Configuration and data files are stored per-user.
+### User data directory
 
-- Windows: %APPDATA%\..\Local\schwab-trader
-- macOS/Linux: ~/.schwab-trader
+All configuration and cached data are stored in a per-user directory outside the project:
 
-Key paths used by the app:
+| Platform      | Path                            |
+|---------------|---------------------------------|
+| Windows       | `%LOCALAPPDATA%\schwab-trader\` |
+| macOS / Linux | `~/.schwab-trader/`             |
 
-- Config repository root (default): <user_dir>/data
-- OAuth callback certificate (default): <user_dir>/creds/localhost.pfx
+Key subdirectories:
 
-These defaults are defined in code (see src/main/kotlin/com/droidkfx/st/config/ConfigEntity.kt and appDir.kt).
+| Path     | Contents                                                                 |
+|----------|--------------------------------------------------------------------------|
+| `data/`  | JSON repositories — accounts, positions, targets, OAuth tokens           |
+| `creds/` | PKCS12 certificate for the local OAuth callback server (`localhost.pfx`) |
+
+On first launch, `config.json` is created in this directory with default values.
 
 ### Setting Schwab API credentials
 
-You can set credentials in either of two ways:
+**Recommended — via the UI Settings dialog:**
 
-1) Via the UI Settings dialog (recommended)
+1. Launch the app
+2. Open **Settings** from the menu bar
+3. Enter your Schwab API **key** and **secret**
+4. Adjust the callback server host, port, path, and certificate settings to match your Schwab app registration
 
-- Launch the app
-- Open Settings
-- Enter your Schwab API key and secret (and adjust callback server values if needed)
+**Alternative — edit `config.json` directly:**
 
-1) By editing the config file directly
-
-- After the first run (or manually), a JSON configuration is stored under the user app dir noted above
-- Fields of interest:
-    - schwabConfig.key
-    - schwabConfig.secret
-    - schwabConfig.callbackServerConfig (host, port, callbackPath, certificate details)
+```json
+{
+  "schwabConfig": {
+    "key": "YOUR_CLIENT_KEY",
+    "secret": "YOUR_CLIENT_SECRET",
+    "baseApiUrl": "api.schwabapi.com",
+    "callbackServerConfig": {
+      "host": "127.0.0.1",
+      "port": 41241,
+      "callbackPath": "",
+      "sslCertLocation": "/path/to/creds/localhost.pfx",
+      "sslCertPassword": "...",
+      "sslCertAlias": "...",
+      "sslCertType": "PKCS12"
+    }
+  }
+}
+```
 
 ### OAuth callback server
 
-The app spins up a local HTTPS server to receive the OAuth redirect from Schwab.
+The app runs a local HTTPS server to receive the redirect from Schwab after the user grants consent.
 
-- Default host/port: 127.0.0.1:41241
-- You must configure your Schwab API application with a redirect/callback URL that matches the app settings, e.g.:
-    - https://127.0.0.1:41241/callback
-- The local server uses a certificate at <user_dir>/creds/localhost.pfx (PKCS12) by default. You may point to another
-  certificate or adjust the password / alias in Settings.
+- Default address: `https://127.0.0.1:41241`
+- Your Schwab API application's **redirect URI** must exactly match the configured host, port, and path — for example:
+  `https://127.0.0.1:41241/callback`
+- The server requires a PKCS12 certificate at the path configured in Settings (default:
+  `<user_dir>/creds/localhost.pfx`)
 
-## Flow overview:
+---
 
-1) Start the app, open Settings, ensure credentials and callback match your Schwab app registration
-2) Trigger sign-in (OAuth) from within the app
-3) Your browser opens the Schwab authorization page
-4) After consent, Schwab redirects to your local HTTPS server
-5) The app exchanges the code for tokens and stores them locally for later calls
+## OAuth Flow
 
-## Project layout
+1. Open **Settings**, enter credentials, confirm the callback URL matches your Schwab app registration.
+2. Select **Update OAuth** from the menu.
+3. The local HTTPS server starts; your browser opens to the Schwab authorization page.
+4. After consent, Schwab redirects to the local server; the app exchanges the code for access and refresh tokens.
+5. Tokens are stored locally. The access token is refreshed automatically when it expires; a full re-auth is triggered
+   if the refresh token is also expired.
 
-- src/main/kotlin/com/droidkfx/st/Main.kt — Application entry point (wires modules and starts UI)
-- account — Account domain, repository, and service
-- position — Positions, targets, repository, and services
-- orders — Orders service and client integration
-- transaction — Transactions service and client integration
-- schwab/client — Ktor clients for Accounts, Orders, Transactions, User Preferences
-- schwab/oauth — LocalServer, OAuth models, repository, and service
-- controller and view — Swing controllers/views and view models
-- config — Config entities, repository, and helpers (per-user directories)
-- util — Data binding, serialization helpers, file repository
+---
 
-## Testing and coverage
+## Project Layout
 
-- Run tests:
-    - macOS/Linux: ./gradlew test
-    - Windows: gradlew.bat test
-- Generate a coverage report (JaCoCo):
-    - macOS/Linux: ./gradlew jacocoTestReport
-    - Windows: gradlew.bat jacocoTestReport
-    - Reports are generated under build/reports/jacoco/test/html
+```
+src/main/kotlin/com/droidkfx/st/
+├── Main.kt              # Entry point — initializes Koin, starts Swing UI
+├── account/             # Account domain: model, service, repository, DI module
+├── position/            # Positions and allocation targets
+├── orders/              # Order placement and preview
+├── transaction/         # Transaction history
+├── strategy/            # Strategy interface + BuyHoldStrategy
+├── schwab/
+│   ├── client/          # Ktor HTTP clients (Accounts, Orders, Transactions, Quotes, OAuth)
+│   └── oauth/           # OAuth service, local HTTPS callback server, token repository
+├── config/              # App configuration entity, service, repository, per-user paths
+├── view/                # Swing UI (JFrame, tabs, allocation table, menus, status bar)
+│   ├── model/           # ViewModels (MVVM pattern, reactive via ValueDataBinding)
+│   └── setting/         # Settings dialog
+└── util/
+    ├── databind/        # ValueDataBinding / ListDataBinding — observable property system
+    ├── progress/        # ProgressService for tracking async operation status
+    ├── repository/      # FileRepository base class for JSON persistence
+    └── serialization/   # Custom KBigDecimal and Instant serializers
+```
+
+---
+
+## Testing and Coverage
+
+```bash
+# Run all unit tests
+./gradlew test
+
+# Generate JaCoCo HTML coverage report
+./gradlew jacocoTestReport
+# Output: build/reports/jacoco/test/html/index.html
+```
+
+Test areas include:
+
+- Repository CRUD (account, position, target, OAuth token)
+- OAuth service flow (token exchange, refresh, re-auth)
+- `BuyHoldStrategy` allocation algorithm (25+ cases)
+- Schwab API model serialization/deserialization
+- ViewModels and observable data binding
+- `ProgressService` async task tracking
+- Custom `KBigDecimal` and `Instant` serializers
+
+---
 
 ## Logging
 
-- Logging is configured via Logback
-- Default configurations are provided in src/main/resources/logback.xml and src/test/resources/logback.xml
+- **Development:** `src/main/resources/logback.xml` — console output, TRACE level
+- **Release exe:** `logback-release.xml`, activated via JVM option `-Dlogback.configurationFile=logback-release.xml` (
+  set in the Launch4j config)
+- Verbose Netty, Ktor, and SSL loggers are suppressed in both configurations
+
+---
 
 ## Troubleshooting
 
-- OAuth redirect fails
-    - Ensure the callback URL in your Schwab API configuration exactly matches the app Settings (host, port, and path)
-    - Confirm the local HTTPS server certificate path/password are correct
-    - Firewall/AV may block local ports; allow 127.0.0.1:<port>
-- API calls failing
-    - Verify tokens are present and not expired; re-run sign-in
-    - Double-check base API URL and credentials
-- UI issues on Windows high-DPI
-    - Try different FlatLaf themes or scale options
+**OAuth redirect fails**
+
+- Confirm the redirect URI in your Schwab API application exactly matches the host, port, and path in Settings
+- Check that the PKCS12 certificate path, password, and alias are correct
+- Firewall or antivirus may block local ports; allow `127.0.0.1:<port>`
+
+**API calls failing**
+
+- Verify the access token is not expired; re-run OAuth if needed
+- Double-check the base API URL (`api.schwabapi.com`) and credentials
+
+**UI issues on Windows high-DPI displays**
+
+- Try adjusting FlatLaf theme options or system DPI scaling settings
+
+---
 
 ## Contributing
 
-Pull requests are welcome. Please include tests where possible and keep changes modular. Run tests and ensure Jacoco
-reports generate cleanly.
+Pull requests are welcome. Please:
+
+- Include tests for new functionality
+- Keep changes focused and modular
+- Run `./gradlew build` (tests + coverage) before submitting
+- Follow existing patterns — Koin DI modules, FileRepository for persistence, ViewModels for UI state
+
+---
 
 ## License
 
-This project is provided as-is without warranty under an MIT License. See LICENSE for specifics.
+This project is provided as-is without warranty under the MIT License. See `LICENSE` for details.

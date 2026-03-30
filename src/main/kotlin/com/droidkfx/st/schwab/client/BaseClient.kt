@@ -44,6 +44,9 @@ abstract class BaseClient(
         if (oauthTokenStatus.value == OauthStatus.EXPIRED) {
             logger.info { "Oauth token expired, attempting token refresh" }
             requestTokenRefresh.value = !requestTokenRefresh.value
+        } else if (oauthTokenStatus.value == OauthStatus.NOT_INITIALIZED) {
+            logger.info { "Oauth token not initialized, initiating OAuth flow" }
+            requestTokenRefresh.value = !requestTokenRefresh.value
         } else if (oauthTokenStatus.value != OauthStatus.READY) {
             return ApiResponse(error = ErrorResponse(emptyList(), "Oauth token not ready"))
         }

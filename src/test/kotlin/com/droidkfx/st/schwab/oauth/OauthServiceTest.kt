@@ -41,6 +41,54 @@ class OauthServiceTest {
         idToken = "header.eyJleHAiOjk5OTk5OTk5OTl9.signature",
     )
 
+    // --- token not initialized triggers OAuth flow ---
+
+    private fun setupNoTokenWithOAuthSuccess(
+        newToken: OauthTokenResponse = futureToken(),
+        state: String = "test-state",
+    ): CompletableDeferred<LocalServer.Result> {
+        val serverResult = CompletableDeferred<LocalServer.Result>().also {
+            it.complete(LocalServer.Result(code = "auth-code", session = null, state = state, error = null))
+        }
+        every { repo.loadExistingToken() } returns null
+        every { client.triggerOauthFlow() } returns state
+        every { server.awaitReponse() } returns serverResult
+        every { client.exchangeOauthToken(any<LocalServer.Result>()) } returns newToken
+        return serverResult
+    }
+
+    @Test
+    fun `when token is not initialized and refresh signal fires OAuth flow is initiated`() {
+        setupNoTokenWithOAuthSuccess()
+
+        OauthService(repo, client, server, tokenStatus, tokenRefreshSignal = tokenRefreshSignal)
+        tokenRefreshSignal.value = !tokenRefreshSignal.value
+
+        verify { client.triggerOauthFlow() }
+    }
+
+    @Test
+    fun `when token is not initialized and OAuth flow succeeds status is READY`() {
+        val newToken = futureToken(accessToken = "fresh-access")
+        setupNoTokenWithOAuthSuccess(newToken)
+
+        OauthService(repo, client, server, tokenStatus, tokenRefreshSignal = tokenRefreshSignal)
+        tokenRefreshSignal.value = !tokenRefreshSignal.value
+
+        assertEquals(OauthStatus.READY, tokenStatus.value)
+    }
+
+    @Test
+    fun `when token is not initialized and OAuth flow succeeds new token is saved to repo`() {
+        val newToken = futureToken(accessToken = "fresh-access")
+        setupNoTokenWithOAuthSuccess(newToken)
+
+        OauthService(repo, client, server, tokenStatus, tokenRefreshSignal = tokenRefreshSignal)
+        tokenRefreshSignal.value = !tokenRefreshSignal.value
+
+        verify { repo.saveToken(newToken) }
+    }
+
     // --- refreshToken success ---
 
     @Test

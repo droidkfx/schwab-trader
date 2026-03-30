@@ -98,7 +98,7 @@ launch4j {
     mainClassName = "com.droidkfx.st.MainKt"
     productName = "Schwab Trader"
     headerType = "console"
-    icon = "${projectDir}/src/main/resources/com/droidkfx/st/view/AppIcon.ico"
+    icon = "${projectDir}/src/main/resources/AppIcon.ico"
 }
 
 kotlin {

@@ -12,8 +12,13 @@ class StatusBar(vm: StatusBarViewModel) : JPanel() {
     init {
         logger.trace { "Initializing" }
         layout = FlowLayout(FlowLayout.RIGHT)
+        add(JLabel(vm.progressText.value).apply {
+            vm.progressText.addSwingListener { text = it }
+        })
         add(JLabel("Oauth Status: ${vm.oauthStatus.value}").apply {
             vm.oauthStatus.addSwingListener { text = "Oauth Status: $it" }
         })
+        // empty to make the status bar the same width as the menu bar
+        add(JLabel(""))
     }
 }

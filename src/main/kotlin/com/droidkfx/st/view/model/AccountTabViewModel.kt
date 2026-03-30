@@ -12,6 +12,7 @@ import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.ValueDataBinding
 import com.droidkfx.st.util.databind.toDataBinding
 import com.droidkfx.st.util.pmap
+import com.droidkfx.st.util.progress.ProgressService
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import kotlinx.coroutines.coroutineScope
 import java.math.BigDecimal
@@ -21,6 +22,7 @@ class AccountTabViewModel(
     private val accountPositionService: AccountPositionService,
     private val accountService: AccountService,
     private val orderService: OrderService,
+    private val progressService: ProgressService,
 ) {
     private val logger = logger {}
 
@@ -71,29 +73,35 @@ class AccountTabViewModel(
 
     suspend fun saveAccountPositions() {
         logger.debug { "saveAccountPositions" }
-        val newTargets = data.map { PositionTarget(it.symbol, it.allocationTarget) }
-        val ap = accountPositionService.updateAccountPositionTargets(accountId, newTargets)
-        updateAccountPosition(ap)
-        rebuildAllocationRows()
+        progressService.track("Saving ${account.name}") {
+            val newTargets = data.map { PositionTarget(it.symbol, it.allocationTarget) }
+            val ap = accountPositionService.updateAccountPositionTargets(accountId, newTargets)
+            updateAccountPosition(ap)
+            rebuildAllocationRows()
+        }
     }
 
     suspend fun refreshData() {
         logger.debug { "refreshData" }
-        val newAccountPosition = accountPositionService.refreshAccountPosition(currentAccountPosition())
-        updateAccountPosition(newAccountPosition)
-        rebuildAllocationRows()
+        progressService.track("Refreshing ${account.name}") {
+            val newAccountPosition = accountPositionService.refreshAccountPosition(currentAccountPosition())
+            updateAccountPosition(newAccountPosition)
+            rebuildAllocationRows()
+        }
     }
 
     suspend fun processOrders() = coroutineScope {
         logger.debug { "processOrders" }
-        val orderPreviews = recommendations
-            .filter { it.recommendation != StrategyAction.HOLD }
-            .pmap { orderService.previewOrder(account, it) }
-            .toList()
-        if (orderPreviews.all { it != null }) {
-            recommendations
+        progressService.track("Processing orders for ${account.name}") {
+            val orderPreviews = recommendations
                 .filter { it.recommendation != StrategyAction.HOLD }
-                .pmap { orderService.order(account, it) }
+                .pmap { orderService.previewOrder(account, it) }
+                .toList()
+            if (orderPreviews.all { it != null }) {
+                recommendations
+                    .filter { it.recommendation != StrategyAction.HOLD }
+                    .pmap { orderService.order(account, it) }
+            }
         }
     }
 }

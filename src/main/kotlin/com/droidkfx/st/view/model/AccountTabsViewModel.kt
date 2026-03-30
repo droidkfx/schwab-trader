@@ -9,6 +9,7 @@ import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.mapped
 import com.droidkfx.st.util.databind.readOnlyMapped
+import com.droidkfx.st.util.progress.ProgressService
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
 class AccountTabsViewModel(
@@ -17,6 +18,7 @@ class AccountTabsViewModel(
     private val factory: AccountTabViewModelFactory,
     private val accountData: ReadWriteListDataBinding<AccountPosition>,
     oauthStatus: ReadOnlyValueDataBinding<OauthStatus>,
+    private val progressService: ProgressService,
 ) {
     private val logger = logger {}
 
@@ -27,12 +29,14 @@ class AccountTabsViewModel(
 
     suspend fun refreshAllAccounts() {
         logger.debug { "refresh" }
-        val accountPositions = accountPositionService.mapAccountToAccountPosition(accountService.refreshAccounts())
-        accountPositions.forEach {
-            if (!accountData.contains(it)) {
-                accountData.add(it)
+        progressService.track("Refreshing accounts") {
+            val accountPositions = accountPositionService.mapAccountToAccountPosition(accountService.refreshAccounts())
+            accountPositions.forEach {
+                if (!accountData.contains(it)) {
+                    accountData.add(it)
+                }
             }
+            accountData.retainAll(accountPositions)
         }
-        accountData.retainAll(accountPositions)
     }
 }

@@ -3,6 +3,7 @@ package com.droidkfx.st.view
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.schwab.oauth.OauthService
 import com.droidkfx.st.util.databind.toDataBinding
+import com.droidkfx.st.util.progress.ProgressService
 import com.droidkfx.st.view.model.AccountTabViewModelFactory
 import com.droidkfx.st.view.model.AccountTabsViewModel
 import com.droidkfx.st.view.model.MenuBarViewModel
@@ -21,6 +22,7 @@ val viewModule = module {
     includes(settingsModule)
 
     // ViewModels
+    singleOf(::ProgressService)
     single(named(accountPositionsBinding)) {
         runBlocking {
             get<AccountPositionService>().getAccountPositions()
@@ -38,6 +40,7 @@ val viewModule = module {
             get(), get(), get(),
             get(named(accountPositionsBinding)),
             get<OauthService>().getTokenStatusBinding(),
+            get(),
         )
     }
 

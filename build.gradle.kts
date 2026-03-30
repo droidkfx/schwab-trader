@@ -97,8 +97,10 @@ launch4j {
     outfile = "schwab-trader.exe"
     mainClassName = "com.droidkfx.st.MainKt"
     productName = "Schwab Trader"
-    headerType = "console"
+    headerType = "gui"
     icon = "${projectDir}/src/main/resources/AppIcon.ico"
+    chdir = "."
+    jvmOptions = setOf("-Dlogback.configurationFile=logback-release.xml")
 }
 
 kotlin {

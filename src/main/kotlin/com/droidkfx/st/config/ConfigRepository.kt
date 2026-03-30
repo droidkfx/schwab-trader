@@ -4,7 +4,7 @@ import com.droidkfx.st.util.databind.toDataBinding
 import com.droidkfx.st.util.repository.FileRepository
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-internal class ConfigRepository() :
+internal class ConfigRepository :
     FileRepository(
         logger {},
         getUsersAppDirPath().toDataBinding()
@@ -15,10 +15,10 @@ internal class ConfigRepository() :
 
     fun loadConfig(): ConfigEntity {
         logger.trace { "loadConfig" }
-        if (currentConfig == null) {
-            return load(configFileName) ?: ConfigEntity().also { saveConfig(it) }
+        return if (currentConfig == null) {
+            load(configFileName) ?: ConfigEntity().also { saveConfig(it) }
         } else {
-            return currentConfig!!
+            currentConfig!!
         }
     }
 

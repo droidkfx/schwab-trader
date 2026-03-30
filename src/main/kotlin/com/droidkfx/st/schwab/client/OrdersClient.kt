@@ -11,6 +11,7 @@ import com.droidkfx.st.util.serialization.KInstant
 import io.github.oshai.kotlinlogging.KLogger
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.client.HttpClient
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.setBody
 import java.math.RoundingMode
 
@@ -38,47 +39,37 @@ class OrdersClient(
         }
     }
 
+
     suspend fun order(account: Account, recommendation: PositionRecommendation): ApiResponse<Unit> =
         postAt("accounts", account.accountNumberHash, "orders") {
 //            val quantity = recommendation.quantity.setScale(0, RoundingMode.FLOOR)
-            val quantity = recommendation.quantity
-            val body = OrderRequest(
-                orderType = OrderTypeRequest.LIMIT,
-                price = recommendation.price.setScale(2, RoundingMode.FLOOR),
-                session = Session.NORMAL,
-                duration = Duration.DAY,
-                orderStrategyType = OrderStrategyType.SINGLE,
-                orderLegCollection = listOf(
-                    OrderLegCollection(
-                        instruction = recommendation.recommendation.toInstruction(),
-                        quantity = quantity,
-                        instrument = TransactionEquity(symbol = recommendation.symbol)
-                    )
-                ),
-            )
-            setBody(body)
+            buildOrderBody(recommendation)
         }
 
     suspend fun previewOrder(account: Account, recommendation: PositionRecommendation): ApiResponse<PreviewOrder> =
         postAt("accounts", account.accountNumberHash, "previewOrder") {
 //            val quantity = recommendation.quantity.setScale(0, RoundingMode.FLOOR)
-            val quantity = recommendation.quantity
-            val body = OrderRequest(
-                orderType = OrderTypeRequest.LIMIT,
-                price = recommendation.price.setScale(2, RoundingMode.FLOOR),
-                session = Session.NORMAL,
-                duration = Duration.DAY,
-                orderStrategyType = OrderStrategyType.SINGLE,
-                orderLegCollection = listOf(
-                    OrderLegCollection(
-                        instruction = recommendation.recommendation.toInstruction(),
-                        quantity = quantity,
-                        instrument = TransactionEquity(symbol = recommendation.symbol)
-                    )
-                ),
-            )
-            setBody(body)
+            buildOrderBody(recommendation)
         }
+
+    private fun HttpRequestBuilder.buildOrderBody(recommendation: PositionRecommendation) {
+        val quantity = recommendation.quantity
+        val body = OrderRequest(
+            orderType = OrderTypeRequest.LIMIT,
+            price = recommendation.price.setScale(2, RoundingMode.FLOOR),
+            session = Session.NORMAL,
+            duration = Duration.DAY,
+            orderStrategyType = OrderStrategyType.SINGLE,
+            orderLegCollection = listOf(
+                OrderLegCollection(
+                    instruction = recommendation.recommendation.toInstruction(),
+                    quantity = quantity,
+                    instrument = TransactionEquity(symbol = recommendation.symbol)
+                )
+            ),
+        )
+        setBody(body)
+    }
 }
 
 private fun StrategyAction.toInstruction(): Instruction = when (this) {

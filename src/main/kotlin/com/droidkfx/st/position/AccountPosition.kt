@@ -11,6 +11,3 @@ data class AccountPosition(
     val currentRecommendedChanges: List<PositionRecommendation>,
     val currentCash: BigDecimal,
 )
-
-fun AccountPosition.withNewPositionTargets(newPositionTargets: List<PositionTarget>) =
-    this.copy(positionTargets = newPositionTargets)

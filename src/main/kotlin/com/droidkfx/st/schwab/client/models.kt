@@ -529,7 +529,7 @@ sealed class TransactionBaseInstrument {
 @OptIn(ExperimentalSerializationApi::class)
 @Serializable
 @JsonClassDiscriminator("assetType")
-sealed class AccountsBaseInstrument() {
+sealed class AccountsBaseInstrument {
     abstract val cusip: String?
     abstract val symbol: String?
     abstract val description: String?

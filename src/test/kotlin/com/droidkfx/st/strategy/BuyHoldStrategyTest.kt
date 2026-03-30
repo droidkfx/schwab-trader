@@ -48,7 +48,7 @@ class BuyHoldStrategyTest {
                 accountCash = BigDecimal("500")
             )
         }
-        // Position price is BigDecimal.ZERO and no quote returned → excluded from recommendations
+        // Position price is BigDecimal.ZERO, and no quote returned → excluded from recommendations
         assertTrue(result.isEmpty(), "Positions with zero price and no quote should be excluded")
     }
 

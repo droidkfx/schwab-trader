@@ -11,9 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
 import javax.swing.JButton
-import javax.swing.JList
 import javax.swing.JMenuItem
-import javax.swing.event.ListSelectionEvent
 
 internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Swing),
@@ -58,14 +56,6 @@ internal fun JMenuItem.addSwingListener(
     addActionListener {
         scope.launch {
             function()
-        }
-    }
-}
-
-internal fun JList<*>.addCoListChangeListener(function: suspend (ListSelectionEvent) -> Unit) {
-    addListSelectionListener {
-        CoroutineScope(Dispatchers.Default).launch {
-            function(it)
         }
     }
 }

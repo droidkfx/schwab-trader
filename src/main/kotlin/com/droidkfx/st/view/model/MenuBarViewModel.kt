@@ -24,17 +24,17 @@ class MenuBarViewModel(
     val invalidateOauthEnabled: ReadOnlyValueDataBinding<Boolean> =
         oauthService.getTokenStatusBinding().readOnlyMapped(::invalidateEnabled)
 
-    suspend fun onOauthUpdate() {
+    fun onOauthUpdate() {
         logger.trace { "onOauthUpdate" }
         oauthService.obtainAuth()
     }
 
-    suspend fun onOauthInvalidate() {
+    fun onOauthInvalidate() {
         logger.trace { "onOauthInvalidate" }
         oauthService.invalidateOauth()
     }
 
-    suspend fun onClearAllData() {
+    fun onClearAllData() {
         logger.trace { "onClearAllData" }
         accountPositionService.clear()
         accountService.clear()

@@ -33,10 +33,10 @@ internal class BuyHoldStrategy(
             else quotesClient.getQuotesForSymbols(it).data ?: emptyMap()
         }
 
-        val positionAllocations = mappedPositions + unmappedPositions.mapNotNull {
-            it.copy(
-                position = it.position.copy(
-                    lastKnownPrice = fetchedQuotes[it.position.symbol]?.quote?.lastPrice ?: BigDecimal.ZERO
+        val positionAllocations = mappedPositions + unmappedPositions.mapNotNull { posProps ->
+            posProps.copy(
+                position = posProps.position.copy(
+                    lastKnownPrice = fetchedQuotes[posProps.position.symbol]?.quote?.lastPrice ?: BigDecimal.ZERO
                 )
             ).let { if (it.position.lastKnownPrice == BigDecimal.ZERO) null else it }
         }
@@ -63,8 +63,8 @@ internal class BuyHoldStrategy(
         )
 
         val easyBuyAllocations = onlyBuyAllocations.map {
-            val weigthedDelta = it.delta.abs() / totalDelta
-            val valueToAllocate = if (accountCash < BigDecimal.ZERO) BigDecimal.ZERO else weigthedDelta * accountCash
+            val weightedDelta = it.delta.abs() / totalDelta
+            val valueToAllocate = if (accountCash < BigDecimal.ZERO) BigDecimal.ZERO else weightedDelta * accountCash
             val sharesToAllocate = (valueToAllocate / it.position.lastKnownPrice).setScale(0, RoundingMode.FLOOR)
             val unallocatedValue = valueToAllocate - (sharesToAllocate * it.position.lastKnownPrice)
             cashToAllocate += unallocatedValue

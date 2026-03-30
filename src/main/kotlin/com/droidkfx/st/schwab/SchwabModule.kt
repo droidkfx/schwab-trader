@@ -8,9 +8,9 @@ import com.droidkfx.st.util.databind.toDataBinding
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-val OAUTH_TOKEN = "oauthToken"
-val OAUTH_TOKEN_STATUS = "oauthTokenStatus"
-val OAUTH_REFRESH_SIGNAL = "tokenRefreshSignal"
+const val OAUTH_TOKEN = "oauthToken"
+const val OAUTH_TOKEN_STATUS = "oauthTokenStatus"
+const val OAUTH_REFRESH_SIGNAL = "tokenRefreshSignal"
 
 val schwabModule = module {
     includes(schwabClientModule, oauthModule)

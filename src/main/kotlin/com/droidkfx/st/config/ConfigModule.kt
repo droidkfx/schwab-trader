@@ -5,7 +5,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-val CONFIG_ENTITY = "configEntity"
+const val CONFIG_ENTITY = "configEntity"
 
 val configModule = module {
     singleOf(::ConfigRepository)

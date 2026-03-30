@@ -56,7 +56,7 @@ Use the Gradle wrapper (recommended):
 
 The resulting executable jar will be at:
 
-- build/libs/schwab-trader-1.0-SNAPSHOT.jar (version may vary)
+- build/libs/schwab-trader-1.0-SNAPSHOT.jar (the version may vary)
 
 ### Run
 
@@ -93,9 +93,9 @@ You can set credentials in either of two ways:
 - Open Settings
 - Enter your Schwab API key and secret (and adjust callback server values if needed)
 
-2) By editing the config file directly
+1) By editing the config file directly
 
-- After first run (or manually), a JSON configuration is stored under the user app dir noted above
+- After the first run (or manually), a JSON configuration is stored under the user app dir noted above
 - Fields of interest:
     - schwabConfig.key
     - schwabConfig.secret
@@ -109,7 +109,7 @@ The app spins up a local HTTPS server to receive the OAuth redirect from Schwab.
 - You must configure your Schwab API application with a redirect/callback URL that matches the app settings, e.g.:
     - https://127.0.0.1:41241/callback
 - The local server uses a certificate at <user_dir>/creds/localhost.pfx (PKCS12) by default. You may point to another
-  certificate or adjust password/alias in Settings.
+  certificate or adjust the password / alias in Settings.
 
 ## Flow overview:
 
@@ -117,18 +117,18 @@ The app spins up a local HTTPS server to receive the OAuth redirect from Schwab.
 2) Trigger sign-in (OAuth) from within the app
 3) Your browser opens the Schwab authorization page
 4) After consent, Schwab redirects to your local HTTPS server
-5) The app exchanges the code for tokens and stores them locally for subsequent calls
+5) The app exchanges the code for tokens and stores them locally for later calls
 
 ## Project layout
 
 - src/main/kotlin/com/droidkfx/st/Main.kt — Application entry point (wires modules and starts UI)
-- account — Account domain, repository and service
+- account — Account domain, repository, and service
 - position — Positions, targets, repository, and services
-- orders — Orders service + client integration
-- transaction — Transactions service + client integration
+- orders — Orders service and client integration
+- transaction — Transactions service and client integration
 - schwab/client — Ktor clients for Accounts, Orders, Transactions, User Preferences
 - schwab/oauth — LocalServer, OAuth models, repository, and service
-- controller & view — Swing controllers/views and view models
+- controller and view — Swing controllers/views and view models
 - config — Config entities, repository, and helpers (per-user directories)
 - util — Data binding, serialization helpers, file repository
 
@@ -137,7 +137,7 @@ The app spins up a local HTTPS server to receive the OAuth redirect from Schwab.
 - Run tests:
     - macOS/Linux: ./gradlew test
     - Windows: gradlew.bat test
-- Generate coverage report (JaCoCo):
+- Generate a coverage report (JaCoCo):
     - macOS/Linux: ./gradlew jacocoTestReport
     - Windows: gradlew.bat jacocoTestReport
     - Reports are generated under build/reports/jacoco/test/html
@@ -161,7 +161,7 @@ The app spins up a local HTTPS server to receive the OAuth redirect from Schwab.
 
 ## Contributing
 
-Pull requests are welcome. Please include tests where feasible and keep changes modular. Run tests and ensure Jacoco
+Pull requests are welcome. Please include tests where possible and keep changes modular. Run tests and ensure Jacoco
 reports generate cleanly.
 
 ## License

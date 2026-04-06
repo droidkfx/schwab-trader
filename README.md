@@ -157,8 +157,24 @@ The app runs a local HTTPS server to receive the redirect from Schwab after the 
 - Default address: `https://127.0.0.1:41241`
 - Your Schwab API application's **redirect URI** must exactly match the configured host, port, and path — for example:
   `https://127.0.0.1:41241/callback`
-- The server requires a PKCS12 certificate at the path configured in Settings (default:
-  `<user_dir>/creds/localhost.pfx`)
+- The server requires a PKCS12 certificate. On first launch the app generates one automatically (see below).
+
+### SSL certificate — automatic management
+
+On first launch, `CertificateService` detects that no certificate is present and automatically:
+
+1. Generates a self-signed PKCS12 keystore at `<user_dir>/creds/localhost.pfx` using the JVM-bundled `keytool`
+   (RSA 2048, 10-year validity, Subject Alternative Names for `localhost` and `127.0.0.1`).
+2. Exports the public certificate to `<user_dir>/creds/localhost.cer`.
+3. Installs the certificate to the OS user trust store so the browser accepts it without warnings:
+    - **Windows** — `certutil -user -addstore Root` (Windows will show a one-time security confirmation dialog)
+    - **macOS** — `security add-trusted-cert` targeting `login.keychain-db`
+    - **Linux** — not automated; the log message prints the `.cer` path for manual import
+4. Saves the generated path, password, and alias back to `config.json`.
+
+**Resetting the certificate:** Open the menu bar and choose **Reset Certificate**. The existing certificate is
+deleted and uninstalled from the OS trust store, then the above process repeats. A confirmation dialog is shown
+before any changes are made.
 
 ---
 
@@ -186,6 +202,7 @@ src/main/kotlin/com/droidkfx/st/
 ├── schwab/
 │   ├── client/          # Ktor HTTP clients (Accounts, Orders, Transactions, Quotes, OAuth)
 │   └── oauth/           # OAuth service, local HTTPS callback server, token repository
+│       └── cert/        # Certificate lifecycle (CertificateService, CertificateKeytool, OsTrustStore)
 ├── config/              # App configuration entity, service, repository, per-user paths
 ├── view/                # Swing UI (JFrame, tabs, allocation table, menus, status bar)
 │   ├── model/           # ViewModels (MVVM pattern, reactive via ValueDataBinding)
@@ -236,8 +253,16 @@ Test areas include:
 **OAuth redirect fails**
 
 - Confirm the redirect URI in your Schwab API application exactly matches the host, port, and path in Settings
-- Check that the PKCS12 certificate path, password, and alias are correct
+- Check that the PKCS12 certificate path, password, and alias are correct in Settings (these are set automatically on
+  first launch; use **Reset Certificate** from the menu if they appear missing or corrupt)
 - Firewall or antivirus may block local ports; allow `127.0.0.1:<port>`
+
+**Browser shows a certificate warning on the OAuth callback page**
+
+- The self-signed certificate may not have been installed to the OS trust store. Try **Reset Certificate** from the
+  menu to regenerate and reinstall it
+- On Windows, confirm you clicked **Yes** on the security dialog that appeared during certificate installation
+- On Linux, manually import `<user_dir>/creds/localhost.cer` into your browser's certificate store
 
 **API calls failing**
 

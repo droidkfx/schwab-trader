@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(./gradlew test:*)"
+      "Bash(./gradlew test:*)",
+      "Bash(xargs grep:*)",
+      "Bash(gradlew.bat compileKotlin 2>&1)",
+      "Bash(cmd.exe /c \"gradlew.bat compileKotlin 2>&1\")",
+      "Bash(./gradlew compileKotlin 2>&1)",
+      "Bash(./gradlew compileKotlin)"
     ]
   }
 }

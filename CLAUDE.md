@@ -45,6 +45,7 @@ src/main/kotlin/com/droidkfx/st/
 ├── schwab/
 │   ├── client/              # Ktor HTTP clients for each Schwab API endpoint
 │   └── oauth/               # OAuth 2.0 flow, local HTTPS callback server (Ktor/Netty)
+│       └── cert/            # Certificate lifecycle: CertificateService, CertificateKeytool, OsTrustStore
 ├── config/                  # App configuration (persisted as JSON)
 ├── view/                    # Swing UI (JFrame, tabs, table, menus, status bar)
 │   ├── model/               # ViewModels (MVVM pattern)
@@ -121,6 +122,45 @@ Subdirectories:
 Config is loaded from `config.json` in that directory. On first launch it is created with defaults. The Settings dialog
 writes back to this file.
 
+## Certificate Management
+
+All certificate code lives in `schwab/oauth/cert/`. Three collaborating types handle the full lifecycle:
+
+**`CertificateKeytool`** — interface for keypair generation and certificate export. The companion object provides
+`CertificateKeytool.system()` which returns `SystemCertificateKeytool`, the default implementation backed by
+`${java.home}/bin/keytool` via `ProcessBuilder` (no PATH dependency). Swap this to test with an alternate
+implementation or a programmatic approach (e.g. BouncyCastle) without touching `CertificateService`.
+
+- `generateKeyPair(pfxFile, alias, password)` — RSA 2048, 10-year validity, PKCS12, SAN for `dns:localhost` /
+  `ip:127.0.0.1`
+- `exportCertificate(pfxFile, cerFile, alias, password)` — PEM-encoded DER export (`-rfc`)
+
+**`OsTrustStore`** — interface for OS trust store operations. The companion object provides
+`OsTrustStore.forCurrentOs()` which selects the implementation at startup:
+
+- `WindowsOsTrustStore` — `certutil -user -addstore/delstore Root` (Windows shows a one-time security dialog)
+- `MacOsTrustStore` — `security add-trusted-cert / delete-certificate` targeting `login.keychain-db`
+- `UnsupportedOsTrustStore` — logs warnings; manual import required
+
+**`CertificateService`** — orchestrates the above two. Constructor-injected by Koin.
+
+- `initializeIfNeeded()` — called from `main()` before the UI appears. No-op when `sslCertPassword` and
+  `sslCertAlias` are non-empty in config and the `.pfx` file exists. Otherwise generates, exports, installs, and
+  writes credentials to `config.json` via `ConfigService.updateConfig()`.
+- `reset()` — deletes `.pfx` and `.cer` files, calls `OsTrustStore.uninstall()`, then re-runs init.
+
+**Koin wiring** — `OauthModule` registers each interface against its factory:
+
+```kotlin
+single<OsTrustStore> { OsTrustStore.forCurrentOs() }
+single<CertificateKeytool> { CertificateKeytool.system() }
+single { CertificateService(get(), get(), get()) }
+```
+
+**`LocalServer` config binding** — `LocalServer` takes `ReadOnlyValueDataBinding<CallbackServerConfig>` (not a bare
+value) so it always reads the current config when `awaitReponse()` starts the Ktor server. This means a cert reset
+followed by a new OAuth trigger picks up the new certificate without an app restart.
+
 ## OAuth Flow
 
 1. User opens **Settings**, enters Schwab API key/secret, configures callback URL.
@@ -160,3 +200,8 @@ The Schwab app registration **must** have the redirect URI matching the callback
   `schwabModule`; `schwabModule` before the domain modules that depend on API clients.
 - **Tests vs. production config:** Tests use their own temp directories. Never hardcode the user app dir path — always
   go through `appDir.kt`.
+- **`LocalServer` config is a binding, not a value:** `LocalServer` receives
+  `ReadOnlyValueDataBinding<CallbackServerConfig>`.
+  Do not change it back to a bare value — that would break cert reset (the singleton would keep stale cert credentials).
+- **`CertificateService` runs before the UI appears:** `initializeIfNeeded()` is called in `main()` between `startKoin`
+  and `showAndRun()`. Errors are shown via `JOptionPane` and the app continues; they do not abort startup.

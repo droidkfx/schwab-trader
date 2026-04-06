@@ -52,7 +52,7 @@ class OauthServiceTest {
         }
         every { repo.loadExistingToken() } returns null
         every { client.triggerOauthFlow() } returns state
-        every { server.awaitReponse() } returns serverResult
+        every { server.awaitResponse() } returns serverResult
         every { client.exchangeOauthToken(any<LocalServer.Result>()) } returns newToken
         return serverResult
     }
@@ -133,7 +133,7 @@ class OauthServiceTest {
         every { repo.loadExistingToken() } answers { if (loadCount++ == 0) initialToken else null }
         every { client.refreshOauth(any()) } throws IllegalStateException("Refresh token expired")
         every { client.triggerOauthFlow() } returns state
-        every { server.awaitReponse() } returns serverResult
+        every { server.awaitResponse() } returns serverResult
         every { client.exchangeOauthToken(any<LocalServer.Result>()) } returns newToken
         return serverResult
     }

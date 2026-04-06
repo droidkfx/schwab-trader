@@ -36,8 +36,31 @@ class MenuBar(
                     settingsDialog.showDialog()
                 }
             })
+            this.add(JMenuItem("Reset Certificate").apply {
+                addCoActionListener {
+                    val confirm = JOptionPane.showConfirmDialog(
+                        null,
+                        "This will delete and regenerate the local SSL certificate.\nProceed?",
+                        "Reset Certificate",
+                        JOptionPane.YES_NO_OPTION
+                    )
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        try {
+                            vm.onResetCertificate()
+                        } catch (e: Exception) {
+                            logger.error(e) { "Certificate reset failed" }
+                            JOptionPane.showMessageDialog(
+                                null,
+                                "Certificate reset failed: ${e.message}\nCheck logs for details.",
+                                "Certificate Error",
+                                JOptionPane.ERROR_MESSAGE
+                            )
+                        }
+                    }
+                }
+            })
             this.addSeparator()
-            this.add(JMenuItem("Update Oath").apply {
+            this.add(JMenuItem("Update OAuth").apply {
                 addCoActionListener { vm.onOauthUpdate() }
                 this.isEnabled = vm.updateOauthEnabled.value
                 vm.updateOauthEnabled.addSwingListener { this.isEnabled = it }

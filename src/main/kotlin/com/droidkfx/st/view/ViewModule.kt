@@ -33,7 +33,7 @@ val viewModule = module {
     singleOf(::StatusBarViewModel)
     singleOf(::AccountTabViewModelFactory)
     single {
-        MenuBarViewModel(get(), get(), get(), get(named(accountPositionsBinding)))
+        MenuBarViewModel(get(), get(), get(), get(named(accountPositionsBinding)), get())
     }
     single {
         AccountTabsViewModel(

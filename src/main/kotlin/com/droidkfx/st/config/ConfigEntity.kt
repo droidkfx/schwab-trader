@@ -10,7 +10,7 @@ data class CallbackServerConfig(
     val callbackPath: String = "",
     val sslCertLocation: String = File(getUsersAppDirPath() + "/creds/localhost.pfx").canonicalPath,
     val sslCertPassword: String = "",
-    val sslCertAlias: String = "",
+    val sslCertAlias: String = "schwab-trader-localhost",
     val sslCertType: String = "PKCS12",
 ) {
     fun url() = "https://$host:$port$callbackPath"

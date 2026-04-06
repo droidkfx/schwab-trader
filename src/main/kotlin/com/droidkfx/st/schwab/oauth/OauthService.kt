@@ -97,7 +97,7 @@ class OauthService(
         existingToken = runBlocking {
             logger.info { "Beginning Oauth flow" }
             tokenStatus.value = OauthStatus.INITIALIZING
-            val resultDeferred = server.awaitReponse()
+            val resultDeferred = server.awaitResponse()
 
             val requestState = client.triggerOauthFlow()
 

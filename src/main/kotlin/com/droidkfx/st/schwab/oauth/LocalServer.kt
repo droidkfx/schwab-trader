@@ -1,9 +1,9 @@
 package com.droidkfx.st.schwab.oauth
 
 import com.droidkfx.st.config.CallbackServerConfig
+import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.ApplicationStopped
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.EmbeddedServer
 import io.ktor.server.engine.embeddedServer
@@ -13,6 +13,10 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.html.body
 import kotlinx.html.h3
 import kotlinx.html.head
@@ -26,28 +30,29 @@ import java.security.KeyStore
 
 
 class LocalServer(
-    val callbackServerConfig: CallbackServerConfig
+    private val callbackServerConfig: ReadOnlyValueDataBinding<CallbackServerConfig>
 ) {
     data class Result(val code: String?, val session: String?, val state: String?, val error: String?)
 
     private val logger = logger {}
 
-    private val result = CompletableDeferred<Result>()
+    private var result = CompletableDeferred<Result>()
     private var server: EmbeddedServer<*, *>? = null
 
-    fun awaitReponse(): CompletableDeferred<Result> {
-        logger.trace { "awaitReponse" }
+    fun awaitResponse(): CompletableDeferred<Result> {
+        logger.trace { "awaitResponse" }
         if (server != null) {
             logger.debug { "Server already running" }
             return result
         }
 
-        logger.debug { "Starting local server on port ${callbackServerConfig.port}" }
+        result = CompletableDeferred()
+        logger.debug { "Starting local server on port ${callbackServerConfig.value.port}" }
         server = embeddedServer(Netty, configure = { envConfig() }) {
             routing {
-                get(callbackServerConfig.callbackPath) {
+                get(callbackServerConfig.value.callbackPath) {
                     logger.debug { "Received callback" }
-                    val code = URLDecoder.decode(call.request.queryParameters["code"], "UTF-8")
+                    val code = call.request.queryParameters["code"]?.let { URLDecoder.decode(it, "UTF-8") }
                     val session = call.request.queryParameters["session"]
                     val error = call.request.queryParameters["error"]
                     val state = call.request.queryParameters["state"]
@@ -84,14 +89,10 @@ class LocalServer(
                     }
                     // stop asynchronously to let response flush
                     // small delay avoids abrupt connection close
-                    call.application.monitor.subscribe(ApplicationStopped) {
-                        // no-op
-                    }
-                    // Stop the server on a separate thread
-                    Thread {
-                        Thread.sleep(200)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        delay(200)
                         stop()
-                    }.start()
+                    }
                 }
             }
         }.start(false)
@@ -107,18 +108,19 @@ class LocalServer(
     }
 
     private fun ApplicationEngine.Configuration.envConfig() {
-        val keyStore = KeyStore.getInstance(callbackServerConfig.sslCertType).apply {
-            FileInputStream(File(callbackServerConfig.sslCertLocation)).use {
-                load(it, callbackServerConfig.sslCertPassword.toCharArray())
+        val cfg = callbackServerConfig.value
+        val keyStore = KeyStore.getInstance(cfg.sslCertType).apply {
+            FileInputStream(File(cfg.sslCertLocation)).use {
+                load(it, cfg.sslCertPassword.toCharArray())
             }
         }
         sslConnector(
             keyStore = keyStore,
-            keyAlias = callbackServerConfig.sslCertAlias,
-            keyStorePassword = { callbackServerConfig.sslCertPassword.toCharArray() },
-            privateKeyPassword = { callbackServerConfig.sslCertPassword.toCharArray() }) {
-            port = callbackServerConfig.port
-            keyStorePath = File(callbackServerConfig.sslCertLocation)
+            keyAlias = cfg.sslCertAlias,
+            keyStorePassword = { cfg.sslCertPassword.toCharArray() },
+            privateKeyPassword = { cfg.sslCertPassword.toCharArray() }) {
+            port = cfg.port
+            keyStorePath = File(cfg.sslCertLocation)
         }
     }
 }

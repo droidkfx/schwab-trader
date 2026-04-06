@@ -5,6 +5,7 @@ import com.droidkfx.st.position.AccountPosition
 import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.schwab.oauth.OauthService
 import com.droidkfx.st.schwab.oauth.OauthStatus
+import com.droidkfx.st.schwab.oauth.cert.CertificateService
 import com.droidkfx.st.util.databind.ReadOnlyValueDataBinding
 import com.droidkfx.st.util.databind.ReadWriteListDataBinding
 import com.droidkfx.st.util.databind.readOnlyMapped
@@ -15,6 +16,7 @@ class MenuBarViewModel(
     private val accountService: AccountService,
     private val oauthService: OauthService,
     private val accountData: ReadWriteListDataBinding<AccountPosition>,
+    private val certificateService: CertificateService,
 ) {
     private val logger = logger {}
 
@@ -32,6 +34,11 @@ class MenuBarViewModel(
     fun onOauthInvalidate() {
         logger.trace { "onOauthInvalidate" }
         oauthService.invalidateOauth()
+    }
+
+    fun onResetCertificate() {
+        logger.info { "onResetCertificate" }
+        certificateService.reset()
     }
 
     fun onClearAllData() {

@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
 import javax.swing.JButton
 import javax.swing.JMenuItem
+import javax.swing.JTable
 
 internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Swing),
@@ -36,6 +37,27 @@ internal fun <T> ListDataBinding<T>.addSwingListener(
     listener: (ListDataBindingEvent<T>) -> Unit
 ) {
     addListener { scope.launch { listener(it) } }
+}
+
+private const val COLUMN_MARGIN = 10
+
+internal fun JTable.packColumns() {
+    for (col in 0 until columnCount) {
+        val tableColumn = columnModel.getColumn(col)
+        val headerComp = tableHeader?.defaultRenderer?.getTableCellRendererComponent(
+            this, tableColumn.headerValue, false, false, -1, col
+        )
+        var colWidth = headerComp?.preferredSize?.width ?: 0
+        for (row in 0 until rowCount) {
+            val cellComp = getCellRenderer(row, col).getTableCellRendererComponent(
+                this, getValueAt(row, col), false, false, row, col
+            )
+            colWidth = maxOf(colWidth, cellComp.preferredSize.width)
+        }
+        colWidth += COLUMN_MARGIN
+        tableColumn.minWidth = colWidth
+        tableColumn.preferredWidth = colWidth
+    }
 }
 
 internal fun JMenuItem.addCoActionListener(

@@ -8,24 +8,31 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
+import java.awt.Dimension
+import java.awt.event.HierarchyEvent
 import java.math.BigDecimal
+import javax.swing.JFrame
 import javax.swing.JScrollPane
 import javax.swing.JTable
+import javax.swing.SwingUtilities
 import javax.swing.event.TableModelListener
 
 class AllocationTable(data: ReadWriteListDataBinding<AllocationRowViewModel>) : JScrollPane() {
     private val logger = KotlinLogging.logger {}
 
     private val allocationTableModel: AllocationTableModel = AllocationTableModel(data) { data.add(it) }
+    private val table: JTable = JTable(allocationTableModel).apply { autoCreateRowSorter = true }
 
     init {
         logger.trace { "Initializing" }
-        setViewportView(
-            JTable(allocationTableModel).apply {
-                autoCreateRowSorter = true
-            })
+        setViewportView(table)
         data.addSwingListener {
             notifyDataChanged()
+        }
+        addHierarchyListener { e ->
+            if (e.changeFlags and HierarchyEvent.SHOWING_CHANGED.toLong() != 0L && isShowing) {
+                refreshColumnWidths()
+            }
         }
     }
 
@@ -35,6 +42,21 @@ class AllocationTable(data: ReadWriteListDataBinding<AllocationRowViewModel>) : 
 
     fun notifyDataChanged() {
         allocationTableModel.fireTableDataChanged()
+        refreshColumnWidths()
+    }
+
+    private fun refreshColumnWidths() {
+        table.packColumns()
+        updateFrameMinimumWidth()
+    }
+
+    private fun updateFrameMinimumWidth() {
+        val frame = SwingUtilities.getWindowAncestor(this) as? JFrame ?: return
+        val scrollBarWidth = verticalScrollBar?.preferredSize?.width ?: 0
+        val borderInsets = border?.getBorderInsets(this)
+        val borderWidth = (borderInsets?.left ?: 0) + (borderInsets?.right ?: 0)
+        val minWidth = table.columnModel.totalColumnWidth + scrollBarWidth + borderWidth
+        frame.minimumSize = Dimension(minWidth, frame.minimumSize.height)
     }
 }
 

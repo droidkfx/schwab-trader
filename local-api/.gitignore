@@ -1,0 +1,6 @@
+# Bearer token — contains session credentials, never commit
+.schwab-token
+
+# Generated spec snapshots — local only, refresh with fetch-schwab-spec.py
+schwab-*-spec.json
+schwab-*-spec.raw.json

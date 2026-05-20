@@ -1,10 +1,14 @@
 @file:Suppress("SpellCheckingInspection")
 
+import java.time.Instant
+import java.time.temporal.ChronoUnit
+
 plugins {
     kotlin("jvm") version "2.2.0"
     kotlin("plugin.serialization") version "2.2.20"
     id("jacoco")
     id("edu.sc.seis.launch4j") version "4.0.0"
+    id("com.github.gmazzo.buildconfig") version "6.0.9"
 //    id("dev.msfjarvis.tracelog") version "0.1.3"
 }
 
@@ -53,6 +57,46 @@ dependencies {
     testImplementation("io.mockk:mockk:1.14.0")
 }
 
+fun gitLine(vararg args: String): String =
+    try {
+        ProcessBuilder("git", *args)
+            .redirectErrorStream(true)
+            .start()
+            .inputStream
+            .bufferedReader()
+            .readLine()
+            ?.trim()
+            ?.takeIf { !it.startsWith("fatal:") && !it.startsWith("error:") }
+            ?: ""
+    } catch (_: Exception) {
+        ""
+    }
+
+val shortHash = gitLine("rev-parse", "--short", "HEAD").ifEmpty { "N/A" }
+val branch = gitLine("rev-parse", "--abbrev-ref", "HEAD").ifEmpty { "N/A" }
+val isDirty =
+    try {
+        ProcessBuilder("git", "status", "--porcelain")
+            .redirectErrorStream(true)
+            .start()
+            .inputStream
+            .bufferedReader()
+            .readLine() != null
+    } catch (_: Exception) {
+        true
+    }
+
+buildConfig {
+    className("BuildInfo")
+    packageName("com.droidkfx.st")
+    useKotlinOutput()
+
+    buildConfigField("VERSION", provider { if (isDirty) "$version-SNAPSHOT" else version.toString() })
+    buildConfigField("GIT_HASH", provider { if (isDirty) "$shortHash-SNAPSHOT" else shortHash })
+    buildConfigField("GIT_BRANCH", provider { if (isDirty) "$branch-SNAPSHOT" else branch })
+    buildConfigField("BUILD_TIME", provider { Instant.now().truncatedTo(ChronoUnit.SECONDS).toString() })
+}
+
 tasks.jar {
     manifest {
         attributes["Main-Class"] = "com.droidkfx.st.MainKt"
@@ -79,6 +123,11 @@ tasks.jacocoTestReport {
         html.required.set(true)
 //        html.outputLocation.set(File("./reports/jacocoHtml"))
     }
+    classDirectories.setFrom(
+        fileTree(layout.buildDirectory.dir("classes/kotlin/main")) {
+            exclude("com/droidkfx/st/BuildInfo.class")
+        },
+    )
     finalizedBy("jacocoTestCoverageVerification")
 }
 

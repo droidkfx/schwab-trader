@@ -4,6 +4,8 @@ import com.droidkfx.st.position.AccountPositionService
 import com.droidkfx.st.schwab.oauth.OauthService
 import com.droidkfx.st.util.databind.toDataBinding
 import com.droidkfx.st.util.progress.ProgressService
+import com.droidkfx.st.view.about.AboutDialog
+import com.droidkfx.st.view.about.AboutViewModel
 import com.droidkfx.st.view.model.AccountTabViewModelFactory
 import com.droidkfx.st.view.model.AccountTabsViewModel
 import com.droidkfx.st.view.model.MenuBarViewModel
@@ -30,6 +32,7 @@ val viewModule = module {
                 .toDataBinding()
         }
     }
+    singleOf(::AboutViewModel)
     singleOf(::StatusBarViewModel)
     singleOf(::AccountTabViewModelFactory)
     single {
@@ -45,6 +48,7 @@ val viewModule = module {
     }
 
     // Views
+    singleOf(::AboutDialog)
     singleOf(::StatusBar)
     singleOf(::MenuBar)
     singleOf(::AccountTabs)

@@ -1,5 +1,6 @@
 package com.droidkfx.st.view
 
+import com.droidkfx.st.view.about.AboutDialog
 import com.droidkfx.st.view.model.MenuBarViewModel
 import com.droidkfx.st.view.setting.SettingsDialog
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
@@ -11,6 +12,7 @@ import javax.swing.JOptionPane
 class MenuBar(
     vm: MenuBarViewModel,
     private val settingsDialog: SettingsDialog,
+    private val aboutDialog: AboutDialog,
 ) : JMenuBar() {
     private val logger = logger {}
 
@@ -69,6 +71,11 @@ class MenuBar(
                 addCoActionListener { vm.onOauthInvalidate() }
                 this.isEnabled = vm.invalidateOauthEnabled.value
                 vm.invalidateOauthEnabled.addSwingListener { this.isEnabled = it }
+            })
+        })
+        add(JMenu("Help").apply {
+            this.add(JMenuItem("About").apply {
+                addSwingListener { aboutDialog.showDialog() }
             })
         })
     }

@@ -76,12 +76,25 @@ val shortHash = gitLine("rev-parse", "--short", "HEAD").ifEmpty { "N/A" }
 val branch = gitLine("rev-parse", "--abbrev-ref", "HEAD").ifEmpty { "N/A" }
 val isDirty =
     try {
-        ProcessBuilder("git", "status", "--porcelain")
+        val lines = ProcessBuilder("git", "status", "--porcelain")
             .redirectErrorStream(true)
             .start()
             .inputStream
             .bufferedReader()
-            .readLine() != null
+            .readLines()
+        lines.any { line ->
+            if (line.length < 3) return@any false
+            // git status --porcelain format: XY<space>path
+            // Renames appear as "old -> new" — check both sides
+            line.substring(3).split(" -> ").any { path ->
+                val p = path.replace('\\', '/')
+                p.startsWith("src/") ||
+                        p.endsWith(".gradle.kts") ||
+                        p.endsWith(".gradle") ||
+                        p == "gradle.properties" ||
+                        p.startsWith("gradle/")
+            }
+        }
     } catch (_: Exception) {
         true
     }

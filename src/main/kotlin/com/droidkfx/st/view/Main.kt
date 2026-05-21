@@ -4,6 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import java.awt.BorderLayout
 import javax.swing.ImageIcon
 import javax.swing.JFrame
+import javax.swing.JPanel
 
 class Main(
     statusBar: StatusBar,
@@ -22,15 +23,21 @@ class Main(
         } ?: run {
             logger.warn { "No icon found @ 'AppIcon.png'" }
         }
+
+        // Combined bottom bar: active dock tab strip (left) + status info (right)
+        val bottomBar = JPanel(BorderLayout()).apply {
+            add(accountTabs.dockStripPanel, BorderLayout.WEST)
+            add(statusBar, BorderLayout.CENTER)
+        }
+
         this.apply {
-            size = goldenRatioSize(800)
-            minimumSize = size
+            minimumSize = goldenRatioSize(350)
             defaultCloseOperation = EXIT_ON_CLOSE
 
             jMenuBar = menuBar
 
             contentPane.add(accountTabs, BorderLayout.CENTER)
-            contentPane.add(statusBar, BorderLayout.SOUTH)
+            contentPane.add(bottomBar, BorderLayout.SOUTH)
         }
     }
 

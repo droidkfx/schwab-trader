@@ -15,16 +15,18 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 class AccountTabsViewModel(
     private val accountPositionService: AccountPositionService,
     private val accountService: AccountService,
-    private val factory: AccountTabViewModelFactory,
+    private val accountTabViewModelFactory: AccountTabViewModelFactory,
+    private val ordersViewModelFactory: OrdersViewModelFactory,
     private val accountData: ReadWriteListDataBinding<AccountPosition>,
     oauthStatus: ReadOnlyValueDataBinding<OauthStatus>,
     private val progressService: ProgressService,
 ) {
     private val logger = logger {}
 
-    val accountTabs: ReadOnlyListDataBinding<AccountTabViewModel> = accountData.mapped { ap ->
-        factory.create(ap)
+    val accountTabBundles: ReadOnlyListDataBinding<AccountTabBundle> = accountData.mapped { ap ->
+        AccountTabBundle(accountTabViewModelFactory.create(ap), ordersViewModelFactory.create(ap.account))
     }
+
     val canRefresh: ReadOnlyValueDataBinding<Boolean> = oauthStatus.readOnlyMapped { it == OauthStatus.READY }
 
     suspend fun refreshAllAccounts() {

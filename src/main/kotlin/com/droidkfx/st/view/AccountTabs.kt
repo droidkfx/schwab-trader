@@ -2,6 +2,8 @@ package com.droidkfx.st.view
 
 import com.droidkfx.st.view.model.AccountTabsViewModel
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
+import java.awt.BorderLayout
+import java.awt.CardLayout
 import javax.swing.Box
 import javax.swing.BoxLayout
 import javax.swing.JButton
@@ -11,27 +13,40 @@ import javax.swing.JTabbedPane
 
 class AccountTabs(
     private val vm: AccountTabsViewModel,
-) : JTabbedPane() {
+) : JPanel(BorderLayout()) {
     private val logger = logger {}
+
+    private val tabbedPane = JTabbedPane()
+
+    /** CardLayout panel that shows the active account tab's dock strip.
+     *  Placed by Main alongside the StatusBar so they share the same row. */
+    private val dockCardLayout = CardLayout()
+    val dockStripPanel: JPanel = JPanel(dockCardLayout)
 
     init {
         logger.trace { "Initializing" }
+        add(tabbedPane, BorderLayout.CENTER)
         buildTabs()
-        vm.accountTabs.addSwingListener {
-            this.removeAll()
+        vm.accountTabBundles.addSwingListener {
+            tabbedPane.removeAll()
+            dockStripPanel.removeAll()
             buildTabs()
         }
+        tabbedPane.addChangeListener { showActiveDockStrip() }
     }
 
     private fun buildTabs() {
-        vm.accountTabs.forEachIndexed { index, tabVm ->
-            addTab(tabVm.accountNameDataBinding.value, AccountTab(tabVm))
-            tabVm.accountNameDataBinding.addSwingListener {
-                setTitleAt(index, it)
+        vm.accountTabBundles.forEachIndexed { index, bundle ->
+            val accountTab = AccountTab(bundle.accountVm, bundle.ordersVm)
+            tabbedPane.addTab(bundle.accountVm.accountNameDataBinding.value, accountTab)
+            dockStripPanel.add(accountTab.dock.tabStrip, "dock_$index")
+            bundle.accountVm.accountNameDataBinding.addSwingListener {
+                tabbedPane.setTitleAt(index, it)
             }
         }
-        if (vm.accountTabs.isEmpty()) {
-            addTab("Getting Started", JPanel().apply {
+        if (vm.accountTabBundles.isEmpty()) {
+            dockStripPanel.add(JPanel(), "dock_empty")
+            tabbedPane.addTab("Getting Started", JPanel().apply {
                 layout = BoxLayout(this, BoxLayout.Y_AXIS)
                 add(Box.createVerticalGlue())
                 add(JLabel("It does not look like you have synced any accounts yet. Click below to get started").apply {
@@ -58,5 +73,12 @@ class AccountTabs(
                 add(Box.createVerticalGlue())
             })
         }
+        showActiveDockStrip()
+    }
+
+    private fun showActiveDockStrip() {
+        val idx = tabbedPane.selectedIndex.coerceAtLeast(0)
+        val key = if (vm.accountTabBundles.isEmpty()) "dock_empty" else "dock_$idx"
+        dockCardLayout.show(dockStripPanel, key)
     }
 }

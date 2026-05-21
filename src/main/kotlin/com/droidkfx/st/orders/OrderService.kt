@@ -11,7 +11,10 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import java.time.LocalDate
 import java.time.ZoneId
 
-class OrderService(private val ordersClient: OrdersClient) {
+class OrderService(
+    private val ordersClient: OrdersClient,
+    private val orderRepository: OrderRepository,
+) {
     private val logger = logger {}
 
     suspend fun order(account: Account, recommendation: PositionRecommendation) {
@@ -21,9 +24,7 @@ class OrderService(private val ordersClient: OrdersClient) {
         } else {
             logger.debug {
                 "submitting order ${recommendation.recommendation} for ${recommendation.symbol} @ ${
-                    recommendation.price.setScale(
-                        2
-                    )
+                    recommendation.price.setScale(2)
                 }"
             }
             val response = ordersClient.order(account, recommendation)
@@ -31,6 +32,7 @@ class OrderService(private val ordersClient: OrdersClient) {
                 logger.error { "Error placing order: ${response.error}" }
             } else {
                 logger.debug { "Order placed successfully" }
+                fetchOrders(account, lookbackDays = 1)
             }
         }
     }
@@ -54,13 +56,36 @@ class OrderService(private val ordersClient: OrdersClient) {
             LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant(),
         )
         return ordersResponse.data?.filter {
-            if (it.status == null) {
-                return@filter false
-            }
+            if (it.status == null) return@filter false
             return@filter when (it.status) {
                 Status.CANCELED, Status.FILLED, Status.EXPIRED -> false
                 else -> true
             }
         } ?: emptyList()
+    }
+
+    fun getOrders(account: Account): List<CachedOrder> {
+        logger.trace { "getOrders for account: ${account.id}" }
+        return orderRepository.loadOrders(account.id)
+    }
+
+    suspend fun fetchOrders(account: Account, lookbackDays: Int = 60): List<CachedOrder> {
+        logger.debug { "fetchOrders for account: ${account.id} lookbackDays=$lookbackDays" }
+        val response = ordersClient.getAccountOrders(
+            account.accountNumberHash,
+            LocalDate.now().minusDays(lookbackDays.toLong()).atStartOfDay(ZoneId.systemDefault()).toInstant(),
+            LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant(),
+        )
+        if (response.error != null) {
+            logger.error { "Error fetching orders: ${response.error}" }
+            return orderRepository.loadOrders(account.id)
+        }
+        val fresh = response.data?.mapNotNull { it.toCachedOrder(account.id) } ?: emptyList()
+        val existing = orderRepository.loadOrders(account.id).associateBy { it.orderId }.toMutableMap()
+        fresh.forEach { existing[it.orderId] = it }
+        val merged = existing.values.sortedByDescending { it.enteredTime }
+        orderRepository.saveOrders(account.id, merged)
+        logger.debug { "fetchOrders: saved ${merged.size} orders for account ${account.id}" }
+        return merged
     }
 }

@@ -9,6 +9,7 @@ import com.droidkfx.st.view.about.AboutViewModel
 import com.droidkfx.st.view.model.AccountTabViewModelFactory
 import com.droidkfx.st.view.model.AccountTabsViewModel
 import com.droidkfx.st.view.model.MenuBarViewModel
+import com.droidkfx.st.view.model.OrdersViewModelFactory
 import com.droidkfx.st.view.model.StatusBarViewModel
 import com.droidkfx.st.view.setting.settingsModule
 import com.formdev.flatlaf.FlatDarkLaf
@@ -35,12 +36,13 @@ val viewModule = module {
     singleOf(::AboutViewModel)
     singleOf(::StatusBarViewModel)
     singleOf(::AccountTabViewModelFactory)
+    singleOf(::OrdersViewModelFactory)
     single {
         MenuBarViewModel(get(), get(), get(), get(named(accountPositionsBinding)), get())
     }
     single {
         AccountTabsViewModel(
-            get(), get(), get(),
+            get(), get(), get(), get(),
             get(named(accountPositionsBinding)),
             get<OauthService>().getTokenStatusBinding(),
             get(),

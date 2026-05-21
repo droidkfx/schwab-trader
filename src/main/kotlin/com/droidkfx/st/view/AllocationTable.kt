@@ -25,6 +25,7 @@ class AllocationTable(data: ReadWriteListDataBinding<AllocationRowViewModel>) : 
 
     init {
         logger.trace { "Initializing" }
+        verticalScrollBarPolicy = VERTICAL_SCROLLBAR_ALWAYS
         setViewportView(table)
         data.addSwingListener {
             notifyDataChanged()
@@ -52,10 +53,15 @@ class AllocationTable(data: ReadWriteListDataBinding<AllocationRowViewModel>) : 
 
     private fun updateFrameMinimumWidth() {
         val frame = SwingUtilities.getWindowAncestor(this) as? JFrame ?: return
+        if (width == 0) return
         val scrollBarWidth = verticalScrollBar?.preferredSize?.width ?: 0
         val borderInsets = border?.getBorderInsets(this)
         val borderWidth = (borderInsets?.left ?: 0) + (borderInsets?.right ?: 0)
-        val minWidth = table.columnModel.totalColumnWidth + scrollBarWidth + borderWidth
+        // Capture all horizontal space consumed by intermediate containers (frame
+        // decorations, JTabbedPane insets, JSplitPane border, etc.) from the live
+        // layout rather than hard-coding each layer.
+        val surroundingWidth = frame.width - width
+        val minWidth = table.columnModel.totalColumnWidth + scrollBarWidth + borderWidth + surroundingWidth
         frame.minimumSize = Dimension(minWidth, frame.minimumSize.height)
     }
 }

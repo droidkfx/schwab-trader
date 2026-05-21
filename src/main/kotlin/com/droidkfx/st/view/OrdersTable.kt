@@ -12,6 +12,7 @@ class OrdersTable(data: ReadWriteListDataBinding<OrderRowViewModel>) : JScrollPa
     private val table = JTable(tableModel).apply { autoCreateRowSorter = true }
 
     init {
+        verticalScrollBarPolicy = VERTICAL_SCROLLBAR_ALWAYS
         setViewportView(table)
         data.addSwingListener { notifyDataChanged() }
     }

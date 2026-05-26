@@ -254,8 +254,13 @@ class MultiSelectDropDown<T>(
                 // matching FlatLaf's FlatBorder which draws at (x + lw/2, y + lw/2).
                 g2.draw(
                     java.awt.geom.RoundRectangle2D.Float(
-                        x + 0.5f, y + 0.5f, width - 1f, height - 1f, arc, arc
-                    )
+                        x + 0.5f,
+                        y + 0.5f,
+                        width - 1f,
+                        height - 1f,
+                        arc,
+                        arc,
+                    ),
                 )
             } finally {
                 g2.dispose()

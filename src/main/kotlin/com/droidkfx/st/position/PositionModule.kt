@@ -9,9 +9,21 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val positionModule = module {
-    single { TargetPositionRepository(get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).readOnlyMapped { it.repositoryRoot }) }
+    single {
+        TargetPositionRepository(
+            get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).readOnlyMapped {
+                it.repositoryRoot
+            },
+        )
+    }
     singleOf(::PositionTargetService)
-    single { PositionRepository(get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).readOnlyMapped { it.repositoryRoot }) }
+    single {
+        PositionRepository(
+            get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).readOnlyMapped {
+                it.repositoryRoot
+            },
+        )
+    }
     singleOf(::PositionService)
 
     singleOf(::AccountPositionService)

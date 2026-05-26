@@ -17,12 +17,16 @@ class StatusBar(vm: StatusBarViewModel) : JPanel() {
         border = BorderFactory.createEmptyBorder(2, 8, 2, 8)
 
         val rightPanel = JPanel(FlowLayout(FlowLayout.LEFT, 8, 0)).apply {
-            add(JLabel(vm.progressText.value).apply {
-                vm.progressText.addSwingListener { text = it }
-            })
-            add(JLabel("Oauth Status: ${vm.oauthStatus.value}").apply {
-                vm.oauthStatus.addSwingListener { text = "Oauth Status: $it" }
-            })
+            add(
+                JLabel(vm.progressText.value).apply {
+                    vm.progressText.addSwingListener { text = it }
+                },
+            )
+            add(
+                JLabel("Oauth Status: ${vm.oauthStatus.value}").apply {
+                    vm.oauthStatus.addSwingListener { text = "Oauth Status: $it" }
+                },
+            )
         }
         add(rightPanel, BorderLayout.EAST)
     }

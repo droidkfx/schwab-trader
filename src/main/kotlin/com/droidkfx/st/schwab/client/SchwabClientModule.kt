@@ -20,11 +20,13 @@ val schwabClientModule = module {
     single {
         HttpClient(Java) {
             install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                    isLenient = true
-                    coerceInputValues = true
-                })
+                json(
+                    Json {
+                        ignoreUnknownKeys = true
+                        isLenient = true
+                        coerceInputValues = true
+                    },
+                )
             }
         }
     }
@@ -36,7 +38,7 @@ val schwabClientModule = module {
     single {
         OauthClient(
             get(named(schwabConfig)),
-            get()
+            get(),
         )
     }
     single {
@@ -45,7 +47,7 @@ val schwabClientModule = module {
             get(),
             get(named(OAUTH_TOKEN)),
             get(named(OAUTH_REFRESH_SIGNAL)),
-            get<ValueDataBinding<OauthStatus>>(named(OAUTH_TOKEN_STATUS))
+            get<ValueDataBinding<OauthStatus>>(named(OAUTH_TOKEN_STATUS)),
         )
     }
     single {
@@ -54,7 +56,7 @@ val schwabClientModule = module {
             get(),
             get(named(OAUTH_TOKEN)),
             get(named(OAUTH_REFRESH_SIGNAL)),
-            get<ValueDataBinding<OauthStatus>>(named(OAUTH_TOKEN_STATUS))
+            get<ValueDataBinding<OauthStatus>>(named(OAUTH_TOKEN_STATUS)),
         )
     }
     single {
@@ -63,7 +65,7 @@ val schwabClientModule = module {
             get(),
             get(named(OAUTH_TOKEN)),
             get(named(OAUTH_REFRESH_SIGNAL)),
-            get<ValueDataBinding<OauthStatus>>(named(OAUTH_TOKEN_STATUS))
+            get<ValueDataBinding<OauthStatus>>(named(OAUTH_TOKEN_STATUS)),
         )
     }
     single {
@@ -72,7 +74,7 @@ val schwabClientModule = module {
             get(),
             get(named(OAUTH_TOKEN)),
             get(named(OAUTH_REFRESH_SIGNAL)),
-            get<ValueDataBinding<OauthStatus>>(named(OAUTH_TOKEN_STATUS))
+            get<ValueDataBinding<OauthStatus>>(named(OAUTH_TOKEN_STATUS)),
         )
     }
     single {

@@ -28,10 +28,7 @@ import java.time.Instant
 import java.util.UUID
 import kotlin.io.encoding.Base64
 
-class OauthClient(
-    val config: ReadOnlyValueDataBinding<SchwabClientConfig>,
-    val client: HttpClient,
-) {
+class OauthClient(val config: ReadOnlyValueDataBinding<SchwabClientConfig>, val client: HttpClient) {
     private val logger = logger {}
 
     fun refreshOauth(refreshToken: String): OauthTokenResponse = exchangeOauthToken(refreshToken, "refresh_token")
@@ -43,10 +40,7 @@ class OauthClient(
         return exchangeOauthToken(result.code, "authorization_code")
     }
 
-    fun exchangeOauthToken(
-        token: String,
-        grantType: String,
-    ): OauthTokenResponse = runBlocking {
+    fun exchangeOauthToken(token: String, grantType: String): OauthTokenResponse = runBlocking {
         client.post {
             url.apply {
                 host = config.value.baseApiUrl
@@ -54,14 +48,14 @@ class OauthClient(
                 encodedPath = "/v1/oauth/token"
             }
             val body = StringBuilder()
-            body.append("grant_type=${grantType}")
+            body.append("grant_type=$grantType")
             when (grantType) {
                 "authorization_code" -> {
-                    body.append("&code=${token}&redirect_uri=${config.value.callbackServerConfig.url()}")
+                    body.append("&code=$token&redirect_uri=${config.value.callbackServerConfig.url()}")
                 }
 
                 "refresh_token" -> {
-                    body.append("&refresh_token=${token}")
+                    body.append("&refresh_token=$token")
                 }
 
                 else -> {
@@ -88,22 +82,18 @@ class OauthClient(
             buildAuthorizeUrl(
                 config.value.key,
                 config.value.callbackServerConfig.url(),
-                state
-            )
+                state,
+            ),
         )
         return state
     }
 
-    private fun buildAuthorizeUrl(
-        clientId: String,
-        redirectUri: String,
-        state: String,
-    ): String {
+    private fun buildAuthorizeUrl(clientId: String, redirectUri: String, state: String): String {
         val params = mutableListOf(
             "client_id=${clientId.urlEncode()}",
             "redirect_uri=${redirectUri.urlEncode()}",
             "response_type=code",
-            "state=${state.urlEncode()}"
+            "state=${state.urlEncode()}",
         )
         return "https://${config.value.baseApiUrl}/v1/oauth/authorize?${params.joinToString("&")}"
     }
@@ -116,11 +106,8 @@ class OauthClient(
         }
     }
 
-    private fun String.urlEncode(): String {
-        return URLEncoder.encode(this, StandardCharsets.UTF_8)
-    }
+    private fun String.urlEncode(): String = URLEncoder.encode(this, StandardCharsets.UTF_8)
 }
-
 
 @Serializable
 @OptIn(ExperimentalSerializationApi::class)
@@ -136,7 +123,7 @@ data class OauthTokenResponse(
     @JsonNames("access_token")
     val accessToken: String,
     @JsonNames("id_token")
-    val idToken: String
+    val idToken: String,
 ) {
 
     @Transient

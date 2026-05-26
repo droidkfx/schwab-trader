@@ -7,7 +7,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 internal class ConfigRepository :
     FileRepository(
         logger {},
-        getUsersAppDirPath().toDataBinding()
+        getUsersAppDirPath().toDataBinding(),
     ) {
 
     private var currentConfig: ConfigEntity? = null

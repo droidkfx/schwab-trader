@@ -26,7 +26,7 @@ private class JdkKeyTool : CertificateKeytool {
         "-storepass", password,
         "-keypass", password,
         "-dname", "CN=localhost, O=schwab-trader, C=US",
-        "-ext", "SAN=dns:localhost,ip:127.0.0.1"
+        "-ext", "SAN=dns:localhost,ip:127.0.0.1",
     )
 
     override fun exportCertificate(
@@ -34,7 +34,7 @@ private class JdkKeyTool : CertificateKeytool {
         certFile: File,
         alias: String,
         password: String,
-        storeType: String
+        storeType: String,
     ) = run(
         "-exportcert",
         "-alias", alias,
@@ -42,7 +42,7 @@ private class JdkKeyTool : CertificateKeytool {
         "-storetype", storeType,
         "-storepass", password,
         "-file", certFile.absolutePath,
-        "-rfc"
+        "-rfc",
     )
 
     private fun run(vararg args: String) {

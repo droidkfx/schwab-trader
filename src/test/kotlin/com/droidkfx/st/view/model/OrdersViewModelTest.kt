@@ -165,7 +165,7 @@ class OrdersViewModelTest {
             cache = listOf(
                 order(1L, Status.WORKING),
                 order(2L, Status.FILLED),
-            )
+            ),
         )
         // Default is all statuses, last 30 days — both visible
         assertEquals(2, vm.displayOrders.size)

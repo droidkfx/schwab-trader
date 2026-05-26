@@ -157,7 +157,7 @@ class ValueDataBindingTest {
         val valueDataBinding = ValueDataBinding(1)
         val mappedDatabind = valueDataBinding.mapped(
             mapperFrom = { it.toString() },
-            mapperUp = { it, _ -> it }
+            mapperUp = { it, _ -> it },
         )
         assertEquals("1", mappedDatabind.value)
     }
@@ -167,7 +167,7 @@ class ValueDataBindingTest {
         val valueDataBinding = ValueDataBinding(1)
         val mappedDatabind = valueDataBinding.mapped(
             mapperFrom = { it.toString() },
-            mapperUp = { it, _ -> it }
+            mapperUp = { it, _ -> it },
         )
         assertEquals("1", mappedDatabind.value)
 
@@ -182,7 +182,7 @@ class ValueDataBindingTest {
         valueDataBinding.addListener { _ -> listenerExecuted = true }
         val mappedDatabind = valueDataBinding.mapped(
             mapperFrom = { "TROLOLOL" },
-            mapperUp = { it, _ -> it }
+            mapperUp = { it, _ -> it },
         )
         mappedDatabind.addListener { _, _ -> throw Exception("Should not be called") }
 
@@ -199,7 +199,7 @@ class ValueDataBindingTest {
         valueDataBinding.addListener { _ -> listenerExecuted = true }
         val mappedDatabind = valueDataBinding.mapped(
             mapperFrom = { it.toString() },
-            mapperUp = { it, _ -> it }
+            mapperUp = { it, _ -> it },
         )
         var mappedListenerExecuted1 = false
         var mappedListenerExecuted2 = false
@@ -219,7 +219,7 @@ class ValueDataBindingTest {
         val valueDataBinding = ValueDataBinding(1)
         val mappedDatabind = valueDataBinding.mapped(
             mapperFrom = { it.toString() },
-            mapperUp = { _, str -> str.toInt() }
+            mapperUp = { _, str -> str.toInt() },
         )
 
         mappedDatabind.value = "2"
@@ -235,7 +235,7 @@ class ValueDataBindingTest {
         val valueDataBinding = ValueDataBinding(Foo(1, "Foo"))
         val mappedDatabind = valueDataBinding.mapped(
             mapperFrom = { it.name },
-            mapperUp = { it, str -> it.copy(name = str) }
+            mapperUp = { it, str -> it.copy(name = str) },
         )
 
         mappedDatabind.value = "2"

@@ -14,7 +14,7 @@ internal class PositionService(
     private val positionRepository: PositionRepository,
     private val accountClient: AccountsClient,
     private val transactionService: TransactionService,
-    private val orderService: OrderService
+    private val orderService: OrderService,
 ) {
     private val logger = logger {}
     fun getCachedPositions(id: String): CurrentPositions {
@@ -38,7 +38,13 @@ internal class PositionService(
         val transactions = transactionService.getTransactionsToday(account)
         transactions.forEach { transaction ->
             // they come in as negative
-            logger.debug { "adjusting funds for transaction: ${transaction.netAmount} ${transaction.transferItems?.map { it.instrument?.symbol }}" }
+            logger.debug {
+                "adjusting funds for transaction: ${transaction.netAmount} ${
+                    transaction.transferItems?.map {
+                        it.instrument?.symbol
+                    }
+                }"
+            }
             currentValue += transaction.netAmount ?: BigDecimal.ZERO
         }
 
@@ -48,7 +54,7 @@ internal class PositionService(
                 Position(
                     it.instrument?.symbol ?: "UNKNOWN",
                     it.totalQuantity,
-                    it.marketPrice
+                    it.marketPrice,
                 )
             }
 
@@ -66,7 +72,6 @@ internal class PositionService(
 
                             else -> {}
                         }
-
                     }
                 }
             }
@@ -82,5 +87,4 @@ internal class PositionService(
         logger.trace { "clear" }
         positionRepository.clear()
     }
-
 }

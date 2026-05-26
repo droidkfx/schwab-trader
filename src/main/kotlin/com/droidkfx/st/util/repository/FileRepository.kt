@@ -9,7 +9,7 @@ import java.io.File
 
 abstract class FileRepository(
     protected open val logger: KLogger,
-    protected val rootPath: ReadOnlyValueDataBinding<String>
+    protected val rootPath: ReadOnlyValueDataBinding<String>,
 ) {
     protected val json = Json {
         ignoreUnknownKeys = true
@@ -40,12 +40,10 @@ abstract class FileRepository(
     }
 
     @OptIn(ExperimentalSerializationApi::class)
-    internal inline fun <reified T> load(file: File): T? {
-        return file.inputStream().use {
-            json.decodeFromStream<T>(it)
-        }.also {
-            logger.debug { "${T::class.simpleName} loaded from file: ${file.nameWithoutExtension}" }
-        }
+    internal inline fun <reified T> load(file: File): T? = file.inputStream().use {
+        json.decodeFromStream<T>(it)
+    }.also {
+        logger.debug { "${T::class.simpleName} loaded from file: ${file.nameWithoutExtension}" }
     }
 
     internal inline fun <reified T> loadAll(): List<T> {

@@ -13,7 +13,9 @@ import kotlinx.serialization.json.JsonUnquotedLiteral
 import kotlinx.serialization.json.jsonPrimitive
 import java.math.BigDecimal
 
-typealias KBigDecimal = @Serializable(with = BigDecimalSerializer::class) BigDecimal
+typealias KBigDecimal =
+    @Serializable(with = BigDecimalSerializer::class)
+    BigDecimal
 
 @OptIn(ExperimentalSerializationApi::class)
 object BigDecimalSerializer : KSerializer<BigDecimal> {
@@ -24,20 +26,18 @@ object BigDecimalSerializer : KSerializer<BigDecimal> {
      * If decoding JSON uses [JsonDecoder.decodeJsonElement] to get the raw content,
      * otherwise decodes using [Decoder.decodeString].
      */
-    override fun deserialize(decoder: Decoder): BigDecimal =
-        when (decoder) {
-            is JsonDecoder -> decoder.decodeJsonElement().jsonPrimitive.content.toBigDecimal()
-            else -> decoder.decodeString().toBigDecimal()
-        }
+    override fun deserialize(decoder: Decoder): BigDecimal = when (decoder) {
+        is JsonDecoder -> decoder.decodeJsonElement().jsonPrimitive.content.toBigDecimal()
+        else -> decoder.decodeString().toBigDecimal()
+    }
 
     /**
      * If encoding JSON uses [JsonUnquotedLiteral] to encode the exact [BigDecimal] value.
      *
      * Otherwise, [value] is encoded using [Encoder.encodeString].
      */
-    override fun serialize(encoder: Encoder, value: BigDecimal) =
-        when (encoder) {
-            is JsonEncoder -> encoder.encodeJsonElement(JsonUnquotedLiteral(value.toPlainString()))
-            else -> encoder.encodeString(value.toPlainString())
-        }
+    override fun serialize(encoder: Encoder, value: BigDecimal) = when (encoder) {
+        is JsonEncoder -> encoder.encodeJsonElement(JsonUnquotedLiteral(value.toPlainString()))
+        else -> encoder.encodeString(value.toPlainString())
+    }
 }

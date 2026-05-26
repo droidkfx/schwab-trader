@@ -16,7 +16,7 @@ import javax.swing.JTable
 
 internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Swing),
-    listener: DataBindChangeListener<T>
+    listener: DataBindChangeListener<T>,
 ) {
     addListener { oldValue, newValue ->
         scope.launch {
@@ -27,14 +27,14 @@ internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(
 
 internal fun <T> ReadOnlyValueDataBinding<T>.addSwingListener(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Swing),
-    listener: DataBindValueListener<T>
+    listener: DataBindValueListener<T>,
 ) {
     this.addSwingListener(scope, listener.asChangeListener())
 }
 
 internal fun <T> ListDataBinding<T>.addSwingListener(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Swing),
-    listener: (ListDataBindingEvent<T>) -> Unit
+    listener: (ListDataBindingEvent<T>) -> Unit,
 ) {
     addListener { scope.launch { listener(it) } }
 }
@@ -45,12 +45,22 @@ internal fun JTable.packColumns() {
     for (col in 0 until columnCount) {
         val tableColumn = columnModel.getColumn(col)
         val headerComp = tableHeader?.defaultRenderer?.getTableCellRendererComponent(
-            this, tableColumn.headerValue, false, false, -1, col
+            this,
+            tableColumn.headerValue,
+            false,
+            false,
+            -1,
+            col,
         )
         var colWidth = headerComp?.preferredSize?.width ?: 0
         for (row in 0 until rowCount) {
             val cellComp = getCellRenderer(row, col).getTableCellRendererComponent(
-                this, getValueAt(row, col), false, false, row, col
+                this,
+                getValueAt(row, col),
+                false,
+                false,
+                row,
+                col,
             )
             colWidth = maxOf(colWidth, cellComp.preferredSize.width)
         }
@@ -62,7 +72,7 @@ internal fun JTable.packColumns() {
 
 internal fun JMenuItem.addCoActionListener(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Default),
-    function: suspend () -> Unit
+    function: suspend () -> Unit,
 ) {
     addActionListener {
         scope.launch {
@@ -73,7 +83,7 @@ internal fun JMenuItem.addCoActionListener(
 
 internal fun JMenuItem.addSwingListener(
     scope: CoroutineScope = CoroutineScope(Dispatchers.Default),
-    function: suspend () -> Unit
+    function: suspend () -> Unit,
 ) {
     addActionListener {
         scope.launch {
@@ -90,6 +100,6 @@ internal fun JButton.addCoActionListener(function: suspend () -> Unit) {
     }
 }
 
-private const val goldenRatio = 1.618
+private const val GOLDEN_RATIO = 1.618
 
-fun goldenRatioSize(size: Int) = java.awt.Dimension((size * goldenRatio).toInt(), size)
+fun goldenRatioSize(size: Int) = java.awt.Dimension((size * GOLDEN_RATIO).toInt(), size)

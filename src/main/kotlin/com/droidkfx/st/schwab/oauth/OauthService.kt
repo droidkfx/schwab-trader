@@ -9,6 +9,7 @@ import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import java.time.Instant
+import kotlin.time.Duration.Companion.seconds
 
 class OauthService(
     val repo: OauthRepository,
@@ -16,7 +17,7 @@ class OauthService(
     val server: LocalServer,
     val tokenStatus: ValueDataBinding<OauthStatus>,
     val authToken: ValueDataBinding<String?> = ValueDataBinding(null),
-    tokenRefreshSignal: ValueDataBinding<Boolean>
+    tokenRefreshSignal: ValueDataBinding<Boolean>,
 ) {
     private val logger = logger {}
     private var existingToken: OauthTokenResponse? = obtainAuth(doInit = false, allowRefresh = false)
@@ -102,7 +103,7 @@ class OauthService(
             val requestState = client.triggerOauthFlow()
 
             val result: LocalServer.Result = try {
-                withTimeout(30_000) {
+                withTimeout(30.seconds) {
                     resultDeferred.await()
                 }
             } catch (_: TimeoutCancellationException) {
@@ -116,7 +117,7 @@ class OauthService(
                 throw RuntimeException("Error: ${result.error}")
             } else if (result.code != null) {
                 if (result.state != requestState) {
-                    logger.error { "State mismatch, expected ${requestState}, got ${result.state} - aborting" }
+                    logger.error { "State mismatch, expected $requestState, got ${result.state} - aborting" }
                     throw IllegalStateException("State mismatch")
                 }
                 val token = client.exchangeOauthToken(result)

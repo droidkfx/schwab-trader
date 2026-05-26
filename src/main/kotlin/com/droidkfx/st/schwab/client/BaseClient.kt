@@ -25,7 +25,7 @@ abstract class BaseClient(
     protected val requestTokenRefresh: ValueDataBinding<Boolean>,
     protected val oathToken: ValueDataBinding<String?> = ValueDataBinding(null),
     protected val oauthTokenStatus: ReadOnlyValueDataBinding<OauthStatus>,
-    protected val defaultPathSegments: List<String> = emptyList()
+    protected val defaultPathSegments: List<String> = emptyList(),
 ) {
     protected abstract val logger: KLogger
     protected val authorization: String
@@ -63,8 +63,11 @@ abstract class BaseClient(
 
             respBody = resp.body<String>()
             if (resp.status.value in 200..299) {
-                if (T::class == Unit::class) ApiResponse()
-                else ApiResponse(json.decodeFromString<T>(respBody))
+                if (T::class == Unit::class) {
+                    ApiResponse()
+                } else {
+                    ApiResponse(json.decodeFromString<T>(respBody))
+                }
             } else if (respBody == "") {
                 ApiResponse(error = ErrorResponse(emptyList(), "${resp.status.value} ${resp.status.description}"))
             } else {
@@ -81,7 +84,7 @@ abstract class BaseClient(
 
     protected suspend inline fun doRequestInternal(
         method: HttpMethod,
-        block: HttpRequestBuilder.() -> Unit
+        block: HttpRequestBuilder.() -> Unit,
     ): HttpResponse = client.request {
         this.method = method
         url {
@@ -97,36 +100,38 @@ abstract class BaseClient(
         logger.trace { "Request: \n${this.method} ${url.buildString()}\n ${this.headers.entries()}\n ${this.body}" }
     }
 
-    protected suspend inline fun <reified T> get(crossinline block: HttpRequestBuilder.() -> Unit = {}): ApiResponse<T> =
-        request(HttpMethod.Get, block)
+    protected suspend inline fun <reified T> get(
+        crossinline block: HttpRequestBuilder.() -> Unit = {
+        },
+    ): ApiResponse<T> = request(HttpMethod.Get, block)
 
-    protected suspend inline fun <reified T> post(crossinline block: HttpRequestBuilder.() -> Unit = {}): ApiResponse<T> =
-        request(HttpMethod.Post) {
-            contentType(ContentType.Application.Json)
-            block()
-        }
+    protected suspend inline fun <reified T> post(
+        crossinline block: HttpRequestBuilder.() -> Unit = {
+        },
+    ): ApiResponse<T> = request(HttpMethod.Post) {
+        contentType(ContentType.Application.Json)
+        block()
+    }
 
     protected suspend inline fun <reified T> getAt(
         vararg segments: String = emptyArray(),
-        crossinline block: HttpRequestBuilder.() -> Unit = {}
-    ): ApiResponse<T> =
-        get {
-            url {
-                path(*defaultPathSegments.toTypedArray(), *segments)
-            }
-            block()
+        crossinline block: HttpRequestBuilder.() -> Unit = {},
+    ): ApiResponse<T> = get {
+        url {
+            path(*defaultPathSegments.toTypedArray(), *segments)
         }
+        block()
+    }
 
     protected suspend inline fun <reified T> postAt(
         vararg segments: String = emptyArray(),
-        crossinline block: HttpRequestBuilder.() -> Unit = {}
-    ): ApiResponse<T> =
-        post {
-            url {
-                path(*defaultPathSegments.toTypedArray(), *segments)
-            }
-            block()
+        crossinline block: HttpRequestBuilder.() -> Unit = {},
+    ): ApiResponse<T> = post {
+        url {
+            path(*defaultPathSegments.toTypedArray(), *segments)
         }
+        block()
+    }
 }
 
 data class ApiResponse<T>(val data: T? = null, val error: ErrorResponse? = null)

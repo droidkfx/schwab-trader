@@ -28,9 +28,14 @@ data class AllocationRowViewModel(
 
     val expectedCost: BigDecimal
         @Column(name = "Expected Cost", mapper = DollarReadTableValueMapper::class, position = 9)
-        get() = currentPrice * tradeShares * if (tradeAction == StrategyAction.SELL.name) BigDecimal(-1.0) else BigDecimal(
-            1.0
-        )
+        get() = currentPrice * tradeShares *
+            if (tradeAction == StrategyAction.SELL.name) {
+                BigDecimal(-1.0)
+            } else {
+                BigDecimal(
+                    1.0,
+                )
+            }
 
     val currentValue: BigDecimal
         @Column(name = "Value", mapper = DollarReadTableValueMapper::class, position = 4)
@@ -49,7 +54,7 @@ fun AccountPosition.toAllocationRows(): MutableList<AllocationRowViewModel> {
             currentPrice = currentPosition?.lastKnownPrice ?: currentRecommendation?.price ?: BigDecimal.ZERO,
             currentAllocation = BigDecimal.ZERO,
             tradeAction = currentRecommendation?.recommendation?.name ?: "TBD",
-            tradeShares = currentRecommendation?.quantity ?: BigDecimal.ZERO
+            tradeShares = currentRecommendation?.quantity ?: BigDecimal.ZERO,
         )
     }.toCollection(rows)
     val totalValue = rows.sumOf { it.currentValue }

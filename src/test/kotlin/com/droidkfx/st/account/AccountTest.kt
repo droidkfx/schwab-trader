@@ -8,13 +8,12 @@ import org.junit.jupiter.api.Test
 class AccountTest {
     @Test
     fun `serialize round trip`() {
-        //assemble
+        // assemble
         val account = defaultAccount()
-
 
         var deserializedAccount: Account? = null
         assertDoesNotThrow {
-            //act
+            // act
             val serializationResult = Json.encodeToString(account)
             deserializedAccount = Json.decodeFromString<Account>(serializationResult)
         }

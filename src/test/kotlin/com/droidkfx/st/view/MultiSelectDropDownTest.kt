@@ -29,8 +29,8 @@ class MultiSelectDropDownTest {
                 ActionEvent(
                     allCheckBox,
                     ActionEvent.ACTION_PERFORMED,
-                    ""
-                )
+                    "",
+                ),
             )
         }
     }

@@ -29,7 +29,7 @@ class OrdersClient(
         fromEnteredTime: KInstant,
         toEnteredTime: KInstant,
         status: ApiOrderStatus? = null,
-        maxResults: Int? = null
+        maxResults: Int? = null,
     ): ApiResponse<List<Order>> = getAt("accounts", accountNumber, "orders") {
         url {
             parameters["fromEnteredTime"] = fromEnteredTime.toString()
@@ -38,7 +38,6 @@ class OrdersClient(
             maxResults?.let { parameters["maxResults"] = it.toString() }
         }
     }
-
 
     suspend fun order(account: Account, recommendation: PositionRecommendation): ApiResponse<Unit> =
         postAt("accounts", account.accountNumberHash, "orders") {
@@ -64,8 +63,8 @@ class OrdersClient(
                 OrderLegCollection(
                     instruction = recommendation.recommendation.toInstruction(),
                     quantity = quantity,
-                    instrument = TransactionEquity(symbol = recommendation.symbol)
-                )
+                    instrument = TransactionEquity(symbol = recommendation.symbol),
+                ),
             ),
         )
         setBody(body)

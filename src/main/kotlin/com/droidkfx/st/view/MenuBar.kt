@@ -9,74 +9,87 @@ import javax.swing.JMenuBar
 import javax.swing.JMenuItem
 import javax.swing.JOptionPane
 
-class MenuBar(
-    vm: MenuBarViewModel,
-    private val settingsDialog: SettingsDialog,
-    private val aboutDialog: AboutDialog,
-) : JMenuBar() {
+class MenuBar(vm: MenuBarViewModel, private val settingsDialog: SettingsDialog, private val aboutDialog: AboutDialog) :
+    JMenuBar() {
     private val logger = logger {}
 
     init {
         logger.trace { "Initializing" }
-        add(JMenu("Menu").apply {
-            this.add(JMenuItem("Reset Data").apply {
-                addSwingListener {
-                    val result = JOptionPane.showConfirmDialog(
-                        null,
-                        "Are you sure you want to clear all data?",
-                        "Clear All Data",
-                        JOptionPane.YES_NO_OPTION
-                    )
-                    when (result) {
-                        JOptionPane.YES_OPTION -> vm.onClearAllData()
-                    }
-                }
-            })
-            this.add(JMenuItem("Settings").apply {
-                addSwingListener {
-                    logger.trace { "onSettings" }
-                    settingsDialog.showDialog()
-                }
-            })
-            this.add(JMenuItem("Reset Certificate").apply {
-                addCoActionListener {
-                    val confirm = JOptionPane.showConfirmDialog(
-                        null,
-                        "This will delete and regenerate the local SSL certificate.\nProceed?",
-                        "Reset Certificate",
-                        JOptionPane.YES_NO_OPTION
-                    )
-                    if (confirm == JOptionPane.YES_OPTION) {
-                        try {
-                            vm.onResetCertificate()
-                        } catch (e: Exception) {
-                            logger.error(e) { "Certificate reset failed" }
-                            JOptionPane.showMessageDialog(
+        add(
+            JMenu("Menu").apply {
+                this.add(
+                    JMenuItem("Reset Data").apply {
+                        addSwingListener {
+                            val result = JOptionPane.showConfirmDialog(
                                 null,
-                                "Certificate reset failed: ${e.message}\nCheck logs for details.",
-                                "Certificate Error",
-                                JOptionPane.ERROR_MESSAGE
+                                "Are you sure you want to clear all data?",
+                                "Clear All Data",
+                                JOptionPane.YES_NO_OPTION,
                             )
+                            when (result) {
+                                JOptionPane.YES_OPTION -> vm.onClearAllData()
+                            }
                         }
-                    }
-                }
-            })
-            this.addSeparator()
-            this.add(JMenuItem("Update OAuth").apply {
-                addCoActionListener { vm.onOauthUpdate() }
-                this.isEnabled = vm.updateOauthEnabled.value
-                vm.updateOauthEnabled.addSwingListener { this.isEnabled = it }
-            })
-            this.add(JMenuItem("Oauth Invalidate").apply {
-                addCoActionListener { vm.onOauthInvalidate() }
-                this.isEnabled = vm.invalidateOauthEnabled.value
-                vm.invalidateOauthEnabled.addSwingListener { this.isEnabled = it }
-            })
-        })
-        add(JMenu("Help").apply {
-            this.add(JMenuItem("About").apply {
-                addSwingListener { aboutDialog.showDialog() }
-            })
-        })
+                    },
+                )
+                this.add(
+                    JMenuItem("Settings").apply {
+                        addSwingListener {
+                            logger.trace { "onSettings" }
+                            settingsDialog.showDialog()
+                        }
+                    },
+                )
+                this.add(
+                    JMenuItem("Reset Certificate").apply {
+                        addCoActionListener {
+                            val confirm = JOptionPane.showConfirmDialog(
+                                null,
+                                "This will delete and regenerate the local SSL certificate.\nProceed?",
+                                "Reset Certificate",
+                                JOptionPane.YES_NO_OPTION,
+                            )
+                            if (confirm == JOptionPane.YES_OPTION) {
+                                try {
+                                    vm.onResetCertificate()
+                                } catch (e: Exception) {
+                                    logger.error(e) { "Certificate reset failed" }
+                                    JOptionPane.showMessageDialog(
+                                        null,
+                                        "Certificate reset failed: ${e.message}\nCheck logs for details.",
+                                        "Certificate Error",
+                                        JOptionPane.ERROR_MESSAGE,
+                                    )
+                                }
+                            }
+                        }
+                    },
+                )
+                this.addSeparator()
+                this.add(
+                    JMenuItem("Update OAuth").apply {
+                        addCoActionListener { vm.onOauthUpdate() }
+                        this.isEnabled = vm.updateOauthEnabled.value
+                        vm.updateOauthEnabled.addSwingListener { this.isEnabled = it }
+                    },
+                )
+                this.add(
+                    JMenuItem("Oauth Invalidate").apply {
+                        addCoActionListener { vm.onOauthInvalidate() }
+                        this.isEnabled = vm.invalidateOauthEnabled.value
+                        vm.invalidateOauthEnabled.addSwingListener { this.isEnabled = it }
+                    },
+                )
+            },
+        )
+        add(
+            JMenu("Help").apply {
+                this.add(
+                    JMenuItem("About").apply {
+                        addSwingListener { aboutDialog.showDialog() }
+                    },
+                )
+            },
+        )
     }
 }

@@ -16,14 +16,12 @@ import kotlin.test.assertTrue
 
 class BuyHoldStrategyTest {
 
-    private fun strategy(quotesClient: QuotesClient = mockk(relaxed = true)) =
-        BuyHoldStrategy(quotesClient)
+    private fun strategy(quotesClient: QuotesClient = mockk(relaxed = true)) = BuyHoldStrategy(quotesClient)
 
     private fun position(symbol: String, quantity: Double, price: Double) =
         Position(symbol, BigDecimal(quantity.toString()), BigDecimal(price.toString()))
 
-    private fun target(symbol: String, allocation: Double) =
-        PositionTarget(symbol, BigDecimal(allocation.toString()))
+    private fun target(symbol: String, allocation: Double) = PositionTarget(symbol, BigDecimal(allocation.toString()))
 
     // --- Empty / edge cases ---
 
@@ -45,7 +43,7 @@ class BuyHoldStrategyTest {
                 positions = emptyList(),
                 // Strategy creates Position(symbol, BigDecimal.ZERO) for unmatched targets
                 allocationTargets = listOf(target("AAPL", 100.0)),
-                accountCash = BigDecimal("500")
+                accountCash = BigDecimal("500"),
             )
         }
         // Position price is BigDecimal.ZERO, and no quote returned → excluded from recommendations
@@ -58,9 +56,9 @@ class BuyHoldStrategyTest {
     fun `position exactly at target allocation generates HOLD`() {
         val result = runBlocking {
             strategy().buildRecommendations(
-                positions = listOf(position("AAPL", 10.0, 100.0)),  // value=1000
-                allocationTargets = listOf(target("AAPL", 100.0)),   // 100% target
-                accountCash = BigDecimal.ZERO                         // no cash → total=1000, actual=100%
+                positions = listOf(position("AAPL", 10.0, 100.0)), // value=1000
+                allocationTargets = listOf(target("AAPL", 100.0)), // 100% target
+                accountCash = BigDecimal.ZERO, // no cash → total=1000, actual=100%
             )
         }
         assertEquals(1, result.size)
@@ -73,9 +71,9 @@ class BuyHoldStrategyTest {
     fun `position above target allocation generates HOLD`() {
         val result = runBlocking {
             strategy().buildRecommendations(
-                positions = listOf(position("AAPL", 10.0, 100.0)),  // value=1000
-                allocationTargets = listOf(target("AAPL", 50.0)),    // only 50% target
-                accountCash = BigDecimal.ZERO                         // total=1000, actual=100% > 50%
+                positions = listOf(position("AAPL", 10.0, 100.0)), // value=1000
+                allocationTargets = listOf(target("AAPL", 50.0)), // only 50% target
+                accountCash = BigDecimal.ZERO, // total=1000, actual=100% > 50%
             )
         }
         val rec = result.first { it.symbol == "AAPL" }
@@ -88,9 +86,9 @@ class BuyHoldStrategyTest {
     fun `single underweight position with cash generates BUY`() {
         val result = runBlocking {
             strategy().buildRecommendations(
-                positions = listOf(position("AAPL", 0.0, 100.0)),   // value=0
-                allocationTargets = listOf(target("AAPL", 100.0)),   // 100% target
-                accountCash = BigDecimal("200")                       // $200 cash, total=$200
+                positions = listOf(position("AAPL", 0.0, 100.0)), // value=0
+                allocationTargets = listOf(target("AAPL", 100.0)), // 100% target
+                accountCash = BigDecimal("200"), // $200 cash, total=$200
             )
         }
         val rec = result.first { it.symbol == "AAPL" }
@@ -104,7 +102,7 @@ class BuyHoldStrategyTest {
             strategy().buildRecommendations(
                 positions = listOf(position("AAPL", 0.0, 100.0)),
                 allocationTargets = listOf(target("AAPL", 100.0)),
-                accountCash = BigDecimal("250")  // can only buy 2 shares at $100
+                accountCash = BigDecimal("250"), // can only buy 2 shares at $100
             )
         }
         val rec = result.first { it.symbol == "AAPL" }
@@ -118,13 +116,13 @@ class BuyHoldStrategyTest {
             strategy().buildRecommendations(
                 positions = listOf(
                     position("AAPL", 0.0, 100.0),
-                    position("MSFT", 0.0, 40.0)
+                    position("MSFT", 0.0, 40.0),
                 ),
                 allocationTargets = listOf(
                     target("AAPL", 50.0),
-                    target("MSFT", 50.0)
+                    target("MSFT", 50.0),
                 ),
-                accountCash = BigDecimal("200")  // $100 each: AAPL=1 share, MSFT=2 shares
+                accountCash = BigDecimal("200"), // $100 each: AAPL=1 share, MSFT=2 shares
             )
         }
         val aapl = result.first { it.symbol == "AAPL" }
@@ -140,14 +138,14 @@ class BuyHoldStrategyTest {
         val result = runBlocking {
             strategy().buildRecommendations(
                 positions = listOf(
-                    position("AAPL", 10.0, 100.0),  // value=1000, 50% of 2000
-                    position("MSFT", 5.0, 100.0)    // value=500, 25% of 2000
+                    position("AAPL", 10.0, 100.0), // value=1000, 50% of 2000
+                    position("MSFT", 5.0, 100.0), // value=500, 25% of 2000
                 ),
                 allocationTargets = listOf(
-                    target("AAPL", 50.0),            // at target → HOLD
-                    target("MSFT", 50.0)             // below target → BUY
+                    target("AAPL", 50.0), // at target → HOLD
+                    target("MSFT", 50.0), // below target → BUY
                 ),
-                accountCash = BigDecimal("500")       // total=$2500, AAPL=40%, MSFT=20%
+                accountCash = BigDecimal("500"), // total=$2500, AAPL=40%, MSFT=20%
             )
         }
         val aapl = result.first { it.symbol == "AAPL" }
@@ -161,9 +159,9 @@ class BuyHoldStrategyTest {
     fun `zero cash results in HOLD for underweight positions`() {
         val result = runBlocking {
             strategy().buildRecommendations(
-                positions = listOf(position("AAPL", 5.0, 100.0)),  // value=500
-                allocationTargets = listOf(target("AAPL", 100.0)),  // only 50% actual
-                accountCash = BigDecimal.ZERO                        // no cash to allocate
+                positions = listOf(position("AAPL", 5.0, 100.0)), // value=500
+                allocationTargets = listOf(target("AAPL", 100.0)), // only 50% actual
+                accountCash = BigDecimal.ZERO, // no cash to allocate
             )
         }
         val rec = result.first { it.symbol == "AAPL" }
@@ -177,7 +175,7 @@ class BuyHoldStrategyTest {
             strategy().buildRecommendations(
                 positions = listOf(position("AAPL", 5.0, 123.45)),
                 allocationTargets = listOf(target("AAPL", 50.0)),
-                accountCash = BigDecimal("200")
+                accountCash = BigDecimal("200"),
             )
         }
         val rec = result.first { it.symbol == "AAPL" }
@@ -190,7 +188,7 @@ class BuyHoldStrategyTest {
     fun `fetches quotes for positions with zero price`() {
         val mockClient = mockk<QuotesClient>()
         coEvery { mockClient.getQuotesForSymbols(listOf("TSLA")) } returns ApiResponse(
-            data = mapOf("TSLA" to QuoteResponse(QuoteResponse.QuoteData(lastPrice = BigDecimal("200"))))
+            data = mapOf("TSLA" to QuoteResponse(QuoteResponse.QuoteData(lastPrice = BigDecimal("200")))),
         )
 
         val result = runBlocking {
@@ -198,7 +196,7 @@ class BuyHoldStrategyTest {
                 // Use BigDecimal.ZERO (scale=0) so == comparison in BuyHoldStrategy identifies unmapped positions
                 positions = listOf(Position("TSLA", BigDecimal.ZERO, BigDecimal.ZERO)),
                 allocationTargets = listOf(target("TSLA", 100.0)),
-                accountCash = BigDecimal("400")
+                accountCash = BigDecimal("400"),
             )
         }
 
@@ -216,7 +214,7 @@ class BuyHoldStrategyTest {
             strategy(mockClient).buildRecommendations(
                 positions = listOf(position("AAPL", 5.0, 100.0)),
                 allocationTargets = listOf(target("AAPL", 100.0)),
-                accountCash = BigDecimal.ZERO
+                accountCash = BigDecimal.ZERO,
             )
         }
 
@@ -235,19 +233,19 @@ class BuyHoldStrategyTest {
             strategy().buildRecommendations(
                 positions = listOf(
                     position("AAPL", 0.0, 100.0),
-                    position("MSFT", 0.0, 40.0)
+                    position("MSFT", 0.0, 40.0),
                 ),
                 allocationTargets = listOf(
                     target("AAPL", 50.0),
-                    target("MSFT", 50.0)
+                    target("MSFT", 50.0),
                 ),
-                accountCash = BigDecimal("150")
+                accountCash = BigDecimal("150"),
             )
         }
         val msft = result.first { it.symbol == "MSFT" }
         assertTrue(
             msft.quantity >= BigDecimal("3"),
-            "Expected at least 3 MSFT shares from leftover cash, got ${msft.quantity}"
+            "Expected at least 3 MSFT shares from leftover cash, got ${msft.quantity}",
         )
     }
 }

@@ -21,10 +21,7 @@ fun defaultCurrentPositions(
     positions = positions,
 )
 
-fun defaultPositionTarget(
-    symbol: String = "AAPL",
-    allocationTarget: KBigDecimal = BigDecimal("0.25"),
-) = PositionTarget(
+fun defaultPositionTarget(symbol: String = "AAPL", allocationTarget: KBigDecimal = BigDecimal("0.25")) = PositionTarget(
     symbol = symbol,
     allocationTarget = allocationTarget,
 )

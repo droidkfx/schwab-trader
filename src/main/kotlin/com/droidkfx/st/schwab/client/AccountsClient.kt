@@ -38,7 +38,7 @@ class AccountsClient(
 
     suspend fun getLinkedAccount(
         accountId: String,
-        includePositions: Boolean = false
+        includePositions: Boolean = false,
     ): ApiResponse<LinkedAccountsResponse> {
         logger.trace { "getLinkedAccount $accountId" }
         return getAt("accounts", accountId) {
@@ -52,6 +52,4 @@ class AccountsClient(
 }
 
 @Serializable
-data class LinkedAccountsResponse(
-    val securitiesAccount: SecuritiesAccount? = null
-)
+data class LinkedAccountsResponse(val securitiesAccount: SecuritiesAccount? = null)

@@ -14,9 +14,9 @@ class CertificateService(
 
     fun isCertificateReady(): Boolean {
         val cfg = configService.configDataBind.value.schwabConfig.callbackServerConfig
-        return cfg.sslCertPassword.isNotEmpty()
-                && cfg.sslCertAlias.isNotEmpty()
-                && File(cfg.sslCertLocation).exists()
+        return cfg.sslCertPassword.isNotEmpty() &&
+            cfg.sslCertAlias.isNotEmpty() &&
+            File(cfg.sslCertLocation).exists()
     }
 
     fun initializeIfNeeded() {
@@ -69,10 +69,10 @@ class CertificateService(
                     callbackServerConfig = current.schwabConfig.callbackServerConfig.copy(
                         sslCertLocation = pfxPath,
                         sslCertPassword = password,
-                        sslCertAlias = alias
-                    )
-                )
-            )
+                        sslCertAlias = alias,
+                    ),
+                ),
+            ),
         )
         logger.info { "Config updated with new certificate credentials" }
     }

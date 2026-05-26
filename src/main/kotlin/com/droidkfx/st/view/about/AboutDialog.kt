@@ -19,9 +19,7 @@ import javax.swing.JPanel
 import javax.swing.SwingConstants
 
 @Suppress("USELESS_CAST") // Cast is required for overload ambiguity on Frame
-class AboutDialog(
-    vm: AboutViewModel,
-) : JDialog(null as? Frame, "About Schwab Trader", true) {
+class AboutDialog(vm: AboutViewModel) : JDialog(null as? Frame, "About Schwab Trader", true) {
     init {
         layout = BorderLayout()
 
@@ -91,11 +89,7 @@ private fun placeholderLogo(): ImageIcon {
 }
 
 private sealed class Row {
-    data class Entry(
-        val label: String,
-        val value: String,
-        val labelBold: Boolean = false,
-    ) : Row()
+    data class Entry(val label: String, val value: String, val labelBold: Boolean = false) : Row()
 
     data object Spacer : Row()
 }

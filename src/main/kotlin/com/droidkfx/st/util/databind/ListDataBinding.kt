@@ -4,30 +4,31 @@ interface ListDataBinding<T> {
     fun addListener(listener: (ListDataBindingEvent<T>) -> Unit)
 }
 
-interface ReadOnlyListDataBinding<T> : List<T>, ListDataBinding<T>
+interface ReadOnlyListDataBinding<T> :
+    List<T>,
+    ListDataBinding<T>
 
-interface ReadWriteListDataBinding<T> : MutableList<T>, ListDataBinding<T>
+interface ReadWriteListDataBinding<T> :
+    MutableList<T>,
+    ListDataBinding<T>
 
 enum class ListDataBindingEventType {
-    ADD, REMOVE, UPDATE
+    ADD,
+    REMOVE,
+    UPDATE,
 }
 
-class ValueUpdatedListDataBindingEvent<T>(
-    index: Int,
-    currentValue: T,
-    val previousValue: T
-) : ListDataBindingEvent<T>(index, currentValue, ListDataBindingEventType.UPDATE) {
+class ValueUpdatedListDataBindingEvent<T>(index: Int, currentValue: T, val previousValue: T) :
+    ListDataBindingEvent<T>(index, currentValue, ListDataBindingEventType.UPDATE) {
     val shouldEmit = currentValue != previousValue
 
-    override fun <U> mapped(mapper: (T) -> U): ValueUpdatedListDataBindingEvent<U> {
-        return ValueUpdatedListDataBindingEvent(index, mapper(currentValue), mapper(previousValue))
-    }
+    override fun <U> mapped(mapper: (T) -> U): ValueUpdatedListDataBindingEvent<U> =
+        ValueUpdatedListDataBindingEvent(index, mapper(currentValue), mapper(previousValue))
 }
 
 open class ListDataBindingEvent<T>(val index: Int, val currentValue: T, val type: ListDataBindingEventType) {
-    open fun <U> mapped(mapper: (T) -> U): ListDataBindingEvent<U> {
-        return ListDataBindingEvent(index, mapper(currentValue), type)
-    }
+    open fun <U> mapped(mapper: (T) -> U): ListDataBindingEvent<U> =
+        ListDataBindingEvent(index, mapper(currentValue), type)
 }
 
 fun <T> List<T>.toDataBinding(): ReadOnlyListDataBinding<T> = ReadOnlyListDataBindingImpl(this)
@@ -44,7 +45,7 @@ fun <T, U> ReadOnlyListDataBinding<T>.mapped(mapper: (T) -> U): ReadOnlyListData
 
 private class MappedListDataBinding<T, U>(
     private val delegate: ReadOnlyListDataBinding<T>,
-    private val mapper: (T) -> U
+    private val mapper: (T) -> U,
 ) : ReadOnlyListDataBinding<U> {
     override val size: Int
         get() = delegate.size
@@ -84,17 +85,15 @@ private class MappedListDataBinding<T, U>(
     }
 }
 
-private open class ReadOnlyListDataBindingImpl<T>(open val delegate: List<T>) :
-    ReadOnlyListDataBinding<T> {
+private open class ReadOnlyListDataBindingImpl<T>(open val delegate: List<T>) : ReadOnlyListDataBinding<T> {
     protected val listeners = mutableListOf<(ListDataBindingEvent<T>) -> Unit>()
 
     override fun listIterator(): ListIterator<T> = delegate.listIterator()
 
     override fun listIterator(index: Int): ListIterator<T> = delegate.listIterator(index)
 
-    override fun subList(fromIndex: Int, toIndex: Int): MutableList<T> {
+    override fun subList(fromIndex: Int, toIndex: Int): MutableList<T> =
         throw UnsupportedOperationException("Sublist is not supported")
-    }
 
     override val size: Int
         get() = delegate.size
@@ -159,11 +158,11 @@ private class ReadWriteListDataBindingImpl<T>(val delegate: MutableList<T>) :
 
     override fun removeAll(elements: Collection<T>): Boolean = elements.map { remove(it) }.any { it }
 
-    override fun retainAll(elements: Collection<T>): Boolean {
-        return delegate.removeAll(delegate.filter {
+    override fun retainAll(elements: Collection<T>): Boolean = delegate.removeAll(
+        delegate.filter {
             !elements.contains(it)
-        })
-    }
+        },
+    )
 
     override fun clear() {
         while (delegate.isNotEmpty()) {
@@ -193,9 +192,8 @@ private class ReadWriteListDataBindingImpl<T>(val delegate: MutableList<T>) :
 
     override fun listIterator(index: Int): MutableListIterator<T> = delegate.listIterator(index)
 
-    override fun subList(fromIndex: Int, toIndex: Int): MutableList<T> {
+    override fun subList(fromIndex: Int, toIndex: Int): MutableList<T> =
         throw UnsupportedOperationException("Sublist is not supported")
-    }
 
     override val size: Int
         get() = delegate.size

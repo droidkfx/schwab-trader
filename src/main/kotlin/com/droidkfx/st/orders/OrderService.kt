@@ -11,10 +11,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 import java.time.LocalDate
 import java.time.ZoneId
 
-class OrderService(
-    private val ordersClient: OrdersClient,
-    private val orderRepository: OrderRepository,
-) {
+class OrderService(private val ordersClient: OrdersClient, private val orderRepository: OrderRepository) {
     private val logger = logger {}
 
     suspend fun order(account: Account, recommendation: PositionRecommendation) {

@@ -17,7 +17,7 @@ class TransactionService(private val transactionsClient: TransactionsClient) {
         account: Account,
         type: TransactionType,
         from: Instant,
-        to: Instant
+        to: Instant,
     ): List<Transaction> {
         logger.info { "Getting transactions for type: $type" }
         val response = transactionsClient.getTransactions(
@@ -25,7 +25,7 @@ class TransactionService(private val transactionsClient: TransactionsClient) {
             from,
             to,
             symbol = null,
-            type = type
+            type = type,
         )
         return response.data ?: emptyList()
     }
@@ -44,7 +44,7 @@ class TransactionService(private val transactionsClient: TransactionsClient) {
                         .plusDays(1)
                         .atStartOfDay(ZoneId.systemDefault())
                         .toInstant()
-                        .minusNanos(1)
+                        .minusNanos(1),
                 )
             }
             .flatten()

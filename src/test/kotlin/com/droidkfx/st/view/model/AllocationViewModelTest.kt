@@ -17,7 +17,7 @@ class AllocationViewModelTest {
         positionTargets: List<PositionTarget> = emptyList(),
         currentPositions: List<Position> = emptyList(),
         currentRecommendedChanges: List<PositionRecommendation> = emptyList(),
-        currentCash: BigDecimal = BigDecimal.ZERO
+        currentCash: BigDecimal = BigDecimal.ZERO,
     ) = AccountPosition(defaultAccount(), positionTargets, currentPositions, currentRecommendedChanges, currentCash)
 
     // --- toAllocationRows ---
@@ -33,8 +33,8 @@ class AllocationViewModelTest {
         val pos = accountPosition(
             positionTargets = listOf(
                 PositionTarget("AAPL", BigDecimal("50")),
-                PositionTarget("MSFT", BigDecimal("50"))
-            )
+                PositionTarget("MSFT", BigDecimal("50")),
+            ),
         )
         assertEquals(2, pos.toAllocationRows().size)
     }
@@ -43,7 +43,7 @@ class AllocationViewModelTest {
     fun `toAllocationRows maps symbol and allocationTarget from target`() {
         val pos = accountPosition(
             positionTargets = listOf(PositionTarget("AAPL", BigDecimal("75"))),
-            currentPositions = listOf(Position("AAPL", BigDecimal("10"), BigDecimal("150")))
+            currentPositions = listOf(Position("AAPL", BigDecimal("10"), BigDecimal("150"))),
         )
         val row = pos.toAllocationRows()[0]
         assertEquals("AAPL", row.symbol)
@@ -54,7 +54,7 @@ class AllocationViewModelTest {
     fun `toAllocationRows maps shares and price from current position`() {
         val pos = accountPosition(
             positionTargets = listOf(PositionTarget("AAPL", BigDecimal("100"))),
-            currentPositions = listOf(Position("AAPL", BigDecimal("10"), BigDecimal("150")))
+            currentPositions = listOf(Position("AAPL", BigDecimal("10"), BigDecimal("150"))),
         )
         val row = pos.toAllocationRows()[0]
         assertEquals(BigDecimal("10"), row.currentShares)
@@ -64,7 +64,7 @@ class AllocationViewModelTest {
     @Test
     fun `toAllocationRows uses zero shares when position is missing`() {
         val pos = accountPosition(
-            positionTargets = listOf(PositionTarget("TSLA", BigDecimal("30")))
+            positionTargets = listOf(PositionTarget("TSLA", BigDecimal("30"))),
         )
         val row = pos.toAllocationRows()[0]
         assertEquals(BigDecimal.ZERO, row.currentShares)
@@ -75,8 +75,8 @@ class AllocationViewModelTest {
         val pos = accountPosition(
             positionTargets = listOf(PositionTarget("TSLA", BigDecimal("30"))),
             currentRecommendedChanges = listOf(
-                PositionRecommendation("TSLA", StrategyAction.BUY, BigDecimal("5"), BigDecimal("200"))
-            )
+                PositionRecommendation("TSLA", StrategyAction.BUY, BigDecimal("5"), BigDecimal("200")),
+            ),
         )
         val row = pos.toAllocationRows()[0]
         assertEquals(BigDecimal("200"), row.currentPrice)
@@ -88,12 +88,12 @@ class AllocationViewModelTest {
         val pos = accountPosition(
             positionTargets = listOf(
                 PositionTarget("AAPL", BigDecimal("50")),
-                PositionTarget("MSFT", BigDecimal("50"))
+                PositionTarget("MSFT", BigDecimal("50")),
             ),
             currentPositions = listOf(
                 Position("AAPL", BigDecimal("10"), BigDecimal("100.00")),
-                Position("MSFT", BigDecimal("10"), BigDecimal("100.00"))
-            )
+                Position("MSFT", BigDecimal("10"), BigDecimal("100.00")),
+            ),
         )
         val rows = pos.toAllocationRows()
         // Equal value positions should have equal allocation
@@ -106,7 +106,7 @@ class AllocationViewModelTest {
     fun `toAllocationRows sets currentAllocation to zero when total value is zero`() {
         val pos = accountPosition(
             positionTargets = listOf(PositionTarget("AAPL", BigDecimal("100"))),
-            currentPositions = listOf(Position("AAPL", BigDecimal("0"), BigDecimal("0")))
+            currentPositions = listOf(Position("AAPL", BigDecimal("0"), BigDecimal("0"))),
         )
         assertEquals(0, BigDecimal.ZERO.compareTo(pos.toAllocationRows()[0].currentAllocation))
     }
@@ -116,8 +116,8 @@ class AllocationViewModelTest {
         val pos = accountPosition(
             positionTargets = listOf(PositionTarget("AAPL", BigDecimal("50"))),
             currentRecommendedChanges = listOf(
-                PositionRecommendation("AAPL", StrategyAction.BUY, BigDecimal("5"), BigDecimal("150"))
-            )
+                PositionRecommendation("AAPL", StrategyAction.BUY, BigDecimal("5"), BigDecimal("150")),
+            ),
         )
         val row = pos.toAllocationRows()[0]
         assertEquals("BUY", row.tradeAction)
@@ -127,7 +127,7 @@ class AllocationViewModelTest {
     @Test
     fun `toAllocationRows sets tradeAction to TBD when no recommendation`() {
         val pos = accountPosition(
-            positionTargets = listOf(PositionTarget("AAPL", BigDecimal("50")))
+            positionTargets = listOf(PositionTarget("AAPL", BigDecimal("50"))),
         )
         assertEquals("TBD", pos.toAllocationRows()[0].tradeAction)
     }
@@ -138,18 +138,18 @@ class AllocationViewModelTest {
         val pos = accountPosition(
             positionTargets = listOf(
                 PositionTarget("AAPL", BigDecimal("50")),
-                PositionTarget("MSFT", BigDecimal("50"))
+                PositionTarget("MSFT", BigDecimal("50")),
             ),
             currentPositions = listOf(
-                Position("AAPL", BigDecimal("10"), BigDecimal("100.00")),  // value=1000
-                Position("MSFT", BigDecimal("10"), BigDecimal("300.00"))   // value=3000
-            )
+                Position("AAPL", BigDecimal("10"), BigDecimal("100.00")), // value=1000
+                Position("MSFT", BigDecimal("10"), BigDecimal("300.00")), // value=3000
+            ),
         )
         val rows = pos.toAllocationRows()
         // MSFT has 3x the value of AAPL, so MSFT allocation should be higher
         assertTrue(
             rows[1].currentAllocation > rows[0].currentAllocation,
-            "MSFT (higher value) should have higher allocation than AAPL"
+            "MSFT (higher value) should have higher allocation than AAPL",
         )
         // AAPL is 25% and MSFT is 75% — verify the ratio is approximately 1:3
         val ratio = rows[1].currentAllocation.toDouble() / rows[0].currentAllocation.toDouble()
@@ -167,7 +167,7 @@ class AllocationViewModelTest {
             currentPrice = BigDecimal.ZERO,
             currentAllocation = BigDecimal("60"),
             tradeAction = "HOLD",
-            tradeShares = BigDecimal.ZERO
+            tradeShares = BigDecimal.ZERO,
         )
         assertEquals(0, BigDecimal("10").compareTo(row.allocationDelta))
     }
@@ -181,7 +181,7 @@ class AllocationViewModelTest {
             currentPrice = BigDecimal("150"),
             currentAllocation = BigDecimal.ZERO,
             tradeAction = "HOLD",
-            tradeShares = BigDecimal.ZERO
+            tradeShares = BigDecimal.ZERO,
         )
         assertEquals(0, BigDecimal("1500").compareTo(row.currentValue))
     }
@@ -195,7 +195,7 @@ class AllocationViewModelTest {
             currentPrice = BigDecimal("100"),
             currentAllocation = BigDecimal.ZERO,
             tradeAction = "BUY",
-            tradeShares = BigDecimal("5")
+            tradeShares = BigDecimal("5"),
         )
         assertTrue(row.expectedCost > BigDecimal.ZERO, "BUY expectedCost should be positive")
         assertEquals(0, BigDecimal("500").compareTo(row.expectedCost))
@@ -210,7 +210,7 @@ class AllocationViewModelTest {
             currentPrice = BigDecimal("100"),
             currentAllocation = BigDecimal.ZERO,
             tradeAction = "SELL",
-            tradeShares = BigDecimal("5")
+            tradeShares = BigDecimal("5"),
         )
         assertTrue(row.expectedCost < BigDecimal.ZERO, "SELL expectedCost should be negative")
     }
@@ -224,7 +224,7 @@ class AllocationViewModelTest {
             currentPrice = BigDecimal("100"),
             currentAllocation = BigDecimal.ZERO,
             tradeAction = "HOLD",
-            tradeShares = BigDecimal.ZERO
+            tradeShares = BigDecimal.ZERO,
         )
         assertEquals(0, BigDecimal.ZERO.compareTo(row.expectedCost))
     }

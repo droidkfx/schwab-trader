@@ -17,9 +17,7 @@ import javax.swing.JPanel
  * Clicking a tab expands its panel into the content area; clicking the active tab
  * collapses it. The parent JSplitPane is notified via [onContentVisibilityChanged].
  */
-class BottomDock(
-    private val onContentVisibilityChanged: (visible: Boolean) -> Unit,
-) {
+class BottomDock(private val onContentVisibilityChanged: (visible: Boolean) -> Unit) {
     companion object {
         /** Approximate minimum height of the orders panel: filter bar (~30px) + 2 table rows (~48px). */
         const val MIN_CONTENT_HEIGHT = 78
@@ -30,8 +28,7 @@ class BottomDock(
     /** The expandable content area — place as the bottom component of a JSplitPane.
      *  Returns a zero-preferred size when invisible, so pack() ignores it. */
     val contentPanel = object : JPanel(cardLayout) {
-        override fun getPreferredSize(): Dimension =
-            if (isVisible) super.getPreferredSize() else Dimension(0, 0)
+        override fun getPreferredSize(): Dimension = if (isVisible) super.getPreferredSize() else Dimension(0, 0)
     }.apply { isVisible = false }
 
     /** The always-visible tab strip — place in the SOUTH of the containing panel. */

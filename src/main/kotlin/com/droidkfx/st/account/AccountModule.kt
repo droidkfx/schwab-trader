@@ -10,7 +10,11 @@ import org.koin.dsl.module
 
 val accountModule = module {
     single {
-        AccountRepository(get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).readOnlyMapped { it.repositoryRoot })
+        AccountRepository(
+            get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).readOnlyMapped {
+                it.repositoryRoot
+            },
+        )
     }
     singleOf(::AccountService)
 }

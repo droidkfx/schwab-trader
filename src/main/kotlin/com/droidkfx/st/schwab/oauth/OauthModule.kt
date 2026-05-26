@@ -20,10 +20,12 @@ val oauthModule = module {
     single {
         LocalServer(
             get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY))
-                .readOnlyMapped { it.schwabConfig.callbackServerConfig }
+                .readOnlyMapped { it.schwabConfig.callbackServerConfig },
         )
     }
-    single { OauthRepository(get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).readOnlyMapped { it.repositoryRoot }) }
+    single {
+        OauthRepository(get<ValueDataBinding<ConfigEntity>>(named(CONFIG_ENTITY)).readOnlyMapped { it.repositoryRoot })
+    }
 
     single {
         OauthService(
@@ -32,7 +34,7 @@ val oauthModule = module {
             get(),
             get(named(OAUTH_TOKEN_STATUS)),
             get(named(OAUTH_TOKEN)),
-            get(named(OAUTH_REFRESH_SIGNAL))
+            get(named(OAUTH_REFRESH_SIGNAL)),
         )
     }
 }

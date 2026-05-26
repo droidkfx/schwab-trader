@@ -23,14 +23,13 @@ class TransactionsClient(
         startDate: KInstant,
         endDate: KInstant,
         symbol: String? = null,
-        type: TransactionType
-    ): ApiResponse<List<Transaction>> =
-        getAt("accounts", accountNumber, "transactions") {
-            url {
-                parameters["startDate"] = startDate.toString()
-                parameters["endDate"] = endDate.toString()
-                parameters["types"] = type.name
-                symbol?.let { parameters["symbol"] = it }
-            }
+        type: TransactionType,
+    ): ApiResponse<List<Transaction>> = getAt("accounts", accountNumber, "transactions") {
+        url {
+            parameters["startDate"] = startDate.toString()
+            parameters["endDate"] = endDate.toString()
+            parameters["types"] = type.name
+            symbol?.let { parameters["symbol"] = it }
         }
+    }
 }

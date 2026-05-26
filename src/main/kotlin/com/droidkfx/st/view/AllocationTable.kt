@@ -73,26 +73,26 @@ private class AllocationTableModel(
     private var newRow: AllocationRowViewModel = defaultValue()
 
     fun defaultValue(): AllocationRowViewModel = AllocationRowViewModel(
-        "", BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-        BigDecimal.ZERO, "", BigDecimal.ZERO
+        "",
+        BigDecimal.ZERO,
+        BigDecimal.ZERO,
+        BigDecimal.ZERO,
+        BigDecimal.ZERO,
+        "",
+        BigDecimal.ZERO,
     )
 
-    fun valueSetup(allocationRowViewModel: AllocationRowViewModel): Boolean {
-        return allocationRowViewModel.symbol.isNotEmpty() && allocationRowViewModel.allocationTarget > BigDecimal.ZERO
-    }
+    fun valueSetup(allocationRowViewModel: AllocationRowViewModel): Boolean =
+        allocationRowViewModel.symbol.isNotEmpty() && allocationRowViewModel.allocationTarget > BigDecimal.ZERO
 
-    override fun getRowCount(): Int {
-        return super.rowCount + 2
-    }
+    override fun getRowCount(): Int = super.rowCount + 2
 
-    override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
-        return if (rowIndex == super.rowCount) {
-            super.isColumnEditable(columnIndex)
-        } else if (rowIndex > super.rowCount) {
-            false
-        } else {
-            super.isCellEditable(rowIndex, columnIndex)
-        }
+    override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean = if (rowIndex == super.rowCount) {
+        super.isColumnEditable(columnIndex)
+    } else if (rowIndex > super.rowCount) {
+        false
+    } else {
+        super.isCellEditable(rowIndex, columnIndex)
     }
 
     override fun setValueAt(value: Any?, rowIndex: Int, columnIndex: Int) {
@@ -113,32 +113,31 @@ private class AllocationTableModel(
         }
     }
 
-    override fun getValueAt(rowIndex: Int, columnIndex: Int): String {
-        return if (rowIndex == super.rowCount) {
-            val column = columns[columnIndex]
-            val dataValue = column.getter?.invoke(newRow)
-            column.mapper.mapOut(dataValue ?: "")
-        } else if (rowIndex > super.rowCount) {
-            if (columnIndex == 0) "TOTAL"
-            else {
-                when (columnIndex) {
-                    1, 4, 5, 6, 9 -> {
-                        var acc = BigDecimal.ZERO
-                        for (i in 0 until super.rowCount) {
-                            val rawValueAt = super.getRawValueAt<BigDecimal>(i, columnIndex)
-                            acc = acc.plus(rawValueAt ?: BigDecimal.ZERO)
-                        }
-                        val column = columns[columnIndex]
-                        column.mapper.mapOut(acc)
+    override fun getValueAt(rowIndex: Int, columnIndex: Int): String = if (rowIndex == super.rowCount) {
+        val column = columns[columnIndex]
+        val dataValue = column.getter?.invoke(newRow)
+        column.mapper.mapOut(dataValue ?: "")
+    } else if (rowIndex > super.rowCount) {
+        if (columnIndex == 0) {
+            "TOTAL"
+        } else {
+            when (columnIndex) {
+                1, 4, 5, 6, 9 -> {
+                    var acc = BigDecimal.ZERO
+                    for (i in 0 until super.rowCount) {
+                        val rawValueAt = super.getRawValueAt<BigDecimal>(i, columnIndex)
+                        acc = acc.plus(rawValueAt ?: BigDecimal.ZERO)
                     }
+                    val column = columns[columnIndex]
+                    column.mapper.mapOut(acc)
+                }
 
-                    else -> {
-                        ""
-                    }
+                else -> {
+                    ""
                 }
             }
-        } else {
-            super.getValueAt(rowIndex, columnIndex)
         }
+    } else {
+        super.getValueAt(rowIndex, columnIndex)
     }
 }

@@ -39,7 +39,7 @@ fun main() {
             orderModule,
             transactionModule,
             positionModule,
-            viewModule
+            viewModule,
         )
     }
     try {
@@ -49,9 +49,9 @@ fun main() {
         JOptionPane.showMessageDialog(
             null,
             "Certificate initialization failed: ${e.message}\n" +
-                    "You may manually configure a certificate in Settings.",
+                "You may manually configure a certificate in Settings.",
             "Certificate Error",
-            JOptionPane.ERROR_MESSAGE
+            JOptionPane.ERROR_MESSAGE,
         )
     }
 

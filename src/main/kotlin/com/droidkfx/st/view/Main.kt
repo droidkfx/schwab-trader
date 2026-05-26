@@ -6,11 +6,7 @@ import javax.swing.ImageIcon
 import javax.swing.JFrame
 import javax.swing.JPanel
 
-class Main(
-    statusBar: StatusBar,
-    menuBar: MenuBar,
-    accountTabs: AccountTabs
-) : JFrame("Schwab Trader") {
+class Main(statusBar: StatusBar, menuBar: MenuBar, accountTabs: AccountTabs) : JFrame("Schwab Trader") {
     private val logger = logger {}
 
     init {

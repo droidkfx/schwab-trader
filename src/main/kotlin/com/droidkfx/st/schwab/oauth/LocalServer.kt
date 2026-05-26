@@ -27,11 +27,9 @@ import java.io.File
 import java.io.FileInputStream
 import java.net.URLDecoder
 import java.security.KeyStore
+import kotlin.time.Duration.Companion.milliseconds
 
-
-class LocalServer(
-    private val callbackServerConfig: ReadOnlyValueDataBinding<CallbackServerConfig>
-) {
+class LocalServer(private val callbackServerConfig: ReadOnlyValueDataBinding<CallbackServerConfig>) {
     data class Result(val code: String?, val session: String?, val state: String?, val error: String?)
 
     private val logger = logger {}
@@ -90,7 +88,7 @@ class LocalServer(
                     // stop asynchronously to let response flush
                     // small delay avoids abrupt connection close
                     CoroutineScope(Dispatchers.IO).launch {
-                        delay(200)
+                        delay(200.milliseconds)
                         stop()
                     }
                 }
@@ -118,7 +116,8 @@ class LocalServer(
             keyStore = keyStore,
             keyAlias = cfg.sslCertAlias,
             keyStorePassword = { cfg.sslCertPassword.toCharArray() },
-            privateKeyPassword = { cfg.sslCertPassword.toCharArray() }) {
+            privateKeyPassword = { cfg.sslCertPassword.toCharArray() },
+        ) {
             port = cfg.port
             keyStorePath = File(cfg.sslCertLocation)
         }

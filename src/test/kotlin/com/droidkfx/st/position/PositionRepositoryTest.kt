@@ -33,7 +33,7 @@ class PositionRepositoryTest {
             positions = listOf(
                 defaultPosition(symbol = "AAPL", quantity = BigDecimal("10"), lastKnownPrice = BigDecimal("150.00")),
                 defaultPosition(symbol = "MSFT", quantity = BigDecimal("5"), lastKnownPrice = BigDecimal("300.00")),
-            )
+            ),
         )
 
         repository.savePositions(accountId, positions)

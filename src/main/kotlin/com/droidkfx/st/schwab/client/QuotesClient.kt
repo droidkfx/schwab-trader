@@ -13,13 +13,13 @@ class QuotesClient(
     client: HttpClient,
     oathToken: ValueDataBinding<String?>,
     requestTokenRefresh: ValueDataBinding<Boolean>,
-    oauthTokenStatus: ReadOnlyValueDataBinding<OauthStatus>
+    oauthTokenStatus: ReadOnlyValueDataBinding<OauthStatus>,
 ) : BaseClient(config, client, requestTokenRefresh, oathToken, oauthTokenStatus, listOf("marketdata", "v1")) {
     override val logger: KLogger = logger {}
 
     suspend fun getQuotesForSymbols(
         symbols: List<String>,
-        indicative: Boolean = false
+        indicative: Boolean = false,
     ): ApiResponse<Map<String, QuoteResponse>> {
         logger.trace { "getQuotesForSymbols" }
         return getAt("quotes") {

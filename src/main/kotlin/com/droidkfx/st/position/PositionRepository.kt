@@ -9,7 +9,7 @@ import java.math.BigDecimal
 class PositionRepository(rootPath: ReadOnlyValueDataBinding<String>) :
     FileRepository(
         logger {},
-        rootPath.readOnlyMapped { "$it/position/current" }
+        rootPath.readOnlyMapped { "$it/position/current" },
     ) {
     fun loadPositions(id: String): CurrentPositions {
         logger.trace { "loadPositions for account: $id" }

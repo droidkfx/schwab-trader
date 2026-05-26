@@ -10,7 +10,7 @@ class AccountPositionService internal constructor(
     private val accountService: AccountService,
     private val positionTargetService: PositionTargetService,
     private val positionService: PositionService,
-    private val strategyEngine: StrategyEngine
+    private val strategyEngine: StrategyEngine,
 ) {
     private val logger = logger {}
 
@@ -29,10 +29,16 @@ class AccountPositionService internal constructor(
         val currentPositions = positionService.getCachedPositions(account.id)
         val positionTargets = positionTargetService.getAccountPositionTargets(account.id)
         val recommendations = strategyEngine.buildRecommendations(
-            currentPositions.positions, positionTargets, currentPositions.accountCash
+            currentPositions.positions,
+            positionTargets,
+            currentPositions.accountCash,
         )
         return AccountPosition(
-            account, positionTargets, currentPositions.positions, recommendations, currentPositions.accountCash
+            account,
+            positionTargets,
+            currentPositions.positions,
+            recommendations,
+            currentPositions.accountCash,
         )
     }
 
@@ -42,12 +48,12 @@ class AccountPositionService internal constructor(
         val newRecommendations = strategyEngine.buildRecommendations(
             currentPositions.positions,
             ap.positionTargets,
-            currentPositions.accountCash
+            currentPositions.accountCash,
         )
         return ap.copy(
             currentPositions = currentPositions.positions,
             currentRecommendedChanges = newRecommendations,
-            currentCash = currentPositions.accountCash
+            currentCash = currentPositions.accountCash,
         )
     }
 

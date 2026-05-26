@@ -9,6 +9,7 @@ plugins {
     id("jacoco")
     id("edu.sc.seis.launch4j") version "4.0.0"
     id("com.github.gmazzo.buildconfig") version "6.0.9"
+    id("org.jlleitschuh.gradle.ktlint") version "12.3.0"
 //    id("dev.msfjarvis.tracelog") version "0.1.3"
 }
 
@@ -57,20 +58,19 @@ dependencies {
     testImplementation("io.mockk:mockk:1.14.0")
 }
 
-fun gitLine(vararg args: String): String =
-    try {
-        ProcessBuilder("git", *args)
-            .redirectErrorStream(true)
-            .start()
-            .inputStream
-            .bufferedReader()
-            .readLine()
-            ?.trim()
-            ?.takeIf { !it.startsWith("fatal:") && !it.startsWith("error:") }
-            ?: ""
-    } catch (_: Exception) {
-        ""
-    }
+fun gitLine(vararg args: String): String = try {
+    ProcessBuilder("git", *args)
+        .redirectErrorStream(true)
+        .start()
+        .inputStream
+        .bufferedReader()
+        .readLine()
+        ?.trim()
+        ?.takeIf { !it.startsWith("fatal:") && !it.startsWith("error:") }
+        ?: ""
+} catch (_: Exception) {
+    ""
+}
 
 val shortHash = gitLine("rev-parse", "--short", "HEAD").ifEmpty { "N/A" }
 val branch = gitLine("rev-parse", "--abbrev-ref", "HEAD").ifEmpty { "N/A" }
@@ -161,9 +161,18 @@ launch4j {
     mainClassName = "com.droidkfx.st.MainKt"
     productName = "Schwab Trader"
     headerType = "gui"
-    icon = "${projectDir}/src/main/resources/AppIcon.ico"
+    icon = "$projectDir/src/main/resources/AppIcon.ico"
     chdir = "."
     jvmOptions = setOf("-Dlogback.configurationFile=logback-release.xml")
+}
+
+ktlint {
+    version.set("1.5.0")
+    android.set(false)
+    reporters {
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
+        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.HTML)
+    }
 }
 
 kotlin {

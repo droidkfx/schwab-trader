@@ -5,10 +5,11 @@ import com.droidkfx.st.util.databind.readOnlyMapped
 import com.droidkfx.st.util.repository.FileRepository
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class AccountRepository(rootPath: ReadOnlyValueDataBinding<String>) : FileRepository(
-    logger {},
-    rootPath.readOnlyMapped { "$it/account" }
-) {
+class AccountRepository(rootPath: ReadOnlyValueDataBinding<String>) :
+    FileRepository(
+        logger {},
+        rootPath.readOnlyMapped { "$it/account" },
+    ) {
     fun loadAccounts(): List<Account> {
         logger.trace { "loadAccounts" }
         return loadAll()

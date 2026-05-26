@@ -6,20 +6,18 @@ import com.droidkfx.st.schwab.client.QuotesClient
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-internal class BuyHoldStrategy(
-    private val quotesClient: QuotesClient
-) : StrategyEngine {
+internal class BuyHoldStrategy(private val quotesClient: QuotesClient) : StrategyEngine {
 
     data class PositionProperties(
         val position: Position,
         val target: PositionTarget,
-        var delta: BigDecimal = BigDecimal.ZERO
+        var delta: BigDecimal = BigDecimal.ZERO,
     )
 
     override suspend fun buildRecommendations(
         positions: List<Position>,
         allocationTargets: List<PositionTarget>,
-        accountCash: BigDecimal
+        accountCash: BigDecimal,
     ): List<PositionRecommendation> {
         val knownPositions = allocationTargets.map { target ->
             positions.firstOrNull { it.symbol == target.symbol }
@@ -27,17 +25,23 @@ internal class BuyHoldStrategy(
                 ?: PositionProperties(Position(target.symbol, BigDecimal.ZERO), target)
         }
 
-        val (unmappedPositions, mappedPositions) = knownPositions.partition { it.position.lastKnownPrice == BigDecimal.ZERO }
+        val (unmappedPositions, mappedPositions) = knownPositions.partition {
+            it.position.lastKnownPrice ==
+                BigDecimal.ZERO
+        }
         val fetchedQuotes = unmappedPositions.map { it.position.symbol }.let {
-            if (it.isEmpty()) emptyMap()
-            else quotesClient.getQuotesForSymbols(it).data ?: emptyMap()
+            if (it.isEmpty()) {
+                emptyMap()
+            } else {
+                quotesClient.getQuotesForSymbols(it).data ?: emptyMap()
+            }
         }
 
         val positionAllocations = mappedPositions + unmappedPositions.mapNotNull { posProps ->
             posProps.copy(
                 position = posProps.position.copy(
-                    lastKnownPrice = fetchedQuotes[posProps.position.symbol]?.quote?.lastPrice ?: BigDecimal.ZERO
-                )
+                    lastKnownPrice = fetchedQuotes[posProps.position.symbol]?.quote?.lastPrice ?: BigDecimal.ZERO,
+                ),
             ).let { if (it.position.lastKnownPrice == BigDecimal.ZERO) null else it }
         }
 
@@ -59,7 +63,7 @@ internal class BuyHoldStrategy(
         data class AllocationIntermediary(
             val positionProperties: PositionProperties,
             val deltaToNextShare: BigDecimal,
-            val recommendation: PositionRecommendation
+            val recommendation: PositionRecommendation,
         )
 
         val easyBuyAllocations = onlyBuyAllocations.map {
@@ -76,8 +80,8 @@ internal class BuyHoldStrategy(
                     it.position.symbol,
                     if (sharesToAllocate == BigDecimal.ZERO) StrategyAction.HOLD else StrategyAction.BUY,
                     sharesToAllocate,
-                    it.position.lastKnownPrice
-                )
+                    it.position.lastKnownPrice,
+                ),
             )
         }
 
@@ -94,8 +98,8 @@ internal class BuyHoldStrategy(
                             deltaToNextShare = it.positionProperties.position.lastKnownPrice,
                             recommendation = it.recommendation.copy(
                                 quantity = it.recommendation.quantity + BigDecimal.ONE,
-                                recommendation = StrategyAction.BUY
-                            )
+                                recommendation = StrategyAction.BUY,
+                            ),
                         )
                     } else {
                         it
@@ -108,7 +112,7 @@ internal class BuyHoldStrategy(
                 it.position.symbol,
                 StrategyAction.HOLD,
                 BigDecimal.ZERO,
-                it.position.lastKnownPrice
+                it.position.lastKnownPrice,
             )
         }
     }

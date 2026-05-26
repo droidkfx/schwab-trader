@@ -18,7 +18,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
-const val accountPositionsBinding = "accountPositionsDataBind"
+const val ACCOUNT_POSITIONS_BINDING = "accountPositionsDataBind"
 
 val viewModule = module {
     FlatDarkLaf.setup()
@@ -26,7 +26,7 @@ val viewModule = module {
 
     // ViewModels
     singleOf(::ProgressService)
-    single(named(accountPositionsBinding)) {
+    single(named(ACCOUNT_POSITIONS_BINDING)) {
         runBlocking {
             get<AccountPositionService>().getAccountPositions()
                 .toMutableList()
@@ -38,12 +38,15 @@ val viewModule = module {
     singleOf(::AccountTabViewModelFactory)
     singleOf(::OrdersViewModelFactory)
     single {
-        MenuBarViewModel(get(), get(), get(), get(named(accountPositionsBinding)), get())
+        MenuBarViewModel(get(), get(), get(), get(named(ACCOUNT_POSITIONS_BINDING)), get())
     }
     single {
         AccountTabsViewModel(
-            get(), get(), get(), get(),
-            get(named(accountPositionsBinding)),
+            get(),
+            get(),
+            get(),
+            get(),
+            get(named(ACCOUNT_POSITIONS_BINDING)),
             get<OauthService>().getTokenStatusBinding(),
             get(),
         )

@@ -16,7 +16,7 @@ class ObjectTableModelTest {
         @field:Column(name = "Amount", position = 1, mapper = BigDecimalReadTableValueMapper::class)
         var amount: BigDecimal = BigDecimal.ZERO,
         @field:Column(name = "ReadOnly", position = 2, editable = false)
-        var readOnly: String = "fixed"
+        var readOnly: String = "fixed",
     )
 
     data class OrderedRow(
@@ -25,12 +25,12 @@ class ObjectTableModelTest {
         @field:Column(name = "First", position = 0)
         var first: String = "a",
         @field:Column(name = "Second", position = 1)
-        var second: String = "b"
+        var second: String = "b",
     )
 
     data class ValRow(
         @field:Column(name = "Immutable", position = 0)
-        val immutable: String = "fixed"
+        val immutable: String = "fixed",
     )
 
     // --- Column count and names ---

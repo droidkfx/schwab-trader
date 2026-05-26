@@ -6,10 +6,11 @@ import com.droidkfx.st.util.databind.readOnlyMapped
 import com.droidkfx.st.util.repository.FileRepository
 import io.github.oshai.kotlinlogging.KotlinLogging.logger
 
-class OauthRepository(rootPath: ReadOnlyValueDataBinding<String>) : FileRepository(
-    logger {},
-    rootPath.readOnlyMapped { "$it/oauth" }
-) {
+class OauthRepository(rootPath: ReadOnlyValueDataBinding<String>) :
+    FileRepository(
+        logger {},
+        rootPath.readOnlyMapped { "$it/oauth" },
+    ) {
 
     fun loadExistingToken(): OauthTokenResponse? {
         logger.trace { "loadExistingToken" }

@@ -23,9 +23,8 @@ class OrdersTable(data: ReadWriteListDataBinding<OrderRowViewModel>) : JScrollPa
     }
 }
 
-private class OrdersTableModel(
-    data: List<OrderRowViewModel>,
-) : ObjectTableModel<OrderRowViewModel>(data, OrderRowViewModel::class.java) {
+private class OrdersTableModel(data: List<OrderRowViewModel>) :
+    ObjectTableModel<OrderRowViewModel>(data, OrderRowViewModel::class.java) {
 
     override fun isCellEditable(rowIndex: Int, columnIndex: Int) = false
 }

@@ -11,32 +11,84 @@ import kotlinx.serialization.json.JsonClassDiscriminator
 import kotlinx.serialization.json.JsonObject
 
 @Serializable
-data class AccountNumberHash(
-    val accountNumber: String,
-    val hashValue: String
-)
+data class AccountNumberHash(val accountNumber: String, val hashValue: String)
 
 enum class Session {
-    NORMAL, AM, PM, SEAMLESS
+    NORMAL,
+    AM,
+    PM,
+    SEAMLESS,
 }
 
 enum class Duration {
-    DAY, GOOD_TILL_CANCEL, FILL_OR_KILL, IMMEDIATE_OR_CANCEL, END_OF_WEEK, END_OF_MONTH, NEXT_END_OF_MONTH, UNKNOWN
+    DAY,
+    GOOD_TILL_CANCEL,
+    FILL_OR_KILL,
+    IMMEDIATE_OR_CANCEL,
+    END_OF_WEEK,
+    END_OF_MONTH,
+    NEXT_END_OF_MONTH,
+    UNKNOWN,
 }
 
 enum class OrderType {
-    MARKET, LIMIT, STOP, STOP_LIMIT, TRAILING_STOP, CABINET, NON_MARKETABLE, MARKET_ON_CLOSE, EXERCISE, TRAILING_STOP_LIMIT, NET_DEBIT, NET_CREDIT, NET_ZERO, LIMIT_ON_CLOSE, UNKNOWN
+    MARKET,
+    LIMIT,
+    STOP,
+    STOP_LIMIT,
+    TRAILING_STOP,
+    CABINET,
+    NON_MARKETABLE,
+    MARKET_ON_CLOSE,
+    EXERCISE,
+    TRAILING_STOP_LIMIT,
+    NET_DEBIT,
+    NET_CREDIT,
+    NET_ZERO,
+    LIMIT_ON_CLOSE,
+    UNKNOWN,
 }
 
 // Note that UNKNOWN is not a valid request type
 typealias OrderTypeRequest = OrderType
 
 enum class ComplexOrderStrategyType {
-    NONE, COVERED, VERTICAL, BACK_RATIO, CALENDAR, DIAGONAL, STRADDLE, STRANGLE, COLLAR_SYNTHETIC, BUTTERFLY, CONDOR, IRON_CONDOR, VERTICAL_ROLL, COLLAR_WITH_STOCK, DOUBLE_DIAGONAL, UNBALANCED_BUTTERFLY, UNBALANCED_CONDOR, UNBALANCED_IRON_CONDOR, UNBALANCED_VERTICAL_ROLL, MUTUAL_FUND_SWAP, CUSTOM
+    NONE,
+    COVERED,
+    VERTICAL,
+    BACK_RATIO,
+    CALENDAR,
+    DIAGONAL,
+    STRADDLE,
+    STRANGLE,
+    COLLAR_SYNTHETIC,
+    BUTTERFLY,
+    CONDOR,
+    IRON_CONDOR,
+    VERTICAL_ROLL,
+    COLLAR_WITH_STOCK,
+    DOUBLE_DIAGONAL,
+    UNBALANCED_BUTTERFLY,
+    UNBALANCED_CONDOR,
+    UNBALANCED_IRON_CONDOR,
+    UNBALANCED_VERTICAL_ROLL,
+    MUTUAL_FUND_SWAP,
+    CUSTOM,
 }
 
 enum class RequestedDestination {
-    INET, ECN_ARCA, CBOE, AMEX, PHLX, ISE, BOX, NYSE, NASDAQ, BATS, C2, AUTO
+    INET,
+    ECN_ARCA,
+    CBOE,
+    AMEX,
+    PHLX,
+    ISE,
+    BOX,
+    NYSE,
+    NASDAQ,
+    BATS,
+    C2,
+    AUTO,
 }
 
 typealias StopPriceLinkBasis = PriceLinkBasis
@@ -44,39 +96,96 @@ typealias StopPriceLinkBasis = PriceLinkBasis
 typealias StopPriceLinkType = PriceLinkType
 
 enum class StopType {
-    STANDARD, BID, ASK, LAST, MARK
+    STANDARD,
+    BID,
+    ASK,
+    LAST,
+    MARK,
 }
 
 enum class PriceLinkBasis {
-    MANUAL, BASE, TRIGGER, LAST, BID, ASK, ASK_BID, MARK, AVERAGE
+    MANUAL,
+    BASE,
+    TRIGGER,
+    LAST,
+    BID,
+    ASK,
+    ASK_BID,
+    MARK,
+    AVERAGE,
 }
 
 enum class PriceLinkType {
-    VALUE, PERCENT, TICK
+    VALUE,
+    PERCENT,
+    TICK,
 }
 
 enum class TaxLotMethod {
-    FIFO, LIFO, HIGH_COST, LOW_COST, AVERAGE_COST, SPECIFIC_LOT, LOSS_HARVESTER
+    FIFO,
+    LIFO,
+    HIGH_COST,
+    LOW_COST,
+    AVERAGE_COST,
+    SPECIFIC_LOT,
+    LOSS_HARVESTER,
 }
 
 enum class SpecialInstruction {
-    ALL_OR_NONE, DO_NOT_REDUCE, ALL_OR_NONE_DO_NOT_REDUCE
+    ALL_OR_NONE,
+    DO_NOT_REDUCE,
+    ALL_OR_NONE_DO_NOT_REDUCE,
 }
 
 enum class OrderStrategyType {
-    SINGLE, CANCEL, RECALL, PAIR, FLATTEN, TWO_DAY_SWAP, BLAST_ALL, OCO, TRIGGER
+    SINGLE,
+    CANCEL,
+    RECALL,
+    PAIR,
+    FLATTEN,
+    TWO_DAY_SWAP,
+    BLAST_ALL,
+    OCO,
+    TRIGGER,
 }
 
 enum class Status {
-    AWAITING_PARENT_ORDER, AWAITING_CONDITION, AWAITING_STOP_CONDITION, AWAITING_MANUAL_REVIEW, ACCEPTED, AWAITING_UR_OUT, PENDING_ACTIVATION, QUEUED, WORKING, REJECTED, PENDING_CANCEL, CANCELED, PENDING_REPLACE, REPLACED, FILLED, EXPIRED, NEW, AWAITING_RELEASE_TIME, PENDING_ACKNOWLEDGEMENT, PENDING_RECALL, UNKNOWN
+    AWAITING_PARENT_ORDER,
+    AWAITING_CONDITION,
+    AWAITING_STOP_CONDITION,
+    AWAITING_MANUAL_REVIEW,
+    ACCEPTED,
+    AWAITING_UR_OUT,
+    PENDING_ACTIVATION,
+    QUEUED,
+    WORKING,
+    REJECTED,
+    PENDING_CANCEL,
+    CANCELED,
+    PENDING_REPLACE,
+    REPLACED,
+    FILLED,
+    EXPIRED,
+    NEW,
+    AWAITING_RELEASE_TIME,
+    PENDING_ACKNOWLEDGEMENT,
+    PENDING_RECALL,
+    UNKNOWN,
 }
 
 enum class AmountIndicator {
-    DOLLARS, SHARES, ALL_SHARES, PERCENTAGE, UNKNOWN
+    DOLLARS,
+    SHARES,
+    ALL_SHARES,
+    PERCENTAGE,
+    UNKNOWN,
 }
 
 enum class SettlementInstruction {
-    REGULAR, CASH, NEXT_DAY, UNKNOWN
+    REGULAR,
+    CASH,
+    NEXT_DAY,
+    UNKNOWN,
 }
 
 @Serializable
@@ -106,7 +215,15 @@ class OrderStrategy(
     val orderLegs: List<OrderLeg>? = null,
 ) {
     enum class AdvancedOrderType {
-        NONE, OTO, OCO, OTOCO, OT2OCO, OT3OCO, BLAST_ALL, OTA, PAIR
+        NONE,
+        OTO,
+        OCO,
+        OTOCO,
+        OT2OCO,
+        OT3OCO,
+        BLAST_ALL,
+        OTA,
+        PAIR,
     }
 }
 
@@ -152,7 +269,11 @@ data class OrderValidationDetail(
 )
 
 enum class ApiRuleAction {
-    ACCEPT, ALERT, REJECT, REVIEW, UNKNOWN
+    ACCEPT,
+    ALERT,
+    REJECT,
+    REVIEW,
+    UNKNOWN,
 }
 
 @Serializable
@@ -163,41 +284,52 @@ data class CommissionAndFee(
 )
 
 @Serializable
-data class Commission(
-    val commissionLegs: List<CommissionLeg>? = null
-)
+data class Commission(val commissionLegs: List<CommissionLeg>? = null)
 
 @Serializable
-data class CommissionLeg(
-    val commissionValues: List<CommissionValue>? = null
-)
+data class CommissionLeg(val commissionValues: List<CommissionValue>? = null)
 
 typealias CommissionValue = FeeValue
 
 @Serializable
-data class Fees(
-    val feeLegs: List<FeeLeg>? = null
-)
+data class Fees(val feeLegs: List<FeeLeg>? = null)
 
 @Serializable
-data class FeeLeg(
-    val feeValues: List<FeeValue>? = null
-)
+data class FeeLeg(val feeValues: List<FeeValue>? = null)
 
 @Serializable
-data class FeeValue(
-    val value: KBigDecimal? = null,
-    val type: FeeType? = null,
-)
+data class FeeValue(val value: KBigDecimal? = null, val type: FeeType? = null)
 
 enum class FeeType {
-    COMMISSION, SEC_FEE, STR_FEE, R_FEE, CDSC_FEE, OPT_REG_FEE, ADDITIONAL_FEE, MISCELLANEOUS_FEE, FTT, FUTURES_CLEARING_FEE, FUTURES_DESK_OFFICE_FEE, FUTURES_EXCHANGE_FEE, FUTURES_GLOBEX_FEE, FUTURES_NFA_FEE, FUTURES_PIT_BROKERAGE_FEE, FUTURES_TRANSACTION_FEE, LOW_PROCEEDS_COMMISSION, BASE_CHARGE, GENERAL_CHARGE, GST_FEE, TAF_FEE, INDEX_OPTION_FEE, TEFRA_TAX, STATE_TAX, UNKNOWN
+    COMMISSION,
+    SEC_FEE,
+    STR_FEE,
+    R_FEE,
+    CDSC_FEE,
+    OPT_REG_FEE,
+    ADDITIONAL_FEE,
+    MISCELLANEOUS_FEE,
+    FTT,
+    FUTURES_CLEARING_FEE,
+    FUTURES_DESK_OFFICE_FEE,
+    FUTURES_EXCHANGE_FEE,
+    FUTURES_GLOBEX_FEE,
+    FUTURES_NFA_FEE,
+    FUTURES_PIT_BROKERAGE_FEE,
+    FUTURES_TRANSACTION_FEE,
+    LOW_PROCEEDS_COMMISSION,
+    BASE_CHARGE,
+    GENERAL_CHARGE,
+    GST_FEE,
+    TAF_FEE,
+    INDEX_OPTION_FEE,
+    TEFRA_TAX,
+    STATE_TAX,
+    UNKNOWN,
 }
 
 @Serializable
-data class Account(
-    val securitiesAccount: SecuritiesAccount? = null,
-)
+data class Account(val securitiesAccount: SecuritiesAccount? = null)
 
 @Serializable
 data class Order(
@@ -294,7 +426,8 @@ data class OrderActivity(
     val executionLegs: List<ExecutionLeg>? = null,
 ) {
     enum class Activity {
-        EXECUTION, ORDER_ACTION
+        EXECUTION,
+        ORDER_ACTION,
     }
 }
 
@@ -343,10 +476,7 @@ data class Position(
 }
 
 @Serializable
-data class ServiceError(
-    val message: String? = null,
-    val errors: List<String>? = null
-)
+data class ServiceError(val message: String? = null, val errors: List<String>? = null)
 
 @Serializable
 data class OrderLegCollection(
@@ -361,20 +491,33 @@ data class OrderLegCollection(
     val toSymbol: String? = null,
 ) {
     enum class OrderLegType {
-        EQUITY, OPTION, INDEX, MUTUAL_FUND, CASH_EQUIVALENT, FIXED_INCOME, CURRENCY, COLLECTIVE_INVESTMENT
+        EQUITY,
+        OPTION,
+        INDEX,
+        MUTUAL_FUND,
+        CASH_EQUIVALENT,
+        FIXED_INCOME,
+        CURRENCY,
+        COLLECTIVE_INVESTMENT,
     }
 
     enum class QuantityType {
-        ALL_SHARES, DOLLARS, SHARES
+        ALL_SHARES,
+        DOLLARS,
+        SHARES,
     }
 
     enum class DivCapGains {
-        REINVEST, PAYOUT
+        REINVEST,
+        PAYOUT,
     }
 }
 
 enum class PositionEffect {
-    OPENING, CLOSING, AUTOMATIC, UNKNOWN
+    OPENING,
+    CLOSING,
+    AUTOMATIC,
+    UNKNOWN,
 }
 
 typealias SecuritiesAccount = SecuritiesAccountBase
@@ -390,7 +533,8 @@ sealed class SecuritiesAccountBase {
 
     @Serializable
     enum class Type {
-        CASH, MARGIN
+        CASH,
+        MARGIN,
     }
 }
 
@@ -479,7 +623,7 @@ class CashAccount(
     override val positions: List<Position>? = null,
     val initialBalances: CashInitialBalance? = null,
     val currentBalances: CashBalance? = null,
-    val projectedBalances: CashBalance? = null
+    val projectedBalances: CashBalance? = null,
 ) : SecuritiesAccountBase()
 
 @Serializable
@@ -550,7 +694,10 @@ class TransactionCashEquivalent(
     val type: Type? = null,
 ) : TransactionBaseInstrument() {
     enum class Type {
-        SWEEP_VEHICLE, SAVINGS, MONEY_MARKET_FUND, UNKNOWN
+        SWEEP_VEHICLE,
+        SAVINGS,
+        MONEY_MARKET_FUND,
+        UNKNOWN,
     }
 }
 
@@ -565,17 +712,40 @@ class CollectiveInvestment(
     val type: Type? = null,
 ) : TransactionBaseInstrument() {
     enum class Type {
-        UNIT_INVESTMENT_TRUST, EXCHANGE_TRADED_FUND, CLOSED_END_FUND, INDEX, UNITS
+        UNIT_INVESTMENT_TRUST,
+        EXCHANGE_TRADED_FUND,
+        CLOSED_END_FUND,
+        INDEX,
+        UNITS,
     }
 }
 
 enum class Instruction {
-    BUY, SELL, BUY_TO_COVER, SELL_SHORT, BUY_TO_OPEN, BUY_TO_CLOSE, SELL_TO_OPEN, SELL_TO_CLOSE, EXCHANGE, SELL_SHORT_EXEMPT
+    BUY,
+    SELL,
+    BUY_TO_COVER,
+    SELL_SHORT,
+    BUY_TO_OPEN,
+    BUY_TO_CLOSE,
+    SELL_TO_OPEN,
+    SELL_TO_CLOSE,
+    EXCHANGE,
+    SELL_SHORT_EXEMPT,
 }
 
 @Serializable
 enum class AssetType {
-    EQUITY, MUTUAL_FUND, OPTION, FUTURE, FOREX, INDEX, CASH_EQUIVALENT, FIXED_INCOME, PRODUCT, CURRENCY, COLLECTIVE_INVESTMENT
+    EQUITY,
+    MUTUAL_FUND,
+    OPTION,
+    FUTURE,
+    FOREX,
+    INDEX,
+    CASH_EQUIVALENT,
+    FIXED_INCOME,
+    PRODUCT,
+    CURRENCY,
+    COLLECTIVE_INVESTMENT,
 }
 
 @Serializable
@@ -599,7 +769,19 @@ class TransactionEquity(
     val type: Type? = null,
 ) : TransactionBaseInstrument() {
     enum class Type {
-        COMMON_STOCK, PREFERRED_STOCK, DEPOSITORY_RECEIPT, PREFERRED_DEPOSITORY_RECEIPT, RESTRICTED_STOCK, COMPONENT_UNIT, RIGHT, WARRANT, CONVERTIBLE_PREFERRED_STOCK, CONVERTIBLE_STOCK, LIMITED_PARTNERSHIP, WHEN_ISSUED, UNKNOWN
+        COMMON_STOCK,
+        PREFERRED_STOCK,
+        DEPOSITORY_RECEIPT,
+        PREFERRED_DEPOSITORY_RECEIPT,
+        RESTRICTED_STOCK,
+        COMPONENT_UNIT,
+        RIGHT,
+        WARRANT,
+        CONVERTIBLE_PREFERRED_STOCK,
+        CONVERTIBLE_STOCK,
+        LIMITED_PARTNERSHIP,
+        WHEN_ISSUED,
+        UNKNOWN,
     }
 }
 
@@ -618,7 +800,25 @@ class TransactionFixedIncome(
     val variableRate: KBigDecimal? = null,
 ) : TransactionBaseInstrument() {
     enum class Type {
-        BOND_UNIT, CERTIFICATE_OF_DEPOSIT, CONVERTIBLE_BOND, COLLATERALIZED_MORTGAGE_OBLIGATION, CORPORATE_BOND, GOVERNMENT_MORTGAGE, GNMA_BONDS, MUNICIPAL_ASSESSMENT_DISTRICT, MUNICIPAL_BOND, OTHER_GOVERNMENT, SHORT_TERM_PAPER, US_TREASURY_BOND, US_TREASURY_BILL, US_TREASURY_NOTE, US_TREASURY_ZERO_COUPON, AGENCY_BOND, WHEN_AS_AND_IF_ISSUED_BOND, ASSET_BACKED_SECURITY, UNKNOWN
+        BOND_UNIT,
+        CERTIFICATE_OF_DEPOSIT,
+        CONVERTIBLE_BOND,
+        COLLATERALIZED_MORTGAGE_OBLIGATION,
+        CORPORATE_BOND,
+        GOVERNMENT_MORTGAGE,
+        GNMA_BONDS,
+        MUNICIPAL_ASSESSMENT_DISTRICT,
+        MUNICIPAL_BOND,
+        OTHER_GOVERNMENT,
+        SHORT_TERM_PAPER,
+        US_TREASURY_BOND,
+        US_TREASURY_BILL,
+        US_TREASURY_NOTE,
+        US_TREASURY_ZERO_COUPON,
+        AGENCY_BOND,
+        WHEN_AS_AND_IF_ISSUED_BOND,
+        ASSET_BACKED_SECURITY,
+        UNKNOWN,
     }
 }
 
@@ -635,30 +835,32 @@ class Forex(
     val counterCurrency: Currency? = null,
 ) : TransactionBaseInstrument() {
     enum class Type {
-        STANDARD, NBBO, UNKNOWN
+        STANDARD,
+        NBBO,
+        UNKNOWN,
     }
 }
 
 // TODO this is complicated
-//@Serializable
-//class Future(
+// @Serializable
+// class Future(
 //    override val assetType: AssetType = AssetType.FUTURE,
 //    override val cusip: String? = null,
 //    override val symbol: String? = null,
 //    override val description: String? = null,
 //    override val instrumentId: Long? = null,
 //    override val netChange: KBigDecimal? = null,
-//) : TransactionBaseInstrument()
+// ) : TransactionBaseInstrument()
 //
-//@Serializable
-//class Index(
+// @Serializable
+// class Index(
 //    override val assetType: AssetType = AssetType.INDEX,
 //    override val cusip: String? = null,
 //    override val symbol: String? = null,
 //    override val description: String? = null,
 //    override val instrumentId: Long? = null,
 //    override val netChange: KBigDecimal? = null,
-//) : TransactionBaseInstrument()
+// ) : TransactionBaseInstrument()
 
 @Serializable
 @SerialName("MUTUAL_FUND")
@@ -677,7 +879,12 @@ class TransactionMutualFund(
     val redemptionCutoffTime: KInstant? = null,
 ) : TransactionBaseInstrument() {
     enum class Type {
-        NOT_APPLICABLE, OPEN_END_NON_TAXABLE, OPEN_END_TAXABLE, NO_LOAD_NON_TAXABLE, NO_LOAD_TAXABLE, UNKNOWN
+        NOT_APPLICABLE,
+        OPEN_END_NON_TAXABLE,
+        OPEN_END_TAXABLE,
+        NO_LOAD_NON_TAXABLE,
+        NO_LOAD_TAXABLE,
+        UNKNOWN,
     }
 }
 
@@ -700,11 +907,16 @@ class TransactionOption(
     val deliverable: TransactionInstrument? = null,
 ) : TransactionBaseInstrument() {
     enum class PutCall {
-        PUT, CALL, UNKNOWN
+        PUT,
+        CALL,
+        UNKNOWN,
     }
 
     enum class Type {
-        VANILLA, BINARY, BARRIER, UNKNOWN
+        VANILLA,
+        BINARY,
+        BARRIER,
+        UNKNOWN,
     }
 }
 
@@ -719,7 +931,8 @@ class Product(
     val type: Type? = null,
 ) : TransactionBaseInstrument() {
     enum class Type {
-        TBD, UNKNOWN
+        TBD,
+        UNKNOWN,
     }
 }
 
@@ -728,10 +941,13 @@ data class AccountAPIOptionDeliverable(
     val symbol: String? = null,
     val deliverableUnits: KBigDecimal? = null,
     val apiCurrencyType: ApiCurrencyType? = null,
-    val assetType: AssetType? = null
+    val assetType: AssetType? = null,
 ) {
     enum class ApiCurrencyType {
-        USD, CAD, EUR, JPY
+        USD,
+        CAD,
+        EUR,
+        JPY,
     }
 }
 
@@ -746,11 +962,45 @@ data class TransactionAPIOptionDeliverable(
 )
 
 enum class ApiOrderStatus {
-    AWAITING_PARENT_ORDER, AWAITING_CONDITION, AWAITING_STOP_CONDITION, AWAITING_MANUAL_REVIEW, ACCEPTED, AWAITING_UR_OUT, PENDING_ACTIVATION, QUEUED, WORKING, REJECTED, PENDING_CANCEL, CANCELED, PENDING_REPLACE, REPLACED, FILLED, EXPIRED, NEW, AWAITING_RELEASE_TIME, PENDING_ACKNOWLEDGEMENT, PENDING_RECALL, UNKNOWN
+    AWAITING_PARENT_ORDER,
+    AWAITING_CONDITION,
+    AWAITING_STOP_CONDITION,
+    AWAITING_MANUAL_REVIEW,
+    ACCEPTED,
+    AWAITING_UR_OUT,
+    PENDING_ACTIVATION,
+    QUEUED,
+    WORKING,
+    REJECTED,
+    PENDING_CANCEL,
+    CANCELED,
+    PENDING_REPLACE,
+    REPLACED,
+    FILLED,
+    EXPIRED,
+    NEW,
+    AWAITING_RELEASE_TIME,
+    PENDING_ACKNOWLEDGEMENT,
+    PENDING_RECALL,
+    UNKNOWN,
 }
 
 enum class TransactionType {
-    TRADE, RECEIVE_AND_DELIVER, DIVIDEND_OR_INTEREST, ACH_RECEIPT, ACH_DISBURSEMENT, CASH_RECEIPT, CASH_DISBURSEMENT, ELECTRONIC_FUND, WIRE_OUT, WIRE_IN, JOURNAL, MEMORANDUM, MARGIN_CALL, MONEY_MARKET, SMA_ADJUSTMENT
+    TRADE,
+    RECEIVE_AND_DELIVER,
+    DIVIDEND_OR_INTEREST,
+    ACH_RECEIPT,
+    ACH_DISBURSEMENT,
+    CASH_RECEIPT,
+    CASH_DISBURSEMENT,
+    ELECTRONIC_FUND,
+    WIRE_OUT,
+    WIRE_IN,
+    JOURNAL,
+    MEMORANDUM,
+    MARGIN_CALL,
+    MONEY_MARKET,
+    SMA_ADJUSTMENT,
 }
 
 @Serializable
@@ -772,15 +1022,27 @@ data class Transaction(
     val transferItems: List<TransferItem>? = null,
 ) {
     enum class ActivityType {
-        ACTIVITY_CORRECTION, EXECUTION, ORDER_ACTION, TRANSFER, UNKNOWN
+        ACTIVITY_CORRECTION,
+        EXECUTION,
+        ORDER_ACTION,
+        TRANSFER,
+        UNKNOWN,
     }
 
     enum class SubAccountType {
-        CASH, MARGIN, SHORT, DIV, INCOME, UNKNOWN
+        CASH,
+        MARGIN,
+        SHORT,
+        DIV,
+        INCOME,
+        UNKNOWN,
     }
 
     enum class TransactionStatus {
-        VALID, INVALID, PENDING, UNKNOWN
+        VALID,
+        INVALID,
+        PENDING,
+        UNKNOWN,
     }
 }
 
@@ -796,7 +1058,11 @@ data class UserDetails(
     val brokerRepCode: String? = null,
 ) {
     enum class UserType {
-        ADVISOR_USER, BROKER_USER, CLIENT_USER, SYSTEM_USER, UNKNOWN
+        ADVISOR_USER,
+        BROKER_USER,
+        CLIENT_USER,
+        SYSTEM_USER,
+        UNKNOWN,
     }
 }
 
@@ -838,18 +1104,11 @@ data class StreamerInfo(
 )
 
 @Serializable
-data class Offer(
-    val level2Permissions: Boolean? = null,
-    val mktDataPermission: String? = null
-)
+data class Offer(val level2Permissions: Boolean? = null, val mktDataPermission: String? = null)
 
 // TODO actually map this model to the Schwab API
 @Serializable
-data class QuoteResponse(
-    val quote: QuoteData
-) {
+data class QuoteResponse(val quote: QuoteData) {
     @Serializable
-    data class QuoteData(
-        val lastPrice: KBigDecimal? = null,
-    )
+    data class QuoteData(val lastPrice: KBigDecimal? = null)
 }

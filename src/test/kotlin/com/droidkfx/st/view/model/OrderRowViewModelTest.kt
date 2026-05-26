@@ -51,8 +51,12 @@ class OrderRowViewModelTest {
     @Test
     fun `toRowViewModel uses empty string for null instruction and orderType`() {
         val order = CachedOrder(
-            orderId = 1L, accountId = "acct", status = Status.WORKING, symbol = "AAPL",
-            instruction = null, orderType = null,
+            orderId = 1L,
+            accountId = "acct",
+            status = Status.WORKING,
+            symbol = "AAPL",
+            instruction = null,
+            orderType = null,
         )
         val row = order.toRowViewModel()
         assertEquals("", row.action)
@@ -62,8 +66,14 @@ class OrderRowViewModelTest {
     @Test
     fun `toRowViewModel uses BigDecimal zero for null quantities and price`() {
         val order = CachedOrder(
-            orderId = 1L, accountId = "acct", status = Status.WORKING, symbol = "AAPL",
-            quantity = null, filledQuantity = null, remainingQuantity = null, price = null,
+            orderId = 1L,
+            accountId = "acct",
+            status = Status.WORKING,
+            symbol = "AAPL",
+            quantity = null,
+            filledQuantity = null,
+            remainingQuantity = null,
+            price = null,
         )
         val row = order.toRowViewModel()
         assertEquals(BigDecimal.ZERO, row.quantity)
@@ -75,8 +85,12 @@ class OrderRowViewModelTest {
     @Test
     fun `toRowViewModel uses empty string for null timestamps`() {
         val order = CachedOrder(
-            orderId = 1L, accountId = "acct", status = Status.WORKING, symbol = "AAPL",
-            enteredTime = null, closeTime = null,
+            orderId = 1L,
+            accountId = "acct",
+            status = Status.WORKING,
+            symbol = "AAPL",
+            enteredTime = null,
+            closeTime = null,
         )
         val row = order.toRowViewModel()
         assertEquals("", row.enteredTime)

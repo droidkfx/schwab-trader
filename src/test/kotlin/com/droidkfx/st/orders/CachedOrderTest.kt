@@ -73,7 +73,7 @@ class CachedOrderTest {
                 OrderLegCollection(
                     instrument = TransactionEquity(symbol = "AAPL"),
                     instruction = Instruction.BUY,
-                )
+                ),
             ),
         )
 

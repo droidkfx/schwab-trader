@@ -24,7 +24,7 @@ class AccountService(private val accountRepository: AccountRepository, private v
                     id = UUID.randomUUID().toString(),
                     name = it.accountNumber,
                     accountNumber = it.accountNumber,
-                    accountNumberHash = it.hashValue
+                    accountNumberHash = it.hashValue,
                 )
             }
         val totalAccounts = knownAccounts + (newAccounts ?: emptyList())

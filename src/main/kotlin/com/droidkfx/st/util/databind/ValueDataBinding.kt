@@ -6,11 +6,11 @@ typealias DataBindChangeListener<T> = (oldValue: T, newValue: T) -> Unit
 
 typealias DataBindValueListener<T> = (newValue: T) -> Unit
 
-fun <T> DataBindValueListener<T>.asChangeListener(): DataBindChangeListener<T> {
-    return { _, newValue -> this(newValue) }
-}
+fun <T> DataBindValueListener<T>.asChangeListener(): DataBindChangeListener<T> = { _, newValue -> this(newValue) }
 
-class ValueDataBinding<T>(initialValue: T) : ReadOnlyValueDataBinding<T>, ReadWriteValueDataBinding<T> {
+class ValueDataBinding<T>(initialValue: T) :
+    ReadOnlyValueDataBinding<T>,
+    ReadWriteValueDataBinding<T> {
     private val logger = logger {}
     private val listeners = mutableListOf<DataBindChangeListener<T>>()
 
@@ -52,15 +52,13 @@ interface ReadWriteValueDataBinding<T> : SubscribeDataBinding<T> {
     var value: T
 }
 
-fun <T> ValueDataBinding<T>.readOnly(): ReadOnlyValueDataBinding<T> {
-    return this.readOnlyMapped { it }
-}
+fun <T> ValueDataBinding<T>.readOnly(): ReadOnlyValueDataBinding<T> = this.readOnlyMapped { it }
 
 fun <T> T.toDataBinding(): ValueDataBinding<T> = ValueDataBinding(this)
 
 private abstract class MappedDataBinding<T, U>(
     private val delegate: SubscribeDataBinding<T>,
-    protected val mapperFrom: (T) -> U
+    protected val mapperFrom: (T) -> U,
 ) : SubscribeDataBinding<U> {
     private val logger = logger {}
 
@@ -81,10 +79,9 @@ private abstract class MappedDataBinding<T, U>(
     }
 }
 
-private class ReadOnlyMappedDataBinding<T, U>(
-    private val delegate: ReadOnlyValueDataBinding<T>,
-    mapperFrom: (T) -> U
-) : MappedDataBinding<T, U>(delegate, mapperFrom), ReadOnlyValueDataBinding<U> {
+private class ReadOnlyMappedDataBinding<T, U>(private val delegate: ReadOnlyValueDataBinding<T>, mapperFrom: (T) -> U) :
+    MappedDataBinding<T, U>(delegate, mapperFrom),
+    ReadOnlyValueDataBinding<U> {
     override val value: U
         get() = mapperFrom(delegate.value)
 }
@@ -92,8 +89,9 @@ private class ReadOnlyMappedDataBinding<T, U>(
 private class ReadWriteMappedDataBinding<T, U>(
     private val delegate: ReadWriteValueDataBinding<T>,
     mapperFrom: (T) -> U,
-    private val mapperTo: (T, U) -> T
-) : MappedDataBinding<T, U>(delegate, mapperFrom), ReadWriteValueDataBinding<U> {
+    private val mapperTo: (T, U) -> T,
+) : MappedDataBinding<T, U>(delegate, mapperFrom),
+    ReadWriteValueDataBinding<U> {
     override var value: U
         get() = mapperFrom(delegate.value)
         set(value) {
@@ -101,13 +99,10 @@ private class ReadWriteMappedDataBinding<T, U>(
         }
 }
 
-fun <T, U> ReadOnlyValueDataBinding<T>.readOnlyMapped(mapper: (T) -> U): ReadOnlyValueDataBinding<U> {
-    return ReadOnlyMappedDataBinding(this, mapper)
-}
+fun <T, U> ReadOnlyValueDataBinding<T>.readOnlyMapped(mapper: (T) -> U): ReadOnlyValueDataBinding<U> =
+    ReadOnlyMappedDataBinding(this, mapper)
 
 fun <T, U> ReadWriteValueDataBinding<T>.mapped(
     mapperFrom: (T) -> U,
-    mapperUp: (T, U) -> T
-): ReadWriteValueDataBinding<U> {
-    return ReadWriteMappedDataBinding(this, mapperFrom, mapperUp)
-}
+    mapperUp: (T, U) -> T,
+): ReadWriteValueDataBinding<U> = ReadWriteMappedDataBinding(this, mapperFrom, mapperUp)

@@ -101,10 +101,11 @@ class MultiSelectDropDown<T>(
         val scrollPane = JScrollPane(panel).apply {
             border = BorderFactory.createEmptyBorder()
             horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
-            verticalScrollBarPolicy = if (items.size > MAX_VISIBLE_ITEMS)
+            verticalScrollBarPolicy = if (items.size > MAX_VISIBLE_ITEMS) {
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS
-            else
+            } else {
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
+            }
         }
 
         popup.addPopupMenuListener(object : PopupMenuListener {
@@ -116,11 +117,11 @@ class MultiSelectDropDown<T>(
                 if (!sized && items.size > MAX_VISIBLE_ITEMS) {
                     sized = true
                     val ph = panel.preferredSize
-                    val rowH = ph.height / (items.size + 1)   // +1 for All row
+                    val rowH = ph.height / (items.size + 1) // +1 for All row
                     val sbW = scrollPane.verticalScrollBar.preferredSize.width
                     scrollPane.preferredSize = Dimension(
                         ph.width + sbW + 4,
-                        rowH * (MAX_VISIBLE_ITEMS + 1) + 8   // +1 for All, +8 border
+                        rowH * (MAX_VISIBLE_ITEMS + 1) + 8, // +1 for All, +8 border
                     )
                     (e.source as JPopupMenu).pack()
                 }
@@ -200,8 +201,8 @@ class MultiSelectDropDown<T>(
                 // Downward chevron centred in the panel, proportions matching FlatLaf's FlatArrowIcon
                 val cx = width / 2f
                 val cy = height / 2f
-                val aw = 4f    // half-width of chevron arms
-                val ah = 2.5f  // half-height of chevron arms
+                val aw = 4f // half-width of chevron arms
+                val ah = 2.5f // half-height of chevron arms
 
                 val path = java.awt.geom.Path2D.Float()
                 path.moveTo(cx - aw, cy - ah)
@@ -234,8 +235,8 @@ class MultiSelectDropDown<T>(
 
     companion object {
         private const val MAX_VISIBLE_ITEMS = 5
-        private const val ARROW_AREA_WIDTH = 16     // matches FlatComboBoxButton preferred width
-        private const val FIXED_WIDTH_PADDING = 32   // border(2) + text-padding(12) + arrow(16) + slack(2)
-        private const val MIN_HEIGHT = 22            // matches JComboBox.preferredSize.height under FlatLaf
+        private const val ARROW_AREA_WIDTH = 16 // matches FlatComboBoxButton preferred width
+        private const val FIXED_WIDTH_PADDING = 32 // border(2) + text-padding(12) + arrow(16) + slack(2)
+        private const val MIN_HEIGHT = 22 // matches JComboBox.preferredSize.height under FlatLaf
     }
 }

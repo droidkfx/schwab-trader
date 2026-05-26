@@ -11,7 +11,9 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
-typealias KInstant = @Serializable(with = InstantSerializer::class) Instant
+typealias KInstant =
+    @Serializable(with = InstantSerializer::class)
+    Instant
 
 object InstantSerializer : KSerializer<Instant> {
     // Fallback formatter for Schwab API responses that use +HHMM offset without colon (e.g., +0000, -0500)

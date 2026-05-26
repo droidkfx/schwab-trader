@@ -38,7 +38,7 @@ class OrderServiceTest {
     fun `fetchOrders returns union of existing cache and fresh API results`() = runBlocking {
         every { orderRepository.loadOrders("acct-1") } returns listOf(cached(1L))
         coEvery { ordersClient.getAccountOrders(any(), any(), any(), any(), any()) } returns
-                ApiResponse(data = listOf(apiOrder(2L)))
+            ApiResponse(data = listOf(apiOrder(2L)))
 
         val result = service.fetchOrders(account)
         assertEquals(2, result.size)
@@ -48,7 +48,7 @@ class OrderServiceTest {
     fun `fetchOrders fresh API result overwrites stale cache entry for the same orderId`() = runBlocking {
         every { orderRepository.loadOrders("acct-1") } returns listOf(cached(1L, status = Status.WORKING))
         coEvery { ordersClient.getAccountOrders(any(), any(), any(), any(), any()) } returns
-                ApiResponse(data = listOf(apiOrder(1L, status = Status.FILLED)))
+            ApiResponse(data = listOf(apiOrder(1L, status = Status.FILLED)))
 
         val result = service.fetchOrders(account)
 
@@ -62,11 +62,11 @@ class OrderServiceTest {
         val newer = Instant.parse("2025-01-10T00:00:00Z")
         every { orderRepository.loadOrders("acct-1") } returns emptyList()
         coEvery { ordersClient.getAccountOrders(any(), any(), any(), any(), any()) } returns
-                ApiResponse(data = listOf(apiOrder(1L, enteredTime = older), apiOrder(2L, enteredTime = newer)))
+            ApiResponse(data = listOf(apiOrder(1L, enteredTime = older), apiOrder(2L, enteredTime = newer)))
 
         val result = service.fetchOrders(account)
 
-        assertEquals(2L, result[0].orderId)  // newer first
+        assertEquals(2L, result[0].orderId) // newer first
         assertEquals(1L, result[1].orderId)
     }
 
@@ -74,7 +74,7 @@ class OrderServiceTest {
     fun `fetchOrders persists merged result to repository`() = runBlocking {
         every { orderRepository.loadOrders("acct-1") } returns emptyList()
         coEvery { ordersClient.getAccountOrders(any(), any(), any(), any(), any()) } returns
-                ApiResponse(data = listOf(apiOrder(7L)))
+            ApiResponse(data = listOf(apiOrder(7L)))
 
         service.fetchOrders(account)
 
@@ -88,7 +88,7 @@ class OrderServiceTest {
         val existing = listOf(cached(1L))
         every { orderRepository.loadOrders("acct-1") } returns existing
         coEvery { ordersClient.getAccountOrders(any(), any(), any(), any(), any()) } returns
-                ApiResponse(error = mockk(relaxed = true))
+            ApiResponse(error = mockk(relaxed = true))
 
         val result = service.fetchOrders(account)
         assertEquals(existing, result)

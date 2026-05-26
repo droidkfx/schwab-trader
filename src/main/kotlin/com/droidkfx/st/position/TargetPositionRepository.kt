@@ -8,7 +8,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging.logger
 internal class TargetPositionRepository(rootPath: ReadOnlyValueDataBinding<String>) :
     FileRepository(
         logger {},
-        rootPath.readOnlyMapped { "$it/position/target" }
+        rootPath.readOnlyMapped { "$it/position/target" },
     ) {
 
     fun loadTargetPositions(accountId: String): List<PositionTarget> {

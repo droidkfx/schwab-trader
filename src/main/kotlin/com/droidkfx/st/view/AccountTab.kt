@@ -18,10 +18,7 @@ import javax.swing.JPanel
 import javax.swing.JSplitPane
 import javax.swing.JTextField
 
-class AccountTab(
-    accountVm: AccountTabViewModel,
-    ordersVm: OrdersViewModel,
-) : JPanel(BorderLayout()) {
+class AccountTab(accountVm: AccountTabViewModel, ordersVm: OrdersViewModel) : JPanel(BorderLayout()) {
     private val logger = logger {}
 
     /** Exposed so AccountTabs can place the tab strip at the JFrame SOUTH level. */
@@ -76,37 +73,45 @@ class AccountTab(
 
         add(
             JPanel(FlowLayout().apply { alignment = FlowLayout.LEFT }).apply {
-                add(JTextField(accountVm.accountNameDataBinding.value).apply {
-                    addActionListener {
-                        logger.debug { "Account name changed to $text" }
-                        accountVm.setAccountName(text)
-                    }
-                    addFocusListener(object : FocusListener {
-                        override fun focusLost(e: java.awt.event.FocusEvent?) {
+                add(
+                    JTextField(accountVm.accountNameDataBinding.value).apply {
+                        addActionListener {
                             logger.debug { "Account name changed to $text" }
                             accountVm.setAccountName(text)
                         }
+                        addFocusListener(object : FocusListener {
+                            override fun focusLost(e: java.awt.event.FocusEvent?) {
+                                logger.debug { "Account name changed to $text" }
+                                accountVm.setAccountName(text)
+                            }
 
-                        override fun focusGained(e: java.awt.event.FocusEvent?) {}
-                    })
-                })
+                            override fun focusGained(e: java.awt.event.FocusEvent?) {}
+                        })
+                    },
+                )
                 add(saveAllocationsButton)
-                add(JButton("Refresh Data").apply {
-                    addCoActionListener {
-                        accountVm.refreshData()
-                        ordersVm.refresh()
-                        CoroutineScope(Dispatchers.Swing).launch {
-                            processOrdersButton.isEnabled = accountVm.data.any {
-                                it.tradeAction == StrategyAction.BUY.name || it.tradeAction == StrategyAction.SELL.name
+                add(
+                    JButton("Refresh Data").apply {
+                        addCoActionListener {
+                            accountVm.refreshData()
+                            ordersVm.refresh()
+                            CoroutineScope(Dispatchers.Swing).launch {
+                                processOrdersButton.isEnabled = accountVm.data.any {
+                                    it.tradeAction == StrategyAction.BUY.name ||
+                                        it.tradeAction == StrategyAction.SELL.name
+                                }
                             }
                         }
-                    }
-                })
+                    },
+                )
                 add(processOrdersButton)
-                add(JLabel("Account Cash: $ ${"%.2f".format(accountVm.accountCash.value)}").apply {
-                    accountVm.accountCash.addSwingListener { text = "Account Cash: $ ${"%.2f".format(it)}" }
-                })
-            }, BorderLayout.NORTH
+                add(
+                    JLabel("Account Cash: $ ${"%.2f".format(accountVm.accountCash.value)}").apply {
+                        accountVm.accountCash.addSwingListener { text = "Account Cash: $ ${"%.2f".format(it)}" }
+                    },
+                )
+            },
+            BorderLayout.NORTH,
         )
         add(splitPane, BorderLayout.CENTER)
     }

@@ -5,7 +5,7 @@ package com.droidkfx.st.schwab.client
 
 fun sampleAccountNumberHash() = AccountNumberHash(
     accountNumber = "123456789",
-    hashValue = "abcdef123456"
+    hashValue = "abcdef123456",
 )
 
 fun sampleOrderLeg() = OrderLeg(
@@ -18,14 +18,14 @@ fun sampleOrderLeg() = OrderLeg(
     finalSymbol = "XYZ",
     legId = 1,
     assetType = AssetType.EQUITY,
-    instruction = Instruction.BUY
+    instruction = Instruction.BUY,
 )
 
 fun sampleOrderBalance() = OrderBalance(
     orderValue = "12.34".toBigDecimal(),
     projectedAvailableFund = "1000".toBigDecimal(),
     projectedBuyingPower = "2000".toBigDecimal(),
-    projectedCommission = "0.01".toBigDecimal()
+    projectedCommission = "0.01".toBigDecimal(),
 )
 
 fun sampleOrderStrategy() = OrderStrategy(
@@ -50,7 +50,7 @@ fun sampleOrderStrategy() = OrderStrategy(
     settlementInstruction = SettlementInstruction.REGULAR,
     strategy = ComplexOrderStrategyType.NONE,
     amountIndicator = AmountIndicator.DOLLARS,
-    orderLegs = listOf(sampleOrderLeg())
+    orderLegs = listOf(sampleOrderLeg()),
 )
 
 fun sampleOrderValidationDetail() = OrderValidationDetail(
@@ -59,7 +59,7 @@ fun sampleOrderValidationDetail() = OrderValidationDetail(
     activityMessage = "info",
     originalSeverity = ApiRuleAction.ACCEPT,
     overrideName = null,
-    overrideSeverity = null
+    overrideSeverity = null,
 )
 
 fun sampleOrderValidationResult() = OrderValidationResult(
@@ -81,7 +81,7 @@ fun sampleFees() = Fees(feeLegs = listOf(sampleFeeLeg()))
 fun sampleCommissionAndFee() = CommissionAndFee(
     commission = sampleCommission(),
     fee = sampleFees(),
-    trueCommission = sampleCommission()
+    trueCommission = sampleCommission(),
 )
 
 fun sampleExecutionLeg() = ExecutionLeg(
@@ -89,7 +89,7 @@ fun sampleExecutionLeg() = ExecutionLeg(
     price = "12.34".toBigDecimal(),
     quantity = "10".toBigDecimal(),
     mismarkedQuantity = "0".toBigDecimal(),
-    instrumentId = 111
+    instrumentId = 111,
 )
 
 fun sampleOrderActivity() = OrderActivity(
@@ -97,7 +97,7 @@ fun sampleOrderActivity() = OrderActivity(
     executionType = "TRADE",
     quantity = "10".toBigDecimal(),
     orderRemainingQuantity = "0".toBigDecimal(),
-    executionLegs = listOf(sampleExecutionLeg())
+    executionLegs = listOf(sampleExecutionLeg()),
 )
 
 fun sampleOrder() = Order(
@@ -134,7 +134,7 @@ fun sampleOrder() = Order(
     orderActivityCollection = listOf(sampleOrderActivity()),
     replacingOrderCollection = emptyList(),
     childOrderStrategies = emptyList(),
-    statusDescription = "accepted"
+    statusDescription = "accepted",
 )
 
 fun sampleOrderRequest() = OrderRequest(
@@ -169,14 +169,14 @@ fun sampleOrderRequest() = OrderRequest(
     orderActivityCollection = listOf(sampleOrderActivity()),
     replacingOrderCollection = emptyList(),
     childOrderStrategies = emptyList(),
-    statusDescription = "accepted"
+    statusDescription = "accepted",
 )
 
 fun samplePreviewOrder() = PreviewOrder(
     orderId = 99,
     orderStrategy = sampleOrderStrategy(),
     orderValidationResult = sampleOrderValidationResult(),
-    commissionAndFee = sampleCommissionAndFee()
+    commissionAndFee = sampleCommissionAndFee(),
 )
 
 fun sampleTransactionEquity() = TransactionEquity(
@@ -185,7 +185,7 @@ fun sampleTransactionEquity() = TransactionEquity(
     description = "Equity",
     instrumentId = 1,
     netChange = "0.1".toBigDecimal(),
-    type = TransactionEquity.Type.COMMON_STOCK
+    type = TransactionEquity.Type.COMMON_STOCK,
 )
 
 fun samplePosition() = Position(
@@ -208,7 +208,7 @@ fun samplePosition() = Position(
     shortOpenProfitLoss = null,
     previousSessionLongQuantity = "10".toBigDecimal(),
     previousSessionShortQuantity = "0".toBigDecimal(),
-    currentDayCost = "0".toBigDecimal()
+    currentDayCost = "0".toBigDecimal(),
 )
 
 fun sampleMarginInitialBalance() = MarginInitialBalance(
@@ -244,7 +244,7 @@ fun sampleMarginInitialBalance() = MarginInitialBalance(
     pendingDeposits = "0".toBigDecimal(),
     marginBalance = "0".toBigDecimal(),
     shortBalance = "0".toBigDecimal(),
-    accountValue = "0".toBigDecimal()
+    accountValue = "0".toBigDecimal(),
 )
 
 fun sampleMarginBalance() = MarginBalance(
@@ -266,7 +266,7 @@ fun sampleMarginBalance() = MarginBalance(
     sma = "0".toBigDecimal(),
     isInCall = false,
     stockBuyingPower = "0".toBigDecimal(),
-    optionBuyingPower = "0".toBigDecimal()
+    optionBuyingPower = "0".toBigDecimal(),
 )
 
 fun sampleCashInitialBalance() = CashInitialBalance(
@@ -287,7 +287,7 @@ fun sampleCashInitialBalance() = CashInitialBalance(
     unsettledCash = "0".toBigDecimal(),
     cashDebitCallValue = "0".toBigDecimal(),
     pendingDeposits = "0".toBigDecimal(),
-    accountValue = "0".toBigDecimal()
+    accountValue = "0".toBigDecimal(),
 )
 
 fun sampleCashBalance() = CashBalance(
@@ -297,7 +297,7 @@ fun sampleCashBalance() = CashBalance(
     longNonMarginableMarketValue = "0".toBigDecimal(),
     totalCash = "0".toBigDecimal(),
     cashDebitCallValue = "0".toBigDecimal(),
-    unsettledCash = "0".toBigDecimal()
+    unsettledCash = "0".toBigDecimal(),
 )
 
 fun sampleMarginAccount() = MarginAccount(
@@ -309,7 +309,7 @@ fun sampleMarginAccount() = MarginAccount(
     positions = listOf(samplePosition()),
     initialBalances = sampleMarginInitialBalance(),
     currentBalances = sampleMarginBalance(),
-    projectedBalances = sampleMarginBalance()
+    projectedBalances = sampleMarginBalance(),
 )
 
 fun sampleCashAccount() = CashAccount(
@@ -321,7 +321,7 @@ fun sampleCashAccount() = CashAccount(
     positions = listOf(samplePosition()),
     initialBalances = sampleCashInitialBalance(),
     currentBalances = sampleCashBalance(),
-    projectedBalances = sampleCashBalance()
+    projectedBalances = sampleCashBalance(),
 )
 
 fun sampleAccount() = Account(securitiesAccount = sampleMarginAccount())
@@ -335,7 +335,7 @@ fun sampleOrderLegCollection() = OrderLegCollection(
     quantity = "10".toBigDecimal(),
     quantityType = OrderLegCollection.QuantityType.SHARES,
     divCapGains = OrderLegCollection.DivCapGains.REINVEST,
-    toSymbol = null
+    toSymbol = null,
 )
 
 fun sampleServiceError() = ServiceError(message = "error", errors = listOf("e1", "e2"))
@@ -350,7 +350,7 @@ fun sampleTransactionFixedIncome() = TransactionFixedIncome(
     maturityDate = "2030-01-01",
     factor = "1.0".toBigDecimal(),
     multiplier = "1.0".toBigDecimal(),
-    variableRate = "0.0".toBigDecimal()
+    variableRate = "0.0".toBigDecimal(),
 )
 
 fun sampleTransactionCashEquivalent() = TransactionCashEquivalent(
@@ -359,7 +359,7 @@ fun sampleTransactionCashEquivalent() = TransactionCashEquivalent(
     description = "CashEq",
     instrumentId = 6,
     netChange = "0.0".toBigDecimal(),
-    type = TransactionCashEquivalent.Type.SWEEP_VEHICLE
+    type = TransactionCashEquivalent.Type.SWEEP_VEHICLE,
 )
 
 fun sampleCollectiveInvestment() = CollectiveInvestment(
@@ -368,7 +368,7 @@ fun sampleCollectiveInvestment() = CollectiveInvestment(
     description = "ETF",
     instrumentId = 7,
     netChange = "0.0".toBigDecimal(),
-    type = CollectiveInvestment.Type.EXCHANGE_TRADED_FUND
+    type = CollectiveInvestment.Type.EXCHANGE_TRADED_FUND,
 )
 
 fun sampleCurrency() = Currency(
@@ -376,7 +376,7 @@ fun sampleCurrency() = Currency(
     symbol = "USD",
     description = "US Dollar",
     instrumentId = 840,
-    netChange = "0.0".toBigDecimal()
+    netChange = "0.0".toBigDecimal(),
 )
 
 fun sampleForex() = Forex(
@@ -387,7 +387,7 @@ fun sampleForex() = Forex(
     netChange = "0.0".toBigDecimal(),
     type = Forex.Type.STANDARD,
     baseCurrency = sampleCurrency(),
-    counterCurrency = sampleCurrency()
+    counterCurrency = sampleCurrency(),
 )
 
 fun sampleTransactionMutualFund() = TransactionMutualFund(
@@ -402,7 +402,7 @@ fun sampleTransactionMutualFund() = TransactionMutualFund(
     type = TransactionMutualFund.Type.OPEN_END_TAXABLE,
     exchangeCutoffTime = null,
     purchaseCutoffTime = null,
-    redemptionCutoffTime = null
+    redemptionCutoffTime = null,
 )
 
 fun sampleTransactionOption() = TransactionOption(
@@ -418,7 +418,7 @@ fun sampleTransactionOption() = TransactionOption(
         deliverableNumber = 1,
         deliverableUnits = "100".toBigDecimal(),
         deliverable = sampleTransactionEquity(),
-        assetType = AssetType.EQUITY
+        assetType = AssetType.EQUITY,
     ),
     optionPremiumMultiplier = 100,
     putCall = TransactionOption.PutCall.CALL,
@@ -426,7 +426,7 @@ fun sampleTransactionOption() = TransactionOption(
     type = TransactionOption.Type.VANILLA,
     underlyingSymbol = "XYZ",
     underlyingCusip = "123456",
-    deliverable = sampleTransactionEquity()
+    deliverable = sampleTransactionEquity(),
 )
 
 fun sampleProduct() = Product(
@@ -435,14 +435,14 @@ fun sampleProduct() = Product(
     description = "Product",
     instrumentId = 5,
     netChange = "0.0".toBigDecimal(),
-    type = Product.Type.TBD
+    type = Product.Type.TBD,
 )
 
 fun sampleAccountAPIOptionDeliverable() = AccountAPIOptionDeliverable(
     symbol = "XYZ",
     deliverableUnits = "100".toBigDecimal(),
     apiCurrencyType = AccountAPIOptionDeliverable.ApiCurrencyType.USD,
-    assetType = AssetType.EQUITY
+    assetType = AssetType.EQUITY,
 )
 
 fun sampleTransactionAPIOptionDeliverable() = TransactionAPIOptionDeliverable(
@@ -451,7 +451,7 @@ fun sampleTransactionAPIOptionDeliverable() = TransactionAPIOptionDeliverable(
     deliverableNumber = 1,
     deliverableUnits = "100".toBigDecimal(),
     deliverable = sampleTransactionEquity(),
-    assetType = AssetType.EQUITY
+    assetType = AssetType.EQUITY,
 )
 
 fun sampleUserDetails() = UserDetails(
@@ -462,7 +462,7 @@ fun sampleUserDetails() = UserDetails(
     systemUserName = "sys",
     firstName = "First",
     lastName = "Last",
-    brokerRepCode = "BR"
+    brokerRepCode = "BR",
 )
 
 fun sampleTransferItem() = TransferItem(
@@ -471,7 +471,7 @@ fun sampleTransferItem() = TransferItem(
     cost = "12.34".toBigDecimal(),
     price = "12.34".toBigDecimal(),
     feeType = FeeType.COMMISSION,
-    positionEffect = PositionEffect.OPENING
+    positionEffect = PositionEffect.OPENING,
 )
 
 fun sampleTransaction() = Transaction(
@@ -489,7 +489,7 @@ fun sampleTransaction() = Transaction(
     orderId = 123,
     netAmount = "12.34".toBigDecimal(),
     activityType = Transaction.ActivityType.EXECUTION,
-    transferItems = listOf(sampleTransferItem())
+    transferItems = listOf(sampleTransferItem()),
 )
 
 fun sampleUserPreferenceAccount() = UserPreferenceAccount(
@@ -499,7 +499,7 @@ fun sampleUserPreferenceAccount() = UserPreferenceAccount(
     nickName = "nick",
     accountColor = "#ffffff",
     displayAcctId = "id",
-    autoPositionEffect = false
+    autoPositionEffect = false,
 )
 
 fun sampleStreamerInfo() = StreamerInfo(
@@ -507,18 +507,18 @@ fun sampleStreamerInfo() = StreamerInfo(
     schwabClientCustomerId = "cid",
     schwabClientCorrelId = "corr",
     schwabClientChannel = "ch",
-    schwabClientFunctionId = "fn"
+    schwabClientFunctionId = "fn",
 )
 
 fun sampleOffer() = Offer(
     level2Permissions = true,
-    mktDataPermission = "perm"
+    mktDataPermission = "perm",
 )
 
 fun sampleUserPreference() = UserPreference(
     accounts = listOf(sampleUserPreferenceAccount()),
     streamerInfo = listOf(sampleStreamerInfo()),
-    offers = listOf(sampleOffer())
+    offers = listOf(sampleOffer()),
 )
 
 fun sampleAccountNumberHashList() = listOf(sampleAccountNumberHash())

@@ -16,13 +16,9 @@ interface ReadWriteTableValueMapper : ReadTableValueMapper {
 }
 
 open class DefaultReadTableValueMapper : ReadWriteTableValueMapper {
-    override fun mapOut(value: Any): String {
-        return value.toString()
-    }
+    override fun mapOut(value: Any): String = value.toString()
 
-    override fun mapIn(value: String): String {
-        return value
-    }
+    override fun mapIn(value: String): String = value
 }
 
 open class BigDecimalReadTableValueMapper(private val format: String = "%.2f") : ReadWriteTableValueMapper {
@@ -36,41 +32,29 @@ open class BigDecimalReadTableValueMapper(private val format: String = "%.2f") :
         return format.format(value)
     }
 
-    override fun mapIn(value: String): BigDecimal {
-        return BigDecimal(value.toDoubleOrNull() ?: 0.0)
-    }
+    override fun mapIn(value: String): BigDecimal = BigDecimal(value.toDoubleOrNull() ?: 0.0)
 }
 
 class DollarReadTableValueMapper : BigDecimalReadTableValueMapper() {
-    override fun mapOut(value: Any): String {
-        return "$ " + super.mapOut(value)
-    }
+    override fun mapOut(value: Any): String = "$ " + super.mapOut(value)
 
-    override fun mapIn(value: String): BigDecimal {
-        return super.mapIn(value.replace("$ ", ""))
-    }
+    override fun mapIn(value: String): BigDecimal = super.mapIn(value.replace("$ ", ""))
 }
 
 class PercentReadTableValueMapper : BigDecimalReadTableValueMapper("%05.2f") {
-    override fun mapOut(value: Any): String {
-        return super.mapOut(value) + " %"
-    }
+    override fun mapOut(value: Any): String = super.mapOut(value) + " %"
 
-    override fun mapIn(value: String): BigDecimal {
-        return super.mapIn(value.replace(" %", ""))
-    }
+    override fun mapIn(value: String): BigDecimal = super.mapIn(value.replace(" %", ""))
 }
 
 annotation class Column(
     val name: String = "",
     val position: Int = -1,
     val mapper: KClass<out ReadTableValueMapper> = DefaultReadTableValueMapper::class,
-    val editable: Boolean = true
+    val editable: Boolean = true,
 )
 
-open class ObjectTableModel<T>(
-    private val data: List<T>, private val typeInfo: Class<T>
-) : AbstractTableModel() {
+open class ObjectTableModel<T>(private val data: List<T>, private val typeInfo: Class<T>) : AbstractTableModel() {
 
     protected val columns = typeInfo.declaredFields
         .filter { it.name != "Companion" }
@@ -85,7 +69,7 @@ open class ObjectTableModel<T>(
                         fetchGetter(field.name),
                         fetchSetter(field.name, field.type),
                         createMapper(col.mapper),
-                        col.editable
+                        col.editable,
                     )
                 } ?: (index to ColumnInfo(field.name, fetchGetter(field.name)))
         }.toMutableList()
@@ -106,36 +90,45 @@ open class ObjectTableModel<T>(
                                     method,
                                     null,
                                     createMapper(col.mapper),
-                                    false
+                                    false,
                                 )
                             } ?: (index to ColumnInfo(method.name.replace("get", ""), method))
-                    }
+                    },
             )
         }.sortedBy { it.first }
         .map { it.second }
 
-    private fun fetchGetter(name: String): Method? {
-        return try {
-            typeInfo.getMethod("get" + name.replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase(
-                    getDefault()
-                ) else it.toString()
-            })
-        } catch (_: Exception) {
-            null
-        }
+    private fun fetchGetter(name: String): Method? = try {
+        typeInfo.getMethod(
+            "get" + name.replaceFirstChar {
+                if (it.isLowerCase()) {
+                    it.titlecase(
+                        getDefault(),
+                    )
+                } else {
+                    it.toString()
+                }
+            },
+        )
+    } catch (_: Exception) {
+        null
     }
 
-    private fun fetchSetter(name: String, type: Class<*>): Method? {
-        return try {
-            typeInfo.getMethod("set" + name.replaceFirstChar {
-                if (it.isLowerCase()) it.titlecase(
-                    getDefault()
-                ) else it.toString()
-            }, type)
-        } catch (_: Exception) {
-            null
-        }
+    private fun fetchSetter(name: String, type: Class<*>): Method? = try {
+        typeInfo.getMethod(
+            "set" + name.replaceFirstChar {
+                if (it.isLowerCase()) {
+                    it.titlecase(
+                        getDefault(),
+                    )
+                } else {
+                    it.toString()
+                }
+            },
+            type,
+        )
+    } catch (_: Exception) {
+        null
     }
 
     override fun getColumnName(column: Int): String = columns.getOrNull(column)?.let {
@@ -144,9 +137,8 @@ open class ObjectTableModel<T>(
 
     internal fun isColumnEditable(column: Int): Boolean = columns.getOrNull(column)?.editable ?: false
 
-    override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
-        return isColumnEditable(columnIndex) && data.size > rowIndex && rowIndex >= 0
-    }
+    override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean =
+        isColumnEditable(columnIndex) && data.size > rowIndex && rowIndex >= 0
 
     protected fun setValueOn(obj: T, index: Int, newValue: Any?) {
         val mapper = (columns[index].mapper as? ReadWriteTableValueMapper) ?: return

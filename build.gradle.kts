@@ -126,6 +126,7 @@ tasks.build {
 
 tasks.test {
     useJUnitPlatform()
+    jvmArgs("-Djava.awt.headless=true")
 }
 
 tasks.jacocoTestReport {

@@ -13,15 +13,12 @@ class OrdersPanel(vm: OrdersViewModel) : JPanel(BorderLayout()) {
     init {
         val ordersTable = OrdersTable(vm.displayOrders)
 
-        val statusOptions = OrderFilter.StatusFilter.entries.toTypedArray()
-        val defaultStatusIndex =
-            statusOptions.indexOfFirst { it == vm.filter.value.statusFilter }.takeIf { it >= 0 } ?: 1
-
-        val statusCombo = JComboBox(statusOptions.map { it.label }.toTypedArray()).apply {
-            selectedIndex = defaultStatusIndex
-            addActionListener {
-                vm.filter.value = vm.filter.value.copy(statusFilter = statusOptions[selectedIndex])
-            }
+        val statusDropDown = MultiSelectDropDown(
+            items = OrderFilter.StatusFilter.entries,
+            labelOf = { it.label },
+            initialSelection = vm.filter.value.statusStatuses,
+        ) { selected ->
+            vm.filter.value = vm.filter.value.copy(statusStatuses = selected)
         }
 
         val lookbackOptions =
@@ -52,7 +49,7 @@ class OrdersPanel(vm: OrdersViewModel) : JPanel(BorderLayout()) {
 
         val filterBar = JPanel(FlowLayout(FlowLayout.LEFT)).apply {
             add(JLabel("Status:"))
-            add(statusCombo)
+            add(statusDropDown)
             add(JLabel("Lookback:"))
             add(lookbackCombo)
             add(JLabel("Date:"))

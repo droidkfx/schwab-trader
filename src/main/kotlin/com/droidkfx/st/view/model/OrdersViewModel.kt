@@ -14,14 +14,13 @@ import java.time.temporal.ChronoUnit
 import javax.swing.SwingUtilities
 
 data class OrderFilter(
-    val statusFilter: StatusFilter = StatusFilter.OPEN,
+    val statusStatuses: Set<StatusFilter> = StatusFilter.entries.toSet(),
     val dateField: DateField = DateField.ENTERED,
     val lookbackDays: Int? = 30,
 ) {
     enum class DateField { ENTERED, CLOSE }
 
     enum class StatusFilter(val label: String) {
-        ALL("All"),
         OPEN("Open"),
         FILLED("Filled"),
         CANCELED("Canceled"),
@@ -71,13 +70,18 @@ class OrdersViewModel(
         displayOrders.addAll(filtered)
     }
 
-    private fun filterByStatus(order: CachedOrder): Boolean = when (filter.value.statusFilter) {
-        OrderFilter.StatusFilter.ALL -> true
-        OrderFilter.StatusFilter.OPEN -> order.status.isOpen()
-        OrderFilter.StatusFilter.FILLED -> order.status == Status.FILLED
-        OrderFilter.StatusFilter.CANCELED -> order.status == Status.CANCELED
-        OrderFilter.StatusFilter.EXPIRED -> order.status == Status.EXPIRED
-        OrderFilter.StatusFilter.REJECTED -> order.status == Status.REJECTED
+    private fun filterByStatus(order: CachedOrder): Boolean {
+        val statuses = filter.value.statusStatuses
+        if (statuses.size == OrderFilter.StatusFilter.entries.size) return true
+        return statuses.any { sf ->
+            when (sf) {
+                OrderFilter.StatusFilter.OPEN -> order.status.isOpen()
+                OrderFilter.StatusFilter.FILLED -> order.status == Status.FILLED
+                OrderFilter.StatusFilter.CANCELED -> order.status == Status.CANCELED || order.status == Status.REPLACED
+                OrderFilter.StatusFilter.EXPIRED -> order.status == Status.EXPIRED
+                OrderFilter.StatusFilter.REJECTED -> order.status == Status.REJECTED
+            }
+        }
     }
 
     private fun filterByDate(order: CachedOrder): Boolean {

@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "com.droidkfx.schwabtrader"
-version = "0.2.1"
+version = "0.2.3"
 
 repositories {
     mavenCentral()

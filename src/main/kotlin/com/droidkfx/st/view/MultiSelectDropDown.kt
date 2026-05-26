@@ -41,8 +41,8 @@ class MultiSelectDropDown<T>(
     internal val checkBoxItems: List<Pair<T, JCheckBox>>
     internal val allCheckBox: JCheckBox
     internal val textLabel = JLabel().apply {
-        // Match ComboBox.padding: top=2, left=6, bottom=2, right=6
-        border = BorderFactory.createEmptyBorder(2, 6, 2, 6)
+        val pad = UIManager.getInsets("ComboBox.padding") ?: Insets(2, 6, 2, 6)
+        border = BorderFactory.createEmptyBorder(pad.top, pad.left, pad.bottom, pad.right)
         isOpaque = false
     }
 
@@ -150,7 +150,7 @@ class MultiSelectDropDown<T>(
         val widestText = (items.map { labelOf(it) } + listOf("All", "None", "${items.size} selected"))
             .maxOf { fm.stringWidth(it) }
         val ps = preferredSize
-        preferredSize = Dimension(widestText + FIXED_WIDTH_PADDING, ps.height.coerceAtLeast(MIN_HEIGHT))
+        preferredSize = Dimension(widestText + FIXED_WIDTH_PADDING, ps.height)
         minimumSize = preferredSize
         maximumSize = Dimension(preferredSize.width, Short.MAX_VALUE.toInt())
 
@@ -175,8 +175,34 @@ class MultiSelectDropDown<T>(
     }
 
     override fun paintComponent(g: Graphics) {
-        g.color = UIManager.getColor("ComboBox.background") ?: Color.WHITE
-        g.fillRect(0, 0, width, height)
+        val g2 = g.create() as Graphics2D
+        try {
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+            val arc = UIManager.getInt("Component.arc").coerceAtLeast(3).toFloat()
+            val w = width.toFloat()
+            val h = height.toFloat()
+            val roundedShape = java.awt.geom.RoundRectangle2D.Float(0f, 0f, w, h, arc, arc)
+
+            // Fill corners with parent background so rounded corners appear transparent,
+            // matching FlatLaf's paintComponentBackground approach.
+            val parentBg = parent?.background ?: UIManager.getColor("Panel.background") ?: Color.WHITE
+            g2.color = parentBg
+            g2.fillRect(0, 0, width, height)
+
+            // Fill the rounded component background.
+            g2.color = UIManager.getColor("ComboBox.background") ?: Color.WHITE
+            g2.fill(roundedShape)
+
+            // Separator between text area and arrow button, matching FlatLaf's buttonSeparatorColor.
+            val sepColor = UIManager.getColor("ComboBox.buttonSeparatorColor")
+            if (sepColor != null) {
+                g2.color = sepColor
+                val sepX = (width - 1 - ARROW_AREA_WIDTH).toFloat()
+                g2.fill(java.awt.geom.Rectangle2D.Float(sepX, 1f, 1f, h - 2f))
+            }
+        } finally {
+            g2.dispose()
+        }
     }
 
     private class ArrowPanel : JPanel() {
@@ -198,11 +224,12 @@ class MultiSelectDropDown<T>(
                 g2.color = arrowColor
                 g2.stroke = BasicStroke(1.5f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND)
 
-                // Downward chevron centred in the panel, proportions matching FlatLaf's FlatArrowIcon
+                // Downward chevron centred in the panel, matching FlatLaf's FlatArrowIcon:
+                // total chevron = 8 px wide × 4 px tall (height = width/2), so half-values are aw=4, ah=2
                 val cx = width / 2f
                 val cy = height / 2f
                 val aw = 4f // half-width of chevron arms
-                val ah = 2.5f // half-height of chevron arms
+                val ah = 2f // half-height of chevron arms
 
                 val path = java.awt.geom.Path2D.Float()
                 path.moveTo(cx - aw, cy - ah)
@@ -222,8 +249,14 @@ class MultiSelectDropDown<T>(
             try {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
                 g2.color = UIManager.getColor("Component.borderColor") ?: Color.GRAY
-                val arc = UIManager.getInt("Component.arc").coerceAtLeast(3)
-                g2.drawRoundRect(x, y, width - 1, height - 1, arc, arc)
+                val arc = UIManager.getInt("Component.arc").coerceAtLeast(3).toFloat()
+                // Offset by 0.5px so the 1px stroke is fully inside the component bounds,
+                // matching FlatLaf's FlatBorder which draws at (x + lw/2, y + lw/2).
+                g2.draw(
+                    java.awt.geom.RoundRectangle2D.Float(
+                        x + 0.5f, y + 0.5f, width - 1f, height - 1f, arc, arc
+                    )
+                )
             } finally {
                 g2.dispose()
             }
@@ -237,6 +270,5 @@ class MultiSelectDropDown<T>(
         private const val MAX_VISIBLE_ITEMS = 5
         private const val ARROW_AREA_WIDTH = 16 // matches FlatComboBoxButton preferred width
         private const val FIXED_WIDTH_PADDING = 32 // border(2) + text-padding(12) + arrow(16) + slack(2)
-        private const val MIN_HEIGHT = 22 // matches JComboBox.preferredSize.height under FlatLaf
     }
 }
